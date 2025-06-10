@@ -1,0 +1,13 @@
+node_modules/
+.expo/
+dist/
+build/
+*.config.js
+babel.config.js
+coverage/
+.nyc_output/
+*.log
+.DS_Store
+android/
+ios/
+web-build/

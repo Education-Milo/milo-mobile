@@ -1,0 +1,6 @@
+# Ignorer tous les fichiers
+*
+
+# Ne pas ignorer le dossier src
+!src/
+!src/**
