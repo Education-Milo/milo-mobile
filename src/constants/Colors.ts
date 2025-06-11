@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   signupContainer: {
-    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
   },
@@ -197,8 +197,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 35,
-    paddingBottom: 10,
+    paddingTop: 15,
+    paddingBottom: 5,
   },
   backButton: {
     padding: 5,
@@ -224,7 +224,6 @@ const styles = StyleSheet.create({
   },
   registerInputContainer: {
     marginBottom: 15,
-    // padding: 5,
   },
   logoRegisterHeader: {
     width: 100,
@@ -232,8 +231,6 @@ const styles = StyleSheet.create({
   },
 
   roleLabel: {
-    fontSize: 16,
-    color: '#11181C',
     marginBottom: 10,
     fontWeight: '500',
   },

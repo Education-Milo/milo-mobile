@@ -1,86 +1,124 @@
 import { TextStyle } from 'react-native';
 
 export const fonts = {
-  system: {
-    regular: 'System',
-    medium: 'System',
-    semiBold: 'System',
-    bold: 'System',
+  outfit: {
+    thin: 'Outfit-Thin',
+    extraLight: 'Outfit-ExtraLight',
+    light: 'Outfit-Light',
+    regular: 'Outfit-Regular',
+    medium: 'Outfit-Medium',
+    semiBold: 'Outfit-SemiBold',
+    bold: 'Outfit-Bold',
+    extraBold: 'Outfit-ExtraBold',
+    black: 'Outfit-Black',
   },
 } as const;
 
-export type FontWeight = keyof typeof fonts.system;
+export type FontWeight = keyof typeof fonts.outfit;
 
 export const typography = {
   // Titres
   h1: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#11181C',
+    fontFamily: fonts.outfit.bold,
+    fontSize: 32,
+    lineHeight: 40,
+    fontWeight: '700' as const,
   } as TextStyle,
 
   h2: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333333',
+    fontFamily: fonts.outfit.bold,
+    fontSize: 28,
+    lineHeight: 36,
+    fontWeight: '700' as const,
   } as TextStyle,
 
   h3: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FF8C00',
+    fontFamily: fonts.outfit.semiBold,
+    fontSize: 24,
+    lineHeight: 32,
+    fontWeight: '600' as const,
   } as TextStyle,
 
   h4: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#11181C',
+    fontFamily: fonts.outfit.semiBold,
+    fontSize: 20,
+    lineHeight: 28,
+    fontWeight: '600' as const,
   } as TextStyle,
 
   // Texte du corps
   bodyLarge: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#11181C',
+    fontFamily: fonts.outfit.regular,
+    fontSize: 18,
+    lineHeight: 26,
+    fontWeight: '400' as const,
+    color: '#666666',
   } as TextStyle,
 
   body: {
-    fontSize: 14,
-    fontWeight: '400',
+    fontFamily: fonts.outfit.regular,
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '400' as const,
     color: '#666666',
   } as TextStyle,
 
   bodySmall: {
-    fontSize: 12,
-    fontWeight: '400',
+    fontFamily: fonts.outfit.regular,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '400' as const,
     color: '#666666',
   } as TextStyle,
 
   // Labels
+  labelLarge: {
+    fontFamily: fonts.outfit.medium,
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: '500' as const,
+    color: '#666666',
+  } as TextStyle,
+
   label: {
+    fontFamily: fonts.outfit.medium,
     fontSize: 14,
-    fontWeight: '500',
+    lineHeight: 20,
+    fontWeight: '500' as const,
     color: '#666666',
   } as TextStyle,
 
   labelSmall: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontFamily: fonts.outfit.medium,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: '400' as const,
+    color: '#666666',
+  } as TextStyle,
+
+  labelExtraSmall: {
+    fontFamily: fonts.outfit.medium,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: '400' as const,
     color: '#666666',
   } as TextStyle,
 
   // Boutons
   button: {
+    fontFamily: fonts.outfit.semiBold,
     fontSize: 16,
-    fontWeight: 'bold',
+    lineHeight: 20,
+    fontWeight: '600' as const,
     color: '#FFFFFF',
   } as TextStyle,
 
-  buttonSmall: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  } as TextStyle,
+  // buttonSmall: {
+  //   fontFamily: fonts.outfit.semiBold,
+  //   fontSize: 12,
+  //   fontWeight: 'bold',
+  //   color: '#FFFFFF',
+  // } as TextStyle,
 
   // Navigation
   navItem: {

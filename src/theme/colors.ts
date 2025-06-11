@@ -3,6 +3,7 @@ export const colors = {
   primary: '#FF8C00',
   secondary: '#FF6B00',
   tertiary: '#FF4500',
+  placeholder: '#333',
 
   // Couleurs de fond
   background: '#FFF8F1',
@@ -11,6 +12,7 @@ export const colors = {
 
   // Couleurs de texte
   text: {
+    title: '#666',
     primary: '#11181C',
     secondary: '#666666',
     tertiary: '#8E8E93',

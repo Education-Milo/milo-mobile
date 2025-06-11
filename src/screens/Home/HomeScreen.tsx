@@ -18,7 +18,7 @@ function Home({ navigation }: HomeScreenProps) {
         {/* En-tête avec logo et informations utilisateur */}
         <View style={styles.header}>
           <Image
-            source={require('../../../assets/images/logo_sans_fond.png')}
+            source={require('@assets/images/logo_sans_fond.png')}
             style={styles.smallLogo}
           />
           <View style={styles.headerRight}>
@@ -80,7 +80,7 @@ function Home({ navigation }: HomeScreenProps) {
               </View>
               <View style={styles.foxContainer}>
                 <Image
-                  source={require('../../../assets/images/mascot.png')}
+                  source={require('@assets/images/mascot.png')}
                   style={styles.mascotteImage}
                   resizeMode='contain'
                 />

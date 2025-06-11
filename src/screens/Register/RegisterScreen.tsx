@@ -18,6 +18,9 @@ import styles from '@constants/Colors';
 import { RootStackParamList } from '@navigation/types';
 import MainButton from '@components/MainButtonComponent';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import TextFieldComponent from '@components/TextField.component';
+import TypographyComponent from '@components/Typography.component';
+import { colors } from '@themes/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Register'>;
 
@@ -135,164 +138,113 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
           style={{ flex: 1 }}
           contentContainerStyle={{ flexGrow: 1 }}
           enableOnAndroid={true}
-          // enableAutomaticScroll={true}
-          // extraScrollHeight={20} // Espace supplémentaire au-dessus du champ
-          // keyboardShouldPersistTaps="handled"
         >
         <ScrollView
           style={styles.registerScrollView}
           contentContainerStyle={styles.registerScrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <Text
-            style={[
-              styles.subtitle,
-              {
-                fontWeight: 'bold',
-                alignSelf: 'flex-start',
-                marginLeft: 10,
-                marginBottom: 15,
-                fontSize: 20,
-              },
-            ]}
+
+          <TypographyComponent
+            variant='h3'
+            style={{
+              fontWeight: 'bold',
+              alignSelf: 'flex-start',
+              marginLeft: 10,
+              marginBottom: 15,
+            }}
+            color={colors.text.title}
           >
             Inscription
-          </Text>
+          </TypographyComponent>
           {/* Nom */}
           <View style={styles.registerInputContainer}>
-            <View style={styles.inputIconContainer}>
-              <Ionicons name='person-outline' size={20} color='#666' />
-              <TextInput
-                style={[styles.input, errors.lastName && styles.inputError]}
-                onChangeText={text => {
-                  setLastName(text);
-                  setErrors(prev => ({ ...prev, lastName: undefined }));
-                }}
-                value={lastName}
-                placeholder='Nom'
-                placeholderTextColor='#999'
-                editable={!isLoading}
-              />
-            </View>
-            {errors.lastName && (
-              <Text style={styles.errorText}>{errors.lastName}</Text>
-            )}
+            <TextFieldComponent
+              placeholder="Nom"
+              icon={<Ionicons name='person-outline' size={20} color='#666' />}
+              value={lastName}
+              onChangeText={text => {
+                setLastName(text);
+                setErrors(prev => ({ ...prev, lastName: undefined }));
+              }}
+              editable={!isLoading}
+              error={errors.lastName}
+            />
           </View>
 
           {/* Prénom */}
           <View style={styles.registerInputContainer}>
-            <View style={styles.inputIconContainer}>
-              <Ionicons name='person-outline' size={20} color='#666' />
-              <TextInput
-                style={[styles.input, errors.firstName && styles.inputError]}
-                onChangeText={text => {
-                  setFirstName(text);
-                  setErrors(prev => ({ ...prev, firstName: undefined }));
-                }}
-                value={firstName}
-                placeholder='Prénom'
-                placeholderTextColor='#999'
-                editable={!isLoading}
-              />
-            </View>
-            {errors.firstName && (
-              <Text style={styles.errorText}>{errors.firstName}</Text>
-            )}
+            <TextFieldComponent
+              placeholder="Prénom"
+              icon={<Ionicons name='person-outline' size={20} color='#666' />}
+              value={firstName}
+              onChangeText={text => {
+                setFirstName(text);
+                setErrors(prev => ({ ...prev, firstName: undefined }));
+              }}
+              editable={!isLoading}
+              error={errors.firstName}
+            />
           </View>
 
           {/* Email */}
           <View style={styles.registerInputContainer}>
-            <View style={styles.inputIconContainer}>
-              <Ionicons name='mail-outline' size={20} color='#666' />
-              <TextInput
-                style={[styles.input, errors.email && styles.inputError]}
-                onChangeText={text => {
-                  setEmail(text);
-                  setErrors(prev => ({ ...prev, email: undefined }));
-                }}
-                value={email}
-                placeholder='Adresse email'
-                placeholderTextColor='#999'
-                keyboardType='email-address'
-                autoCapitalize='none'
-                editable={!isLoading}
-              />
-            </View>
-            {errors.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
-            )}
+            <TextFieldComponent
+              placeholder="Adresse email"
+              icon={<Ionicons name='mail-outline' size={20} color='#666' />}
+              value={email}
+              onChangeText={text => {
+                setEmail(text);
+                setErrors(prev => ({ ...prev, email: undefined }));
+              }}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              editable={!isLoading}
+              error={errors.email}
+            />
           </View>
 
           {/* Mot de passe */}
           <View style={styles.registerInputContainer}>
-            <View style={styles.inputIconContainer}>
-              <Ionicons name='lock-closed-outline' size={20} color='#666' />
-              <TextInput
-                style={[styles.input, errors.password && styles.inputError]}
-                onChangeText={text => {
-                  setPassword(text);
-                  setErrors(prev => ({ ...prev, password: undefined }));
-                }}
-                value={password}
-                placeholder='Mot de passe'
-                placeholderTextColor='#999'
-                secureTextEntry={!showPassword}
-                editable={!isLoading}
-              />
-              <TouchableOpacity
-                onPress={() => setShowPassword(!showPassword)}
-                style={{ padding: 10 }}
-              >
-                <Ionicons
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
-                  size={20}
-                  color='#666'
-                />
-              </TouchableOpacity>
-            </View>
-            {errors.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
-            )}
+            <TextFieldComponent
+              placeholder="Mot de passe"
+              icon={<Ionicons name='lock-closed-outline' size={20} color='#666' />}
+              value={password}
+              onChangeText={text => {
+                setPassword(text);
+                setErrors(prev => ({ ...prev, password: undefined }));
+              }}
+              type="password"
+              editable={!isLoading}
+              error={errors.password}
+            />
           </View>
 
           {/* Confirmation mot de passe */}
           <View style={styles.registerInputContainer}>
-            <View style={styles.inputIconContainer}>
-              <Ionicons name='lock-closed-outline' size={20} color='#666' />
-              <TextInput
-                style={[
-                  styles.input,
-                  errors.confirmPassword && styles.inputError,
-                ]}
-                onChangeText={text => {
-                  setConfirmPassword(text);
-                  setErrors(prev => ({ ...prev, confirmPassword: undefined }));
-                }}
-                value={confirmPassword}
-                placeholder='Confirmation du mot de passe'
-                placeholderTextColor='#999'
-                secureTextEntry={!showPassword}
-                editable={!isLoading}
-              />
-              <TouchableOpacity
-                onPress={() => setShowPassword(!showPassword)}
-                style={{ padding: 10 }}
-              >
-                <Ionicons
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
-                  size={20}
-                  color='#666'
-                />
-              </TouchableOpacity>
-            </View>
-            {errors.confirmPassword && (
-              <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-            )}
+            <TextFieldComponent
+              placeholder="Confirmation du mot de passe"
+              icon={<Ionicons name='lock-closed-outline' size={20} color='#666' />}
+              value={confirmPassword}
+              onChangeText={text => {
+                setConfirmPassword(text);
+                setErrors(prev => ({ ...prev, confirmPassword: undefined }));
+              }}
+              type="password"
+              editable={!isLoading}
+              error={errors.confirmPassword}
+            />
           </View>
 
           {/* Sélection du rôle */}
           <View style={styles.registerInputContainer}>
-            <Text style={styles.roleLabel}>Sélectionnez votre rôle :</Text>
+            <TypographyComponent
+              variant='labelLarge'
+              style={{marginBottom: 10}}
+              color={colors.text.title}
+            >
+              Sélectionnez votre rôle :
+            </TypographyComponent>
             <View style={styles.roleContainer}>
               {roles.map(roleOption => (
                 <TouchableOpacity
@@ -333,15 +285,15 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
               .
             </Text>
           </View>
+          <MainButton
+            onPress={handleRegister}
+            loading={isLoading}
+            title="S'inscrire"
+            style={{ marginBottom: 20 }}
+          />
         </ScrollView>
       </KeyboardAwareScrollView>
       {/* Bouton d'inscription */}
-      <MainButton
-        onPress={handleRegister}
-        loading={isLoading}
-        title="S'inscrire"
-        style={{ width: '100%', marginBottom: 20 }}
-      />
     </View>
   );
 }
