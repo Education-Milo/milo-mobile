@@ -63,7 +63,7 @@ const MainButtonComponent = (props: MainButtonComponentProps) => {
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 12,
+    borderRadius: 9999,
     overflow: 'hidden',
     height: 48,
     width: '100%',
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
   },
   gradient: {
     flex: 1,
+    borderRadius: 9999,
     alignItems: 'center',
     justifyContent: 'center',
   },

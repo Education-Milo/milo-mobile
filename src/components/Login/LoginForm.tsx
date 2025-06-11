@@ -3,15 +3,17 @@ import {
   ActivityIndicator,
   Alert,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@navigation/types';
 import { Ionicons } from '@expo/vector-icons';
+import { colors }from '@themes/colors';
 import styles from '@constants/Colors';
 import MainButton from '@components/MainButtonComponent';
+import TypographyComponent from '@components/Typography.component';
+import TextFieldComponent from '@components/TextField.component';
 
 export interface LoginFormProps {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -68,76 +70,58 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
 
   return (
     <>
-      <Text
-        style={[
-          styles.subtitle,
-          {
-            fontWeight: 'bold',
-            alignSelf: 'flex-start',
-            marginLeft: 10,
-            marginBottom: 15,
-            fontSize: 20,
-          },
-        ]}
+      <TypographyComponent
+        variant='h3'
+        style={{
+          fontWeight: 'bold',
+          alignSelf: 'flex-start',
+          marginLeft: 10,
+          marginBottom: 15,
+        }}
+        color={colors.text.title}
       >
         Se connecter
-      </Text>
-
+      </TypographyComponent>
       <View style={styles.inputContainer}>
-        <View style={styles.inputIconContainer}>
-          <Ionicons name='mail-outline' size={20} color='#666' />
-          <TextInput
-            style={[styles.input, errors.email && styles.inputError]}
-            onChangeText={text => {
-              setEmail(text);
-              setErrors(prev => ({ ...prev, email: undefined }));
-            }}
-            value={email}
-            placeholder='Votre adresse email'
-            placeholderTextColor='#999'
-            keyboardType='email-address'
-            autoCapitalize='none'
-            editable={!isLoading}
-          />
-        </View>
-        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+        <TextFieldComponent
+          placeholder="Votre adresse email"
+          icon={<Ionicons name='mail-outline' size={20} color='#666' />}
+          value={email}
+          onChangeText={text => {
+            setEmail(text);
+            setErrors(prev => ({ ...prev, email: undefined }));
+          }}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          editable={!isLoading}
+          error={errors.email}
+        />
       </View>
 
       <View style={styles.inputContainer}>
-        <View style={styles.inputIconContainer}>
-          <Ionicons name='lock-closed-outline' size={20} color='#666' />
-          <TextInput
-            style={[styles.input, errors.password && styles.inputError]}
-            onChangeText={text => {
-              setPassword(text);
-              setErrors(prev => ({ ...prev, password: undefined }));
-            }}
-            value={password}
-            placeholder='Votre mot de passe'
-            placeholderTextColor='#999'
-            secureTextEntry={!showPassword}
-            editable={!isLoading}
-          />
-          <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
-            style={{ padding: 10 }}
-          >
-            <Ionicons
-              name={showPassword ? 'eye-outline' : 'eye-off-outline'}
-              size={20}
-              color='#666'
-            />
-          </TouchableOpacity>
-        </View>
-        {errors.password && (
-          <Text style={styles.errorText}>{errors.password}</Text>
-        )}
+        <TextFieldComponent
+          placeholder="Votre mot de passe"
+          icon={<Ionicons name='lock-closed-outline' size={20} color='#666' />}
+          value={password}
+          onChangeText={text => {
+            setPassword(text);
+            setErrors(prev => ({ ...prev, password: undefined }));
+          }}
+          type="password"
+          editable={!isLoading}
+          error={errors.password}
+        />
         <TouchableOpacity
           disabled={isLoading}
           style={styles.forgotPasswordContainer}
           onPress={() => navigation.navigate('ForgotPassword')}
         >
-          <Text style={styles.forgotPassword}>Mot de passe oublié ?</Text>
+          <TypographyComponent
+            variant='bodySmall'
+            style={{ color: '#FF8C00', textDecorationLine: 'underline' }}
+          >
+            Mot de passe oublié ?
+          </TypographyComponent>
         </TouchableOpacity>
       </View>
 

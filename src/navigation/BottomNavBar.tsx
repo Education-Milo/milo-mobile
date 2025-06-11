@@ -33,7 +33,7 @@ function BottomNavBar({ navigation, currentRoute }: BottomNavBarProps) {
   };
 
   return (
-    <View style={[styles.navBarContainer, { backgroundColor: '#FFFFFF' }]}>
+    <View style={[styles.navBarContainer, { backgroundColor: '#FFF8F1' }]}>
       <View style={styles.navBarContent}>
         {navItems.map((item, index) => (
           <TouchableOpacity

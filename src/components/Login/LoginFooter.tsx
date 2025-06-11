@@ -3,6 +3,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@navigation/types';
 import styles from '@constants/Colors';
+import TypographyComponent from '@components/Typography.component';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -16,19 +17,23 @@ function LoginFooter({ navigation, isLoading }: LoginFooterProps) {
     <>
       <View style={styles.dividerContainer}>
         <View style={styles.dividerLine} />
-        <Text style={styles.dividerText}>OU</Text>
+        <TypographyComponent variant="bodySmall" style={styles.dividerText}>
+          OU
+        </TypographyComponent>
         <View style={styles.dividerLine} />
       </View>
-
-      <View style={styles.signupContainer}>
-        <Text style={styles.signupText}>Pas de compte ?</Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Register')}
-          disabled={isLoading}
-        >
-          <Text style={styles.signupLink}>Inscrivez-vous</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Register')}
+        disabled={isLoading}
+        style={styles.signupContainer}
+      >
+      <TypographyComponent variant="bodySmall">
+        Vous n'avez pas de compte ?
+      </TypographyComponent>
+        <TypographyComponent variant="body" style={{ color: '#FF8C00', textDecorationLine: 'underline'}}>
+          Inscrivez-vous
+        </TypographyComponent>
+      </TouchableOpacity>
     </>
   );
 }
