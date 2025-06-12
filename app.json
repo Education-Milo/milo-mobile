@@ -21,10 +21,16 @@
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.miloeducationeip.app"
     },
     "web": {
       "favicon": "./assets/images/logo.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e06d0caa-8b35-4027-b31e-68fc1142e0d6"
+      }
     }
   }
 }

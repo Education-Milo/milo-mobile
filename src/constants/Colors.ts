@@ -304,10 +304,6 @@ const styles = StyleSheet.create({
   // Styles pour la NavBar - À ajouter dans Colors.ts
 
   navBarContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     backgroundColor: '#FFF',
     borderTopWidth: 1,
     borderTopColor: '#E5E5E5',
