@@ -3,7 +3,6 @@ import axios, {
   AxiosRequestConfig,
   CreateAxiosDefaults,
 } from 'axios';
-import { Buffer } from 'buffer';
 
 const APIAxios = axios.create({
   baseURL: process.env.API_URL,
@@ -14,10 +13,10 @@ const APIAxios = axios.create({
 
 APIAxios.interceptors.request.use(
   async config => {
-    const token = '';
-
+    const { useAuthStore } = await import('@store/auth/auth.store');
+    const accessToken = useAuthStore.getState().accessToken;
     try {
-      if (token) config.headers.Authorization = `Bearer ${token}`;
+      if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
       return config;
     } catch (err) {
       return Promise.reject(err);
@@ -45,6 +44,12 @@ APIAxios.interceptors.response.use(
 );
 
 export const APIRoutes = {
+  POST_Register: '/auth/register',
+  POST_Login: '/auth/login',
+  POST_ForgotPassword: '/auth/forgot-password',
+  POST_RequestConfirmEmail: '/auth/request-confirm-email',
+  GET_CurrentUser: '/users/me',
+
   /* AUTH */
   //   POSTLogin: (): AxiosRequestConfig => ({method: 'POST', url: '/auth/login'}),
   //   GETCurrentUser: (): AxiosRequestConfig => ({method: 'GET', url: '/users/me'}),

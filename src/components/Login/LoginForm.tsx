@@ -14,6 +14,7 @@ import styles from '@constants/Colors';
 import MainButton from '@components/MainButtonComponent';
 import TypographyComponent from '@components/Typography.component';
 import TextFieldComponent from '@components/TextField.component';
+import { useAuthStore } from '@store/auth/auth.store';
 
 export interface LoginFormProps {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -29,6 +30,8 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+
+  const login = useAuthStore(state => state.login);
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -55,12 +58,13 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
     setIsLoading(true);
     onLoadingChange?.(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await login(email, password);
       navigation.navigate('Home');
       if (onLoginSuccess) {
         onLoginSuccess();
       }
     } catch (error) {
+      console.error('Login error:', error);
       Alert.alert('Erreur', 'Une erreur est survenue. Veuillez réessayer.');
     } finally {
       setIsLoading(false);
