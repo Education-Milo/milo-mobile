@@ -92,6 +92,7 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
             setErrors(prev => ({ ...prev, email: undefined }));
           }}
           keyboardType="email-address"
+          autoComplete='email'
           autoCapitalize="none"
           editable={!isLoading}
           error={errors.email}
@@ -108,6 +109,7 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
             setErrors(prev => ({ ...prev, password: undefined }));
           }}
           type="password"
+          autoComplete='password'
           editable={!isLoading}
           error={errors.password}
         />
