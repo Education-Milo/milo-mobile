@@ -46,6 +46,20 @@ export const typography = {
     fontWeight: '600' as const,
   } as TextStyle,
 
+  h5: {
+    fontFamily: fonts.outfit.medium,
+    fontSize: 18,
+    lineHeight: 24,
+    fontWeight: '600' as const,
+  } as TextStyle,
+
+  h6: {
+    fontFamily: fonts.outfit.medium,
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: '600' as const,
+  } as TextStyle,
+
   // Texte du corps
   bodyLarge: {
     fontFamily: fonts.outfit.regular,

@@ -5,8 +5,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import styles from '@constants/Colors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { RootStackParamList } from '@navigation/types';
-import LoginForm from '@components/Login/LoginForm';
-import LoginFooter from '@components/Login/LoginFooter';
+import LoginForm from '@components/Login/LoginForm.component';
+import LoginFooter from '@components/Login/LoginFooter.component';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 

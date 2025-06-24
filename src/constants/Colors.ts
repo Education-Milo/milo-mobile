@@ -101,10 +101,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  forgotPasswordContainer: {
-    alignItems: 'flex-end',
-    marginTop: 8,
-  },
+  // forgotPasswordContainer: {
+  //   alignItems: 'flex-end',
+  //   marginTop: 8,
+  // },
   forgotPassword: {
     color: '#FF8C00',
     textDecorationLine: 'underline',
@@ -304,10 +304,10 @@ const styles = StyleSheet.create({
   // Styles pour la NavBar - À ajouter dans Colors.ts
 
   navBarContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    // position: 'absolute',
+    // bottom: 0,
+    // left: 0,
+    // right: 0,
     backgroundColor: '#FFF',
     borderTopWidth: 1,
     borderTopColor: '#E5E5E5',
@@ -977,7 +977,373 @@ const leaderboardStyles = {
   },
 };
 
+const homeStyles = {
+  // Actions rapides
+  quickActionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    marginBottom: 20,
+    gap: 10,
+  },
+  quickActionCard: {
+    flex: 1,
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  quickActionIcon: {
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  quickActionText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
+  },
+
+  // Section missions
+  missionsSection: {
+    paddingHorizontal: 15,
+    marginBottom: 25,
+  },
+  missionsSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  missionsTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  missionProgress: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FF8C00',
+    backgroundColor: '#FFECE0',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 15,
+  },
+  missionsContainer: {
+    gap: 12,
+  },
+  modernMissionCard: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    padding: 16,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3
+  },
+  modernMissionCardCompleted: {
+    borderLeftColor: '#4CAF50',
+    backgroundColor: '#F8FFF8',
+  },
+  missionLeftContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  missionColorIndicator: {
+    width: 4,
+    height: 40,
+    borderRadius: 2,
+    marginRight: 12,
+  },
+  missionContent: {
+    flex: 1,
+  },
+
+missionMainContent: {
+  flex: 1,
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center'
+},
+
+missionTextContent: {
+  flex: 1,
+  marginRight: 16
+},
+
+missionRightSection: {
+  alignItems: 'flex-end'
+},
+  missionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 4,
+  },
+  missionTitleCompleted: {
+    textDecorationLine: 'line-through',
+    color: '#666',
+  },
+  missionDescription: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 6,
+  },
+  missionCategory: {
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
+  missionRightContent: {
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    height: 60,
+  },
+  missionTimeContainer: {
+    backgroundColor: '#F5F5F5',
+    borderRadius: 20,
+    padding: 8,
+  },
+  timeIcon: {
+    fontSize: 16,
+  },
+  missionPointsContainer: {
+    backgroundColor: '#FFECE0',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  missionPoints: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FF8C00',
+  },
+  completedCheckmark: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkmarkIcon: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  // Section succès
+  achievementsSection: {
+    paddingHorizontal: 15,
+    marginBottom: 10,
+  },
+  achievementsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  achievementCard: {
+    flex: 1,
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    borderTopWidth: 3,
+    borderTopColor: '#FFD700',
+  },
+  achievementIcon: {
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  achievementInfo: {
+    alignItems: 'center',
+  },
+  achievementTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  achievementDate: {
+    fontSize: 12,
+    color: '#666',
+  },
+
+  // Section cours
+  coursesContainer: {
+    gap: 12,
+  },
+  courseInfo: {
+    flex: 1,
+  },
+  courseLastAccessed: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 4,
+  },
+  courseArrow: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 15,
+  },
+  arrowIcon: {
+    fontSize: 16,
+    opacity: 0.6,
+  },
+  // Nouveaux styles pour les cartes de cours modernes
+modernCourseCard: {
+  backgroundColor: '#FFFFFF',
+  borderRadius: 12,
+  padding: 16,
+  marginBottom: 12,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 3,
+},
+courseHeader: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  marginBottom: 8,
+},
+courseHeaderLeft: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  flex: 1,
+},
+courseSubjectModern: {
+  fontSize: 12,
+  fontWeight: '600',
+  textTransform: 'uppercase',
+  letterSpacing: 0.5,
+},
+courseMenuButton: {
+  marginLeft: 8,
+  padding: 4,
+},
+courseMenuIcon: {
+  fontSize: 16,
+  color: '#666',
+},
+coursePlayButton: {
+  backgroundColor: '#F5F5F5',
+  borderRadius: 20,
+  width: 32,
+  height: 32,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+coursePlayIcon: {
+  fontSize: 14,
+  color: '#333',
+},
+courseTitleModern: {
+  fontSize: 16,
+  fontWeight: '600',
+  color: '#333',
+  marginBottom: 12,
+},
+courseProgressSection: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'flex-end',
+  marginBottom: 8,
+},
+courseProgressInfo: {
+  flex: 1,
+},
+courseLastAccessedModern: {
+  fontSize: 12,
+  color: '#666',
+  marginBottom: 4,
+},
+courseProgressText: {
+  fontSize: 12,
+  color: '#666',
+  fontWeight: '500',
+},
+courseProgressPercentage: {
+  fontSize: 14,
+  fontWeight: '600',
+  color: '#333',
+},
+courseProgressBarContainer: {
+  marginTop: 4,
+},
+courseProgressBarBackground: {
+  height: 6,
+  backgroundColor: '#E0E0E0',
+  borderRadius: 3,
+  overflow: 'hidden',
+},
+courseProgressBarFill: {
+  height: '100%',
+  borderRadius: 3,
+},
+
+  // Styles pour le menu déroulant
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 8,
+    width: '80%',
+    maxWidth: 300,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  menuItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  menuItemDelete: {
+    marginTop: 4,
+    backgroundColor: '#FFF0F0',
+  },
+  menuItemText: {
+    fontSize: 16,
+    color: '#333333',
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  menuItemTextDelete: {
+    color: '#FF3B30',
+  },
+  
+};
+
 export default {
   ...styles,
   ...leaderboardStyles,
+  ...homeStyles,
 };

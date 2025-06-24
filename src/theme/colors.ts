@@ -17,6 +17,7 @@ export const colors = {
     secondary: '#666666',
     tertiary: '#8E8E93',
     white: '#FFFFFF',
+    deleted: '#FF3B30',
   },
 
   // Couleurs de bordure et séparateur
