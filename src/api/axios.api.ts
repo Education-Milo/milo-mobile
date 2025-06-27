@@ -3,9 +3,10 @@ import axios, {
   AxiosRequestConfig,
   CreateAxiosDefaults,
 } from 'axios';
+import { API_URL } from '@env';
 
 const APIAxios = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -44,8 +45,8 @@ APIAxios.interceptors.response.use(
 );
 
 export const APIRoutes = {
-  POST_Register: '/auth/register',
-  POST_Login: '/auth/login',
+  POST_Register: '/register',
+  POST_Login: '/token',
   POST_ForgotPassword: '/auth/forgot-password',
   POST_RequestConfirmEmail: '/auth/request-confirm-email',
   GET_CurrentUser: '/users/me',

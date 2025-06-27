@@ -62,7 +62,6 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
         onLoginSuccess();
       }
     } catch (error) {
-      navigation.navigate('Home');
       console.error('Login error:', error);
     } finally {
       setIsLoading(false);

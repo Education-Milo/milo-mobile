@@ -26,7 +26,7 @@ interface CardProps {
   onMenuPress?: () => void;
   // Styles et événements
   style?: ViewStyle;
-  titleStyle?: TextStyle; // 👈 AJOUT DE CETTE PROP
+  titleStyle?: TextStyle;
   onPress?: () => void;
   disabled?: boolean;
   children?: React.ReactNode;
@@ -84,7 +84,7 @@ const getVariantConfig = (variant: CardVariant) => {
       showMenu: false,
     }
   };
-  
+
   return configs[variant] || configs.custom;
 };
 
@@ -103,7 +103,7 @@ const Card: React.FC<CardProps> = ({
   showMenu,
   onMenuPress,
   style,
-  titleStyle, // 👈 RÉCUPÉRATION DE LA PROP
+  titleStyle,
   onPress,
   disabled = false,
   children,
@@ -220,7 +220,7 @@ const Card: React.FC<CardProps> = ({
       </TouchableOpacity>
     );
   }
-  
+
   // Layout horizontal (mission, custom)
   return (
     <TouchableOpacity style={cardStyle} onPress={onPress} disabled={disabled} activeOpacity={0.7}>
@@ -232,11 +232,11 @@ const Card: React.FC<CardProps> = ({
       <View style={styles.horizontalContent}>
         <View style={styles.textSection}>
           {title && (
-            <TypographyComponent 
-              variant="h6" 
+            <TypographyComponent
+              variant="h6"
               style={[
                 styles.title,
-                titleStyle // 👈 APPLICATION DU STYLE PERSONNALISÉ ICI AUSSI
+                titleStyle
               ]}
             >
               {title}
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  
+
   // Layout vertical
   verticalContent: {
     flex: 1,
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 4,
   },
-  
+
   // Layout horizontal
   horizontalContent: {
     flex: 1,
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  
+
   // Textes communs
   title: {
     fontSize: 16,
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
-  
+
   // Menu
   menuButton: {
     padding: 4,

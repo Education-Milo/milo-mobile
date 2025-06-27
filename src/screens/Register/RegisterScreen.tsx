@@ -4,7 +4,6 @@ import {
   ActivityIndicator,
   Alert,
   ScrollView,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -21,6 +20,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import TextFieldComponent from '@components/TextField.component';
 import TypographyComponent from '@components/Typography.component';
 import { colors } from '@themes/colors';
+import { useAuthStore } from '@store/auth/auth.store';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Register'>;
 
@@ -45,6 +45,9 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
     confirmPassword?: string;
     role?: string;
   }>({});
+
+  // Récupération de la méthode register depuis le store
+  const { register, loading } = useAuthStore();
 
   const roles = [
     { key: 'Eleve', label: 'Élève' },
@@ -95,12 +98,8 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
 
     setIsLoading(true);
     try {
-      // Simulation d'un délai de chargement
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Ici vous pouvez ajouter votre logique d'inscription
-      // Par exemple, envoyer les données à votre API
-
+      // Appel de la méthode register du store
+      await register(email, password, lastName, firstName, role);
       Alert.alert(
         'Inscription réussie',
         'Votre compte a été créé avec succès !',
@@ -111,8 +110,15 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
           },
         ]
       );
-    } catch (error) {
-      Alert.alert('Erreur', 'Une erreur est survenue. Veuillez réessayer.');
+    } catch (error: any) {
+      console.error('Erreur lors de l\'inscription:', error);
+      // Gestion des erreurs spécifiques
+      let errorMessage = 'Une erreur est survenue. Veuillez réessayer.';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
     } finally {
       setIsLoading(false);
     }
@@ -167,7 +173,7 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
                 setLastName(text);
                 setErrors(prev => ({ ...prev, lastName: undefined }));
               }}
-              editable={!isLoading}
+              editable={!isLoading && !loading}
               error={errors.lastName}
             />
           </View>
@@ -182,7 +188,7 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
                 setFirstName(text);
                 setErrors(prev => ({ ...prev, firstName: undefined }));
               }}
-              editable={!isLoading}
+              editable={!isLoading && !loading}
               error={errors.firstName}
             />
           </View>
@@ -199,7 +205,7 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
               }}
               keyboardType="email-address"
               autoCapitalize="none"
-              editable={!isLoading}
+              editable={!isLoading && !loading}
               error={errors.email}
             />
           </View>
@@ -215,7 +221,7 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
                 setErrors(prev => ({ ...prev, password: undefined }));
               }}
               type="password"
-              editable={!isLoading}
+              editable={!isLoading && !loading}
               error={errors.password}
             />
           </View>
@@ -231,7 +237,7 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
                 setErrors(prev => ({ ...prev, confirmPassword: undefined }));
               }}
               type="password"
-              editable={!isLoading}
+              editable={!isLoading && !loading}
               error={errors.confirmPassword}
             />
           </View>
@@ -257,43 +263,42 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
                     setRole(roleOption.key);
                     setErrors(prev => ({ ...prev, role: undefined }));
                   }}
-                  disabled={isLoading}
+                  disabled={isLoading || loading}
                 >
-                  <Text
+                  <TypographyComponent
                     style={[
                       styles.roleButtonText,
                       role === roleOption.key && styles.roleButtonTextActive,
                     ]}
                   >
                     {roleOption.label}
-                  </Text>
+                  </TypographyComponent>
                 </TouchableOpacity>
               ))}
             </View>
-            {errors.role && <Text style={styles.errorText}>{errors.role}</Text>}
+            {errors.role && <TypographyComponent style={styles.errorText}>{errors.role}</TypographyComponent>}
           </View>
 
           {/* Conditions d'utilisation */}
           <View style={styles.termsContainer}>
-            <Text style={styles.termsText}>
+            <TypographyComponent style={styles.termsText}>
               En rejoignant Milo, vous confirmez avoir lu et accepté les{' '}
-              <Text style={styles.termsLink}>
+              <TypographyComponent style={styles.termsLink}>
                 conditions générales d'utilisation
-              </Text>{' '}
+              </TypographyComponent>{' '}
               et la{' '}
-              <Text style={styles.termsLink}>politique de confidentialité</Text>
+              <TypographyComponent style={styles.termsLink}>politique de confidentialité</TypographyComponent>
               .
-            </Text>
+            </TypographyComponent>
           </View>
           <MainButton
             onPress={handleRegister}
-            loading={isLoading}
+            loading={isLoading || loading}
             title="S'inscrire"
             style={{ marginBottom: 20 }}
           />
         </ScrollView>
       </KeyboardAwareScrollView>
-      {/* Bouton d'inscription */}
     </View>
   );
 }

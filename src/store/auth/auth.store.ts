@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { AuthStore } from '@store/auth/auth.model';
 import APIAxios, { APIRoutes } from '@api/axios.api';
+import qs from 'qs';
 
 export const useAuthStore = create<AuthStore>((set) => ({
   loading: false,
@@ -8,10 +9,23 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
   login: async (email, password) => {
     try {
-      const response = await APIAxios.post(APIRoutes.POST_Login, {
-        email,
+      const data = qs.stringify({
+        grant_type: "password",
+        username: email,
         password,
+        scope: "",
+        client_id: "",
+        client_secret: "",
       });
+      const response = await APIAxios.post(
+        APIRoutes.POST_Login,
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      );
       set({
         accessToken: response.data.accessToken,
       });
@@ -22,17 +36,19 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
   register: async (email, password, lastName, firstName, role) => {
     try {
+      console.log(APIRoutes.POST_Register);
       const response = await APIAxios.post(APIRoutes.POST_Register, {
         email,
         password,
-        lastName,
-        firstName,
+        nom: lastName,
+        prenom: firstName,
         role
       });
       set({
         accessToken: response.data.accessToken,
       });
     } catch (error) {
+      console.log('email:', email, 'password:', password, 'lastName:', lastName, 'firstName:', firstName, 'role:', role);
       throw error;
     }
   },

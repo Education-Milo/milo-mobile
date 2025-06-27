@@ -11,7 +11,8 @@
       "@navigation/*": ["src/navigation/*"],
       "@themes/*": ["src/theme/*"],
       "@store/*": ["src/store/*"],
-      "@api/*": ["src/api/*"]
+      "@api/*": ["src/api/*"],
+      "@env": ["./node_modules/react-native-dotenv"]
     }
   }
 }
