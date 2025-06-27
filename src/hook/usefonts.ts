@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
 
 const fontMap = {
-  'Fedora-One': require('../../assets/fonts/FedoraOne-Regular.ttf'),
+  'FredokaOne-Regular': require('@assets/fonts/FredokaOne-Regular.ttf'),
+  'Qualy-neue-regular': require('@assets/fonts/qualy-neue-regular.ttf'),
 };
 
 export const useFonts = () => {

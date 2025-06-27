@@ -13,7 +13,10 @@ export const fonts = {
   //   black: 'Outfit-Black',
   // },
   fredoka: {
-    regular: 'FredokaOne',
+    regular: 'FredokaOne-Regular',
+  },
+  qualy: {
+    regular: 'Qualy-neue-regular',
   },
 } as const;
 
@@ -73,7 +76,7 @@ export const typography = {
   } as TextStyle,
 
   body: {
-    fontFamily: fonts.fredoka.regular,
+    fontFamily: fonts.qualy.regular,
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '400' as const,

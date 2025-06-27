@@ -263,8 +263,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   termsContainer: {
-    marginTop: 15,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   termsText: {
     fontSize: 14,

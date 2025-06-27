@@ -154,7 +154,6 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
           <TypographyComponent
             variant='h3'
             style={{
-              fontWeight: 'bold',
               alignSelf: 'flex-start',
               marginLeft: 10,
               marginBottom: 15,
