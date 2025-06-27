@@ -1,0 +1,46 @@
+name: 🎮 Discord Notification
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  notify:
+    name: 🔔 Notification Discord
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout du code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📊 Récupération des informations
+        id: commit_info
+        run: |
+          echo "commit_message=$(git log -1 --pretty=format:'%s' | tr '\n' ' ' | head -c 100)" >> $GITHUB_OUTPUT
+          echo "commit_author=$(git log -1 --pretty=format:'%an')" >> $GITHUB_OUTPUT
+          echo "commit_date=$(git log -1 --pretty=format:'%ad' --date=format:'%d/%m/%Y à %H:%M')" >> $GITHUB_OUTPUT
+          echo "files_changed=$(git diff --name-only HEAD~1 HEAD | wc -l)" >> $GITHUB_OUTPUT
+          echo "repo_name=$(echo '${{ github.repository }}' | cut -d'/' -f2)" >> $GITHUB_OUTPUT
+
+      - name: 🔔 Message discord
+        uses: appleboy/discord-action@master
+        with:
+          webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
+          webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
+          color: "#F8DC11"
+          username: "🤖 Bot D. Push"
+          avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+          message: |
+            🚀 **NOUVEAU PUSH MOBILE** 🚀
+            
+            **📋 INFORMATIONS**
+            📦 Projet: ${{ steps.commit_info.outputs.repo_name }}
+            👨‍💻 Développeur: ${{ steps.commit_info.outputs.commit_author }}
+            📅 Date: ${{ steps.commit_info.outputs.commit_date }}
+
+            **💬 COMMIT**
+            🏷️ Message: ${{ steps.commit_info.outputs.commit_message }}
+            📁 Fichiers modifiés: ${{ steps.commit_info.outputs.files_changed }}
+
