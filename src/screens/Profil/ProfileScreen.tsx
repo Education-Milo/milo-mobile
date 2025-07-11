@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   View,
@@ -7,6 +7,7 @@ import {
   RefreshControl,
   Image,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '@constants/Colors';
@@ -15,6 +16,7 @@ import StatisticsComponent from '@components/Profil/StatisticsComponent';
 import { RootStackParamList } from '@navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Layout from '@components/Layout';
+import { useUserStore } from '@store/user/user.store';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -239,12 +241,26 @@ function ProfilScreen({ navigation }: ProfilScreenProps) {
   );
   const [refreshing, setRefreshing] = useState(false);
 
+  const { user, loading, getMe, getFullName, getInitials } = useUserStore();
+  useEffect(() => {
+    // Récupérer les données si pas encore chargées
+    if (!user) {
+      getMe();
+    }
+  }, []);
+
   const onRefresh = async () => {
     setRefreshing(true);
-    setTimeout(() => {
+    try {
+      await getMe(true);
+    } finally {
       setRefreshing(false);
-    }, 1000);
+    }
   };
+
+  if (loading && !user) {
+    return <ActivityIndicator />;
+  }
 
   return (
     <Layout navigation={navigation}>
@@ -293,24 +309,24 @@ function ProfilScreen({ navigation }: ProfilScreenProps) {
             <View style={localStyles.profileContainer}>
               <View style={localStyles.avatarContainer}>
                 <View style={localStyles.avatar}>
-                  <Text style={localStyles.avatarText}>T</Text>
+                  <Text style={localStyles.avatarText}>{getInitials()}</Text>
                 </View>
                 <View style={localStyles.crownContainer}>
                   <Text style={{ fontSize: 12 }}>👑</Text>
                 </View>
               </View>
               <View style={localStyles.profileInfo}>
-                <Text style={localStyles.profileName}>Thomas</Text>
-                <Text style={localStyles.profileLevel}>Niveau 12</Text>
+                <Text style={localStyles.profileName}>{user?.prenom}</Text>
+                <Text style={localStyles.profileLevel}>{user?.level || 0}</Text>
                 <View style={localStyles.pointsContainer}>
                   <Text style={{ fontSize: 14, marginRight: 3 }}>⭐</Text>
-                  <Text style={localStyles.pointsText}>8945 points</Text>
+                  <Text style={localStyles.pointsText}>{user?.points || 0}</Text>
                 </View>
               </View>
             </View>
 
             {/* Barre de progression */}
-            <View style={localStyles.progressContainer}>
+            {/* <View style={localStyles.progressContainer}>
               <View style={localStyles.progressHeader}>
                 <Text style={localStyles.progressText}>
                   Progression vers le niveau 13
@@ -324,11 +340,11 @@ function ProfilScreen({ navigation }: ProfilScreenProps) {
               <View style={localStyles.progressBarContainer}>
                 <View style={localStyles.progressBar} />
               </View>
-            </View>
+            </View> */}
           </View>
 
           {/* Statistiques rapides */}
-          <View style={localStyles.statsContainer}>
+          {/* <View style={localStyles.statsContainer}>
             <View style={localStyles.statCard}>
               <Text style={localStyles.statEmoji}>🔥</Text>
               <Text style={localStyles.statValue}>7</Text>
@@ -344,10 +360,10 @@ function ProfilScreen({ navigation }: ProfilScreenProps) {
               <Text style={localStyles.statValue}>23</Text>
               <Text style={localStyles.statLabel}>Défis{'\n'}terminés</Text>
             </View>
-          </View>
+          </View> */}
 
           {/* Message de félicitation */}
-          <View style={localStyles.congratulationCard}>
+          {/* <View style={localStyles.congratulationCard}>
             <View style={localStyles.congratulationContent}>
               <Text style={localStyles.congratulationEmoji}>🤩</Text>
               <View style={{ flex: 1 }}>
@@ -360,7 +376,7 @@ function ProfilScreen({ navigation }: ProfilScreenProps) {
                 </Text>
               </View>
             </View>
-          </View>
+          </View> */}
 
           {/* Onglets */}
           <View style={localStyles.tabsContainer}>

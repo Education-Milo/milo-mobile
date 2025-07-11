@@ -49,7 +49,7 @@ export const APIRoutes = {
   POST_Login: '/token',
   POST_ForgotPassword: '/auth/forgot-password',
   POST_RequestConfirmEmail: '/auth/request-confirm-email',
-  GET_CurrentUser: '/users/me',
+  GET_Me: '/users/me',
 
   /* AUTH */
   //   POSTLogin: (): AxiosRequestConfig => ({method: 'POST', url: '/auth/login'}),
