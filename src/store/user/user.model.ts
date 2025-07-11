@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 
 export type UserRole = 'USER' | 'PROF' | 'PARENT' | 'ADMIN' ;
+export type ClassType = '6ème' | '5ème' | '4ème' | '3ème';
 export interface User {
 
     id: string;
@@ -12,9 +13,12 @@ export interface User {
     points?: number;
     streak?: number;
     xp?: number;
+    miloro?: number;
     maxXp?: number;
     documentsScanned?: number;
     challengesCompleted?: number;
+    avatarId?: number;
+    classe: ClassType;
   }
   export interface UserStats {
     documentsScanned: number;

@@ -8,6 +8,9 @@ import {
   Image,
   StyleSheet,
   ActivityIndicator,
+  Dimensions,
+  Modal,
+  FlatList,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '@constants/Colors';
@@ -17,6 +20,9 @@ import { RootStackParamList } from '@navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Layout from '@components/Layout';
 import { useUserStore } from '@store/user/user.store';
+import Header from '@components/Header.component';
+import TypographyComponent from '@components/Typography.component';
+import { colors } from '@themes/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -24,15 +30,21 @@ interface ProfilScreenProps {
   navigation: NavigationProp;
 }
 
+const { width } = Dimensions.get('window');
+
+const AVATAR_IMAGES = [
+  { id: 1, source: require('@assets/images/avatars/profil_picture1.png') },
+  { id: 2, source: require('@assets/images/avatars/profil_picture2.jpg') },
+  { id: 3, source: require('@assets/images/avatars/profil_picture3.png') },
+  { id: 4, source: require('@assets/images/avatars/profil_picture4.png') },
+];
+
 const localStyles = StyleSheet.create({
   headerSection: {
     backgroundColor: '#FF8C00',
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
-    paddingTop: 50,
     paddingBottom: 30,
-    paddingHorizontal: 20,
-    marginBottom: 20,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -44,174 +56,171 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 20,
     padding: 8,
-    marginRight: 10,
+    marginLeft: 10,
   },
   profileContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
   },
   avatarContainer: {
     position: 'relative',
-    marginRight: 15,
+    marginBottom: 15,
   },
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#FF8C00',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: 'white',
+  },
+  avatarImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  avatarText: {
+    color: 'white',
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
+  editAvatarButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
     backgroundColor: 'white',
+    borderRadius: 15,
+    width: 30,
+    height: 30,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
     elevation: 5,
-  },
-  avatarText: {
-    color: '#FF8C00',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  crownContainer: {
-    position: 'absolute',
-    bottom: -2,
-    right: -2,
-    backgroundColor: '#FFD700',
-    borderRadius: 12,
-    width: 24,
-    height: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  profileInfo: {
-    flex: 1,
   },
   profileName: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: 2,
-  },
-  profileLevel: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
     marginBottom: 5,
   },
-  pointsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  pointsText: {
+  joinedDate: {
     fontSize: 14,
-    color: 'white',
-    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.7)',
+    marginBottom: 20,
   },
-  progressContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: 15,
-    padding: 15,
-    width: '100%',
-  },
-  progressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  progressText: {
-    color: 'white',
-    fontSize: 13,
-  },
-  progressBarContainer: {
-    width: '100%',
-    height: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 3,
-  },
-  progressBar: {
-    width: '83%',
-    height: '100%',
-    backgroundColor: 'white',
-    borderRadius: 3,
-  },
-  statsContainer: {
+  statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingHorizontal: 20,
-    marginBottom: 30,
+    width: '100%',
+    paddingHorizontal: 40,
   },
-  statCard: {
+  statItem: {
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  statLabel: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.7)',
+    marginTop: 2,
+  },
+  contentSection: {
+    backgroundColor: '#FFF8F1',
+    flex: 1,
+    paddingTop: 30,
+    paddingHorizontal: 20,
+  },
+  progressTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 20,
+  },
+  progressCard: {
     backgroundColor: 'white',
     borderRadius: 15,
     padding: 20,
-    alignItems: 'center',
-    minWidth: 80,
+    marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
-  statEmoji: {
-    fontSize: 24,
-    marginBottom: 5,
+  progressRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  statValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  statLabel: {
-    fontSize: 12,
+  progressText: {
     color: '#666',
-    textAlign: 'center',
+    fontSize: 14,
   },
-  congratulationCard: {
-    backgroundColor: '#FFECE0',
+  progressValue: {
+    color: '#FF8C00',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  chartContainer: {
+    backgroundColor: 'white',
     borderRadius: 15,
     padding: 20,
-    marginHorizontal: 20,
-    marginBottom: 30,
-    borderLeftWidth: 4,
-    borderLeftColor: '#FF8C00',
+    marginBottom: 20,
+    height: 200,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  congratulationContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  congratulationEmoji: {
-    fontSize: 24,
-    marginRight: 10,
-  },
-  congratulationTitle: {
+  chartTitle: {
+    color: '#333',
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FF8C00',
-    marginBottom: 5,
+    marginBottom: 15,
   },
-  congratulationText: {
-    fontSize: 14,
+  chart: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+  },
+  chartBar: {
+    backgroundColor: '#FF8C00',
+    width: 20,
+    borderRadius: 10,
+    marginHorizontal: 5,
+  },
+  chartLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+    paddingHorizontal: 10,
+  },
+  chartLabel: {
     color: '#666',
-    lineHeight: 20,
+    fontSize: 12,
   },
   tabsContainer: {
-    paddingHorizontal: 20,
-  },
-  tabsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
     marginBottom: 20,
   },
   tabButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    borderRadius: 25,
     flex: 1,
-    marginRight: 10,
-    justifyContent: 'center',
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginHorizontal: 5,
+    borderRadius: 25,
   },
   tabButtonActive: {
     backgroundColor: '#FF8C00',
@@ -220,18 +229,85 @@ const localStyles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
   },
   tabText: {
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: '600',
   },
   tabTextActive: {
-    color: '#FFF',
-    fontWeight: 'bold',
+    color: 'white',
   },
   tabTextInactive: {
     color: '#666',
   },
-  contentContainer: {
-    width: '100%',
+  // Styles pour la modal de sélection d'avatar
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    width: width * 0.85,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  closeButton: {
+    padding: 5,
+  },
+  avatarGrid: {
+    paddingBottom: 20,
+  },
+  avatarOption: {
+    width: (width * 0.85 - 80) / 3,
+    aspectRatio: 1,
+    margin: 5,
+    borderRadius: 50,
+    overflow: 'hidden',
+    borderWidth: 3,
+    borderColor: 'transparent',
+  },
+  avatarOptionSelected: {
+    borderColor: '#FF8C00',
+  },
+  avatarOptionImage: {
+    width: '100%',
+    height: '100%',
+  },
+  resetAvatarButton: {
+    backgroundColor: '#F5F5F5',
+    borderRadius: 15,
+    padding: 15,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  resetAvatarText: {
+    color: '#666',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  saveButton: {
+    backgroundColor: '#FF8C00',
+    borderRadius: 15,
+    padding: 15,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  saveButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
@@ -240,14 +316,22 @@ function ProfilScreen({ navigation }: ProfilScreenProps) {
     'statistics'
   );
   const [refreshing, setRefreshing] = useState(false);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
+  const [currentAvatar, setCurrentAvatar] = useState<number | null>(null);
 
   const { user, loading, getMe, getFullName, getInitials } = useUserStore();
   useEffect(() => {
-    // Récupérer les données si pas encore chargées
     if (!user) {
       getMe();
     }
   }, []);
+
+  useEffect(() => {
+    if (user?.avatarId) {
+      setCurrentAvatar(user.avatarId);
+    }
+  }, [user]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -258,8 +342,73 @@ function ProfilScreen({ navigation }: ProfilScreenProps) {
     }
   };
 
+  const handleAvatarPress = () => {
+    setSelectedAvatar(currentAvatar);
+    setShowAvatarModal(true);
+  };
+
+  const handleAvatarSelect = (avatarId: number) => {
+    setSelectedAvatar(avatarId);
+  };
+
+  const handleResetAvatar = () => {
+    setSelectedAvatar(null);
+  };
+
+  const handleSaveAvatar = async () => {
+    try {
+      setCurrentAvatar(selectedAvatar);
+      setShowAvatarModal(false);
+      await getMe(true);
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde de l\'avatar:', error);
+    }
+  };
+
+  const renderAvatar = () => {
+    if (currentAvatar) {
+      const avatarImage = AVATAR_IMAGES.find(img => img.id === currentAvatar);
+      if (avatarImage) {
+        return (
+          <Image
+            source={avatarImage.source}
+            style={localStyles.avatarImage}
+            resizeMode="cover"
+          />
+        );
+      }
+    }
+    return (
+      <TypographyComponent style={localStyles.avatarText}>
+        {getInitials()}
+      </TypographyComponent>
+    );
+  };
+
+  const renderAvatarOption = ({ item }: { item: typeof AVATAR_IMAGES[0] }) => (
+    <TouchableOpacity
+      style={[
+        localStyles.avatarOption,
+        selectedAvatar === item.id && localStyles.avatarOptionSelected,
+      ]}
+      onPress={() => handleAvatarSelect(item.id)}
+    >
+      <Image
+        source={item.source}
+        style={localStyles.avatarOptionImage}
+        resizeMode="cover"
+      />
+    </TouchableOpacity>
+  );
+
   if (loading && !user) {
-    return <ActivityIndicator />;
+    return (
+      <Layout navigation={navigation}>
+        <View style={[styles.homeContainer, { justifyContent: 'center', alignItems: 'center' }]}>
+          <ActivityIndicator size="large" color="#FF8C00" />
+        </View>
+      </Layout>
+    );
   }
 
   return (
@@ -275,112 +424,77 @@ function ProfilScreen({ navigation }: ProfilScreenProps) {
             />
           }
         >
-          {/* Section profil avec header intégré */}
+          {/* Section Header avec profil */}
           <View style={localStyles.headerSection}>
-            {/* Header intégré transparent */}
-            <View style={localStyles.headerContainer}>
-              <View>
-                <Image
-                  source={require('@assets/images/logo_sans_fond.png')}
-                  style={styles.smallLogo}
-                />
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('Notifications')}
-                  style={localStyles.headerButton}
-                >
-                  <Ionicons
-                    name='notifications-outline'
-                    size={20}
-                    color='white'
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('Settings')}
-                  style={[localStyles.headerButton, { marginRight: 0 }]}
-                >
-                  <Ionicons name='options-outline' size={20} color='white' />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Profil utilisateur */}
+            <Header
+              userPoints={450}
+              streakDays={3}
+              showNotifications={true}
+              showPoints={false}
+              showStreak={false}
+            />
+            {/* Profil utilisateur centré */}
             <View style={localStyles.profileContainer}>
               <View style={localStyles.avatarContainer}>
-                <View style={localStyles.avatar}>
-                  <Text style={localStyles.avatarText}>{getInitials()}</Text>
-                </View>
-                <View style={localStyles.crownContainer}>
-                  <Text style={{ fontSize: 12 }}>👑</Text>
-                </View>
+                <TouchableOpacity
+                  style={localStyles.avatar}
+                  onPress={handleAvatarPress}
+                  activeOpacity={0.8}
+                >
+                  {renderAvatar()}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={localStyles.editAvatarButton}
+                  onPress={handleAvatarPress}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons name="pencil" size={16} color="#FF8C00" />
+                </TouchableOpacity>
               </View>
-              <View style={localStyles.profileInfo}>
-                <Text style={localStyles.profileName}>{user?.prenom}</Text>
-                <Text style={localStyles.profileLevel}>{user?.level || 0}</Text>
-                <View style={localStyles.pointsContainer}>
-                  <Text style={{ fontSize: 14, marginRight: 3 }}>⭐</Text>
-                  <Text style={localStyles.pointsText}>{user?.points || 0}</Text>
+              <TypographyComponent
+                style={{}}
+                color={colors.text.white}
+                variant='h3'>
+                  {getFullName()}
+              </TypographyComponent>
+              <TypographyComponent style={localStyles.joinedDate}>
+                @{getFullName()} • {user?.classe || '6ème'}
+              </TypographyComponent>
+              {/* Statistiques en ligne */}
+              <View style={localStyles.statsRow}>
+                <View style={localStyles.statItem}>
+                  <TypographyComponent style={localStyles.statNumber}>{user?.miloro || 0}</TypographyComponent>
+                  <TypographyComponent style={localStyles.statLabel}>Miloro</TypographyComponent>
+                </View>
+                <View style={localStyles.statItem}>
+                  <TypographyComponent style={localStyles.statNumber}>{user?.level || 0}</TypographyComponent>
+                  <TypographyComponent style={localStyles.statLabel}>Niveau</TypographyComponent>
+                </View>
+                <View style={localStyles.statItem}>
+                  <TypographyComponent style={localStyles.statNumber}>{user?.points || 0}</TypographyComponent>
+                  <TypographyComponent style={localStyles.statLabel}>Points</TypographyComponent>
                 </View>
               </View>
             </View>
-
-            {/* Barre de progression */}
-            {/* <View style={localStyles.progressContainer}>
-              <View style={localStyles.progressHeader}>
-                <Text style={localStyles.progressText}>
-                  Progression vers le niveau 13
-                </Text>
-                <Text
-                  style={[localStyles.progressText, { fontWeight: 'bold' }]}
-                >
-                  1247/1500 XP
-                </Text>
-              </View>
-              <View style={localStyles.progressBarContainer}>
-                <View style={localStyles.progressBar} />
-              </View>
-            </View> */}
           </View>
 
-          {/* Statistiques rapides */}
-          {/* <View style={localStyles.statsContainer}>
-            <View style={localStyles.statCard}>
-              <Text style={localStyles.statEmoji}>🔥</Text>
-              <Text style={localStyles.statValue}>7</Text>
-              <Text style={localStyles.statLabel}>Série{'\n'}actuelle</Text>
-            </View>
-            <View style={localStyles.statCard}>
-              <Text style={localStyles.statEmoji}>📚</Text>
-              <Text style={localStyles.statValue}>47</Text>
-              <Text style={localStyles.statLabel}>Documents{'\n'}scannés</Text>
-            </View>
-            <View style={localStyles.statCard}>
-              <Text style={localStyles.statEmoji}>🏆</Text>
-              <Text style={localStyles.statValue}>23</Text>
-              <Text style={localStyles.statLabel}>Défis{'\n'}terminés</Text>
-            </View>
-          </View> */}
-
-          {/* Message de félicitation */}
-          {/* <View style={localStyles.congratulationCard}>
-            <View style={localStyles.congratulationContent}>
-              <Text style={localStyles.congratulationEmoji}>🤩</Text>
-              <View style={{ flex: 1 }}>
-                <Text style={localStyles.congratulationTitle}>
-                  Impressionnant !
-                </Text>
-                <Text style={localStyles.congratulationText}>
-                  Tu es dans le top 15% des apprenants de ta classe d'âge.
-                  Continue comme ça ! ⭐
-                </Text>
+          {/* Section contenu */}
+          <View style={localStyles.contentSection}>
+            <TypographyComponent style={localStyles.progressTitle}>Progression hebdomadaire</TypographyComponent>
+            {/* Carte de progression */}
+            <View style={localStyles.progressCard}>
+              <View style={localStyles.progressRow}>
+                <TypographyComponent style={localStyles.progressText}>Cette semaine</TypographyComponent>
+                <TypographyComponent style={localStyles.progressValue}>36 leçons</TypographyComponent>
+              </View>
+              <View style={localStyles.progressRow}>
+                <TypographyComponent style={localStyles.progressText}>Semaine dernière</TypographyComponent>
+                <TypographyComponent style={localStyles.progressValue}>74 leçons</TypographyComponent>
               </View>
             </View>
-          </View> */}
 
-          {/* Onglets */}
-          <View style={localStyles.tabsContainer}>
-            <View style={localStyles.tabsRow}>
+            {/* Onglets */}
+            <View style={localStyles.tabsContainer}>
               <TouchableOpacity
                 style={[
                   localStyles.tabButton,
@@ -404,7 +518,6 @@ function ProfilScreen({ navigation }: ProfilScreenProps) {
               <TouchableOpacity
                 style={[
                   localStyles.tabButton,
-                  { marginRight: 0 },
                   activeTab === 'statistics'
                     ? localStyles.tabButtonActive
                     : localStyles.tabButtonInactive,
@@ -425,15 +538,64 @@ function ProfilScreen({ navigation }: ProfilScreenProps) {
             </View>
 
             {/* Contenu selon l'onglet actif */}
-            <View style={localStyles.contentContainer}>
-              {activeTab === 'statistics' ? (
-                <StatisticsComponent onRefresh={onRefresh} />
-              ) : (
-                <DocumentComponent onRefresh={onRefresh} />
-              )}
-            </View>
+            {activeTab === 'statistics' ? (
+              <StatisticsComponent onRefresh={onRefresh} />
+            ) : (
+              <DocumentComponent onRefresh={onRefresh} />
+            )}
           </View>
         </ScrollView>
+
+        {/* Modal de sélection d'avatar */}
+        <Modal
+          visible={showAvatarModal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowAvatarModal(false)}
+        >
+          <View style={localStyles.modalOverlay}>
+            <View style={localStyles.modalContent}>
+              <View style={localStyles.modalHeader}>
+                <TypographyComponent style={localStyles.modalTitle}>
+                  Choisir un avatar
+                </TypographyComponent>
+                <TouchableOpacity
+                  style={localStyles.closeButton}
+                  onPress={() => setShowAvatarModal(false)}
+                >
+                  <Ionicons name="close" size={24} color="#666" />
+                </TouchableOpacity>
+              </View>
+
+              <FlatList
+                data={AVATAR_IMAGES}
+                renderItem={renderAvatarOption}
+                numColumns={3}
+                keyExtractor={(item) => item.id.toString()}
+                style={localStyles.avatarGrid}
+                columnWrapperStyle={{ justifyContent: 'space-between' }}
+              />
+
+              <TouchableOpacity
+                style={localStyles.resetAvatarButton}
+                onPress={handleResetAvatar}
+              >
+                <TypographyComponent style={localStyles.resetAvatarText}>
+                  Utiliser les initiales
+                </TypographyComponent>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={localStyles.saveButton}
+                onPress={handleSaveAvatar}
+              >
+                <TypographyComponent style={localStyles.saveButtonText}>
+                  Sauvegarder
+                </TypographyComponent>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
     </Layout>
   );
