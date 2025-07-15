@@ -23,7 +23,6 @@ export const useUserStore = create<UserStore>((set, get) => ({
       set({ loading: true });
       const response = await APIAxios.get(APIRoutes.GET_Me);
       const userData: User = response.data;
-      console.log('User data fetched:', userData);
       set({
         user: userData,
         lastUserFetch: now,

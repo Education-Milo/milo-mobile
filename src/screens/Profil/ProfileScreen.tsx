@@ -432,6 +432,7 @@ function ProfilScreen({ navigation }: ProfilScreenProps) {
               showNotifications={true}
               showPoints={false}
               showStreak={false}
+              navigation={navigation}
             />
             {/* Profil utilisateur centré */}
             <View style={localStyles.profileContainer}>

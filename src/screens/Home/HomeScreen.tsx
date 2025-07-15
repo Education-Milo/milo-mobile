@@ -126,6 +126,8 @@ function Home({ navigation }: HomeScreenProps) {
           showNotifications={true}
           showPoints={true}
           showStreak={true}
+          showSettings={false}
+          navigation={navigation}
         />
         <ScrollView>
           <HomeGame

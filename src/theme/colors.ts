@@ -9,6 +9,7 @@ export const colors = {
   background: '#FFF8F1',
   white: '#FFFFFF',
   card: '#FFFFFF',
+  black: '#000000',
 
   // Couleurs de texte
   text: {

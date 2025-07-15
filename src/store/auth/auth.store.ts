@@ -43,7 +43,6 @@ export const useAuthStore = create<AuthStore>()(
 
       register: async (email, password, lastName, firstName, role) => {
         try {
-          console.log(APIRoutes.POST_Register);
           const response = await APIAxios.post(APIRoutes.POST_Register, {
             email,
             password,
@@ -51,7 +50,6 @@ export const useAuthStore = create<AuthStore>()(
             prenom: firstName,
             role
           });
-          console.log('Register response:', response.data);
           const token = response.data.access_token || response.data.accessToken;
           if (!token) {
             throw new Error('No access token received from server');

@@ -1,9 +1,8 @@
-import React from 'react';
-import { Image, Text, TouchableOpacity, View, ViewStyle, ImageStyle } from 'react-native';
+import React, { useState } from 'react';
+import { Image, TouchableOpacity, View, ViewStyle, ImageStyle, Modal, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import TypographyComponent from './Typography.component';
 import { colors } from '@themes/colors';
-
 interface HeaderProps {
   notificationCount?: number;
   userPoints?: number;
@@ -13,6 +12,7 @@ interface HeaderProps {
   showStreak?: boolean;
   showSettings?: boolean;
   backgroundColor?: string;
+  navigation?: any;
 }
 
 function Header({
@@ -24,9 +24,21 @@ function Header({
   showStreak = true,
   showSettings = true,
   backgroundColor = 'transparent',
+  navigation,
 }: HeaderProps) {
 
+  const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
+
+  const openSettingsModal = async () => {
+    setIsSettingsModalVisible(true);
+  };
+
+  const closeSettingsModal = async () => {
+    setIsSettingsModalVisible(false);
+  };
+
   return (
+    <>
     <View style={[viewStyles.header, { backgroundColor }]}>
       <Image
         source={require('@assets/images/logo_sans_fond.png')}
@@ -72,16 +84,55 @@ function Header({
           </TouchableOpacity>
         )}
         {showSettings && (
-          <TouchableOpacity
-            onPress={() => {
-              console.log('Paramètres pressés');
-            }}
-          >
+          <TouchableOpacity onPress={openSettingsModal}>
             <Ionicons name="options-outline" size={24} color="#666" />
           </TouchableOpacity>
         )}
       </View>
     </View>
+        <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isSettingsModalVisible}
+        onRequestClose={closeSettingsModal}
+      >
+        <View style={viewStyles.modalOverlay}>
+          <View style={viewStyles.modalContent}>
+            <View style={viewStyles.modalHeader}>
+              <TypographyComponent
+                variant='h4'
+                style={{}}
+                color={colors.text.title}
+              >
+                Paramètres
+              </TypographyComponent>
+              <TouchableOpacity onPress={closeSettingsModal}>
+                <Ionicons name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+            <View style={viewStyles.settingsOptions}>
+              <TouchableOpacity style={viewStyles.settingItem}>
+                <Ionicons name="shield-outline" size={20} color="#666" />
+                <TypographyComponent style={{}} variant='body'>Confidentialité</TypographyComponent>
+              </TouchableOpacity>
+              <TouchableOpacity style={viewStyles.settingItem}>
+                <Ionicons name="help-circle-outline" size={20} color="#666" />
+                <TypographyComponent style={{}}variant='body'>Aide</TypographyComponent>
+              </TouchableOpacity>
+              <TouchableOpacity style={viewStyles.settingItem}
+               onPress={async () => {
+                const { useAuthStore } = await import('@store/auth/auth.store');
+                await useAuthStore.getState().logout();
+                navigation.navigate('Login');
+              }}>
+                <Ionicons name="log-out-outline" size={20} color="#ff3b30" />
+                <TypographyComponent style={{color: '#ff3b30'}} variant='body'>Déconnexion</TypographyComponent>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 }
 
@@ -167,6 +218,38 @@ const viewStyles: { [key: string]: ViewStyle } = {
     height: 12,
     borderWidth: 2,
     borderColor: '#fff',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#F6EBDF',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  settingsOptions: {
+    gap: 16,
+  },
+  settingItem: {
+    flexDirection: 'row' as const,
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: colors.background,
+    borderRadius: 12,
+    gap: 12,
   },
 };
 

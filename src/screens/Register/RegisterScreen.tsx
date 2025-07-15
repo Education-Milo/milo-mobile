@@ -98,7 +98,6 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
 
     setIsLoading(true);
     try {
-      // Appel de la méthode register du store
       await register(email, password, lastName, firstName, role);
       Alert.alert(
         'Inscription réussie',
@@ -112,7 +111,6 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
       );
     } catch (error: any) {
       console.error('Erreur lors de l\'inscription:', error);
-      // Gestion des erreurs spécifiques
       let errorMessage = 'Une erreur est survenue. Veuillez réessayer.';
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;

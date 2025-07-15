@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, Animated } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import styles from '@constants/Colors';
 import { RootStackParamList } from './types';
+import TypographyComponent from '@components/Typography.component';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -63,14 +64,14 @@ function BottomNavBar({ navigation, currentRoute }: BottomNavBarProps) {
                   />
                   {currentRoute === item.route }
                 </View>
-                <Text
+                <TypographyComponent
                   style={[
                     styles.navItemText,
                     currentRoute === item.route && styles.navItemTextActive,
                   ]}
                 >
                   {item.name}
-                </Text>
+                </TypographyComponent>
               </>
             )}
           </TouchableOpacity>

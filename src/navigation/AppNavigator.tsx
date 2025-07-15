@@ -11,6 +11,7 @@ import ProfilScreen from '@screens/Profil/ProfileScreen';
 import ForgetPasswordScreen from '@screens/ForgetPassword/ForgetPasswordScreen';
 import LessonScreen from '@screens/Lesson/LessonScreen';
 import GameScreen from '@screens/Game/GameScreen';
+// import SettingsScreen from '@screens/Settings/settings.screen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -44,7 +45,11 @@ export default function AppNavigator() {
           component={ProfilScreen}
           options={{ headerShown: false }}
         />
-
+        {/* <Stack.Screen
+          name='Settings'
+          component={SettingsScreen}
+          options={{ headerShown: false }}
+        /> */}
         <Stack.Screen
           name='CameraOrImport'
           component={CameraOrImportScreen}
