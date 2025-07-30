@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import styles from '@constants/Colors';
+import styles from '@navigation/constants/Colors';
 import { RootStackParamList } from './types';
 import TypographyComponent from '@components/Typography.component';
 

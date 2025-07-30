@@ -51,6 +51,8 @@ export const APIRoutes = {
   POST_RequestConfirmEmail: '/auth/request-confirm-email',
   GET_Me: '/users/me',
 
+  POST_CREATE_QCM: '/qcm'
+
   /* AUTH */
   //   POSTLogin: (): AxiosRequestConfig => ({method: 'POST', url: '/auth/login'}),
   //   GETCurrentUser: (): AxiosRequestConfig => ({method: 'GET', url: '/users/me'}),

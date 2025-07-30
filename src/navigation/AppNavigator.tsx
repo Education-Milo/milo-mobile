@@ -1,75 +1,80 @@
-import React from 'react';
-import { NavigationContainer, StackRouter } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from '@screens/Home/HomeScreen';
-import LoginScreen from '@screens/Login/LoginScreen';
-import RegisterScreen from '@screens/Register/RegisterScreen';
-import { RootStackParamList } from './types';
-import SelectDocumentScreen from '@screens/Scan/SelectDocumentScreen';
-import CameraOrImportScreen from '@screens/Scan/CameraOrImportScreen';
-import ProfilScreen from '@screens/Profil/ProfileScreen';
-import ForgetPasswordScreen from '@screens/ForgetPassword/ForgetPasswordScreen';
-import LessonScreen from '@screens/Lesson/LessonScreen';
-import GameScreen from '@screens/Game/GameScreen';
-// import SettingsScreen from '@screens/Settings/settings.screen';
+import { useAuthStore } from '@store/auth/auth.store';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+import AuthNavigator from './AuthNavigator';
+import UnAuthNavigator from './UnAuthNavigator';
+import LoadingScreen from '@screens/LoadingScreen'; // Écran de chargement optionnel
+
+const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const accessToken = useAuthStore(state => state.accessToken);
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  // Écouter les changements du token d'authentification
+  useEffect(() => {
+    if (accessToken) {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
+    setIsLoading(false);
+  }, [accessToken]);
+
+  const checkAuthStatus = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Le store Zustand gère automatiquement la persistance
+      // Pas besoin de vérifier AsyncStorage manuellement
+      if (accessToken) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification du token:', error);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fonction pour mettre à jour le statut d'authentification
+  const updateAuthStatus = (status: boolean) => {
+    setIsAuthenticated(status);
+  };
+
+  // Affichage de l'écran de chargement pendant la vérification
+  if (isLoading) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Loading" component={LoadingScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
+
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={ {animation: 'none'}} initialRouteName='Login'>
-        <Stack.Screen
-          name='Login'
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name='Register'
-          component={RegisterScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name='ForgotPassword'
-          component={ForgetPasswordScreen}
-          options={{ headerShown: false }}
-        />
-
-        <Stack.Screen
-          name='Home'
-          component={HomeScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name='Profile'
-          component={ProfilScreen}
-          options={{ headerShown: false }}
-        />
-        {/* <Stack.Screen
-          name='Settings'
-          component={SettingsScreen}
-          options={{ headerShown: false }}
-        /> */}
-        <Stack.Screen
-          name='CameraOrImport'
-          component={CameraOrImportScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name='Scan'
-          component={SelectDocumentScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name='Lesson'
-          component={LessonScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name='Game'
-          component={GameScreen}
-          options={{ headerShown: false }}
-        />
+      <Stack.Navigator screenOptions={{ headerShown: false, animation: 'none' }}>
+        {isAuthenticated ? (
+          <Stack.Screen name="AuthStack">
+            {() => <AuthNavigator onLogout={() => updateAuthStatus(false)} />}
+          </Stack.Screen>
+        ) : (
+          <Stack.Screen name="UnAuthStack">
+            {() => <UnAuthNavigator onLogin={() => updateAuthStatus(true)} />}
+          </Stack.Screen>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

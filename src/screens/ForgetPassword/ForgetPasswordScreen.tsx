@@ -15,7 +15,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@navigation/types';
-import styles from '@constants/Colors';
+import styles from '@navigation/constants/Colors';
 import MainButtonComponent from '@components/MainButtonComponent';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import TypographyComponent from '@components/Typography.component';

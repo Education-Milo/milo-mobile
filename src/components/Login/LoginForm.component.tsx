@@ -57,7 +57,7 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
     onLoadingChange?.(true);
     try {
       await login(email, password);
-      navigation.navigate('Home');
+      // Suppression de navigation.navigate('Home') car onLoginSuccess va gérer le changement de navigateur
       if (onLoginSuccess) {
         onLoginSuccess();
       }

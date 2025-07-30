@@ -90,7 +90,6 @@ export const useUserStore = create<UserStore>((set, get) => ({
     return `${user.prenom} ${user.nom}`.trim();
   },
 
-  // Getter pour les initiales
   getInitials: () => {
     const user = get().user;
     if (!user) return '';
@@ -98,7 +97,6 @@ export const useUserStore = create<UserStore>((set, get) => ({
     const lastInitial = user.nom?.charAt(0)?.toUpperCase() || '';
     return `${firstInitial}${lastInitial}`;
   },
-
 
   clearUserData: () => {
     set({

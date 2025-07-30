@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Image, ScrollView, TouchableOpacity, View, Modal } from 'react-native';
-import styles from '@constants/Colors';
+import styles from '@navigation/constants/Colors';
 import Layout from '@components/Layout';
 import Header from '@components/Header.component';
 import { RootStackParamList } from '@navigation/types';

@@ -24,7 +24,7 @@ const HomeFooter: React.FC<HomeFooterProps> = ({ recentCourses, navigateToCourse
   return (
     <View style={styles.courseSection}>
       <View style={styles.sectionHeader}>
-        <TypographyComponent variant='h4' style={{fontWeight: 'bold'}}color={colors.primary}>
+        <TypographyComponent variant='h4' style={{}} color={colors.primary}>
           Mes cours
         </TypographyComponent>
       </View>

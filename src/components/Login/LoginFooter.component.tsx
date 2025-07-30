@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@navigation/types';
-import styles from '@constants/Colors';
+import styles from '@navigation/constants/Colors';
 import TypographyComponent from '@components/Typography.component';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;

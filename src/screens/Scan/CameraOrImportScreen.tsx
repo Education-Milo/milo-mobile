@@ -18,7 +18,7 @@ import { RootStackParamList } from '../../navigation/types';
 import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
-import styles from '../../constants/Colors';
+import styles from '../../navigation/constants/Colors';
 
 const { width } = Dimensions.get('window');
 

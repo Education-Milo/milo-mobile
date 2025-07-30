@@ -4,6 +4,7 @@ export const colors = {
   secondary: '#FF6B00',
   tertiary: '#FF4500',
   placeholder: '#333',
+  white_60: 'rgba(255, 255, 255, 0.6)',
 
   // Couleurs de fond
   background: '#FFF8F1',

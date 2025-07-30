@@ -12,6 +12,9 @@ export type RootStackParamList = {
   Settings: undefined;
   Lesson: undefined;
   Game: undefined;
+  LessonChapter: { matiere: string };
+  ChatScreen: { matiere: string; chapitre: string };
+  ExercicesScreen: { matiere: string; chapitre: string };
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;

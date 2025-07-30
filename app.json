@@ -21,12 +21,27 @@
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.miloeducation.Milo"
     },
     "web": {
       "favicon": "./assets/images/logo.png"
     },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      "expo-font",
+      "expo-navigation-bar",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/logo.png",
+          "resizeMode": "cover",
+          "backgroundColor": "#050319",
+          "imageWidth": 200
+        }
+      ]
+    ],
+    "scheme": "template",
     "extra": {
       "eas": {
         "projectId": "e06d0caa-8b35-4027-b31e-68fc1142e0d6"

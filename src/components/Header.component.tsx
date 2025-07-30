@@ -123,7 +123,7 @@ function Header({
                onPress={async () => {
                 const { useAuthStore } = await import('@store/auth/auth.store');
                 await useAuthStore.getState().logout();
-                navigation.navigate('Login');
+                // Suppression de navigation.navigate('Login') car la déconnexion va automatiquement changer de navigateur
               }}>
                 <Ionicons name="log-out-outline" size={20} color="#ff3b30" />
                 <TypographyComponent style={{color: '#ff3b30'}} variant='body'>Déconnexion</TypographyComponent>

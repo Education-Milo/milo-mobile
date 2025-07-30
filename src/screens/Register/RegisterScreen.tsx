@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -13,7 +12,7 @@ import {
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import styles from '@constants/Colors';
+import styles from '@navigation/constants/Colors';
 import { RootStackParamList } from '@navigation/types';
 import MainButton from '@components/MainButtonComponent';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -105,7 +104,7 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
         [
           {
             text: 'OK',
-            onPress: () => navigation.navigate('Home'),
+            onPress: () => navigation.navigate('Login'),
           },
         ]
       );

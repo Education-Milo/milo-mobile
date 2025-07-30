@@ -13,7 +13,7 @@ import {
   FlatList,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import styles from '@constants/Colors';
+import styles from '@navigation/constants/Colors';
 import DocumentComponent from '@components/Profil/DocumentComponent';
 import StatisticsComponent from '@components/Profil/StatisticsComponent';
 import { RootStackParamList } from '@navigation/types';

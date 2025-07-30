@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
-import styles from '../../constants/Colors';
+import styles from '../../navigation/constants/Colors';
 import Layout from '../../components/Layout';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;

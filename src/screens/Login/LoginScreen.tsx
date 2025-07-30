@@ -1,8 +1,7 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { Image, View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import styles from '@constants/Colors';
+import styles from '@navigation/constants/Colors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { RootStackParamList } from '@navigation/types';
 import LoginForm from '@components/Login/LoginForm.component';
@@ -41,7 +40,6 @@ function LoginScreen({ navigation, onLoginSuccess }: LoginScreenProps) {
           navigation={navigation}
           isLoading={isLoading}
           />
-        <StatusBar style='auto' />
       </View>
     </KeyboardAwareScrollView>
   );
