@@ -35,9 +35,8 @@ const LessonChapter = ({ navigation, route }: LessonChapterScreenProps) => {
   const chapitres = CHAPITRES[matiere] || [];
   const [selectedChapter, setSelectedChapter] = useState<string>('');
 
-  // BottomSheet refs et snap points
   const bottomSheetRef = useRef<BottomSheetModal>(null!);
-  // const snapPoints = useMemo(() => ['40%', '70%'], []);
+  const snapPoints = useMemo(() => ['60%', '40%'], []);
 
   const handleModalOpen = useCallback((chapitre: string) => {
     setSelectedChapter(chapitre);
@@ -79,8 +78,8 @@ const LessonChapter = ({ navigation, route }: LessonChapterScreenProps) => {
         <BottomSheetComponent
           ref={bottomSheetRef}
           enableDynamicSizing={true}
-          style={{ backgroundColor: colors.background }}
-          // snapPoints={snapPoints}
+          snapPoints={snapPoints}
+          style={{ backgroundColor: colors.background, borderTopLeftRadius: 30, borderTopRightRadius: 30 }}
         >
           <TypographyComponent variant="h5" style={styles.bottomSheetTitle}>
             {selectedChapter}
@@ -97,8 +96,11 @@ const LessonChapter = ({ navigation, route }: LessonChapterScreenProps) => {
               ✏️ Exercices
             </TypographyComponent>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleCloseBottomSheet} style={{ alignItems : 'center', justifyContent: 'center', padding: 16 }}>
-            <TypographyComponent variant="body" color={colors.text.secondary}>
+          <TouchableOpacity
+            onPress={handleCloseBottomSheet}
+            style={styles.cancelButton}
+          >
+            <TypographyComponent variant="button" color={colors.text.secondary}>
               Annuler
             </TypographyComponent>
           </TouchableOpacity>
@@ -121,6 +123,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 12,
     marginBottom: 12,
+    width: '100%',
+    alignItems: 'center',
+  },
+  cancelButton: {
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    padding: 12,
     width: '100%',
     alignItems: 'center',
   },

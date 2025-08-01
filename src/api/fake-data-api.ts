@@ -1,7 +1,7 @@
 export const fakeRecentCourses = [
   {
     id: 1,
-    subject: "HISTOIRE",
+    subject: "Histoire",
     title: "La Révolution française",
     lastAccessed: "Hier",
     progress: 75,
@@ -9,7 +9,7 @@ export const fakeRecentCourses = [
   },
   {
     id: 2,
-    subject: "MATHÉMATIQUES",
+    subject: "Mathématiques",
     title: "Les polynômes",
     lastAccessed: "Il y a 2 jours",
     progress: 60,
@@ -17,7 +17,7 @@ export const fakeRecentCourses = [
   },
   {
     id: 3,
-    subject: "FRANÇAIS",
+    subject: "Français",
     title: "L'analyse littéraire",
     lastAccessed: "Il y a 3 jours",
     progress: 45,
@@ -25,7 +25,7 @@ export const fakeRecentCourses = [
   },
   {
     id: 4,
-    subject: "SCIENCES",
+    subject: "Sciences",
     title: "La photosynthèse",
     lastAccessed: "Il y a 4 jours",
     progress: 90,

@@ -1,7 +1,11 @@
+import React, { useRef, useState, useEffect } from 'react';
 import { colors } from "@themes/colors";
-import { View, TouchableOpacity, ScrollView, SafeAreaView, Modal, Animated } from "react-native";
+import { View, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import TypographyComponent from '../Typography.component';
+import BottomSheetComponent from '../BottomSheetModal.component';
+import FireworksAnimation from '@components/FireWorkAnimation.component'; // Votre nouveau composant
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 interface QuestionComponentProps {
   question: {
@@ -14,10 +18,10 @@ interface QuestionComponentProps {
   onAnswerSelect: (selectedAnswer: string) => void;
   selectedAnswer?: string;
   showCorrection: boolean;
-  feedback?: string | null; // Ajout feedback
+  feedback?: string | null;
   onGoBack?: () => void;
-  onNext?: () => void; // Ajout onNext
-  canGoNext?: boolean; // Ajout canGoNext
+  onNext?: () => void;
+  canGoNext?: boolean;
 }
 
 const QuestionComponent: React.FC<QuestionComponentProps> = ({
@@ -33,12 +37,51 @@ const QuestionComponent: React.FC<QuestionComponentProps> = ({
   canGoNext
 }) => {
   const progressPercentage = ((questionIndex + 1) / totalQuestions) * 100;
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [showFireworks, setShowFireworks] = useState(false);
+
+  // Gérer l'ouverture du bottom sheet et le déclenchement des feux d'artifice
+  useEffect(() => {
+    if (feedback && bottomSheetRef.current) {
+      setTimeout(() => {
+        bottomSheetRef.current?.present();
+        setIsBottomSheetOpen(true);
+        // Déclencher les feux d'artifice pour une bonne réponse
+        if (feedback === 'correct') {
+          setTimeout(() => {
+            setShowFireworks(true);
+          }, 300); // Délai pour que le BottomSheet soit ouvert
+        }
+      }, 100);
+    } else {
+      setIsBottomSheetOpen(false);
+      setShowFireworks(false);
+    }
+  }, [feedback]);
+
+  const handleFireworksComplete = () => {
+    setShowFireworks(false);
+  };
 
   return (
     <View style={{
       flex: 1,
       backgroundColor: '#FFF8F1',
     }}>
+      {/* Animation de feux d'artifice */}
+      <FireworksAnimation
+        isVisible={showFireworks}
+        particleCount={15}
+        duration={2500}
+        containerSize={350}
+        particleDistance={140}
+        particleSize={22}
+        position={{ bottom: 100, left: 350 }}
+        onAnimationComplete={handleFireworksComplete}
+        colors={['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#FF8A80', '#A7FFEB', '#DDA0DD', '#98FB98']}
+      />
+
       <View style={{ backgroundColor: '#FFF8F1' }}>
         <View style={{
           paddingHorizontal: 20,
@@ -61,21 +104,23 @@ const QuestionComponent: React.FC<QuestionComponentProps> = ({
             >
               <Ionicons name="close" size={32} color="#9CA3AF" />
             </TouchableOpacity>
-          </View>
 
-          {/* Barre de progression */}
-          <View style={{
-            height: 16,
-            backgroundColor: '#374151',
-            borderRadius: 8,
-            overflow: 'hidden'
-          }}>
+            {/* Barre de progression */}
             <View style={{
-              height: '100%',
-              backgroundColor: '#10B981',
+              height: 16,
+              backgroundColor: '#374151',
               borderRadius: 8,
-              width: `${progressPercentage}%`,
-            }} />
+              overflow: 'hidden',
+              flex: 1,
+              marginLeft: 20
+            }}>
+              <View style={{
+                height: '100%',
+                backgroundColor: '#10B981',
+                borderRadius: 8,
+                width: `${progressPercentage}%`,
+              }} />
+            </View>
           </View>
         </View>
       </View>
@@ -104,6 +149,7 @@ const QuestionComponent: React.FC<QuestionComponentProps> = ({
             <Ionicons name="help-circle" size={20} color="white" />
           </View>
           <TypographyComponent
+            variant="h6"
             color='#8B5CF6'
             style={{
               fontSize: 16,
@@ -121,10 +167,10 @@ const QuestionComponent: React.FC<QuestionComponentProps> = ({
           style={{
             fontSize: 28,
             fontWeight: '700',
-            color: '#FFFFFF',
             lineHeight: 36,
             marginBottom: 48
           }}
+          color={colors.text.secondary}
         >
           {question.question}
         </TypographyComponent>
@@ -207,82 +253,78 @@ const QuestionComponent: React.FC<QuestionComponentProps> = ({
             );
           })}
         </View>
-        {/* Feedback immédiat après la réponse + bouton suivant dans une Modal animée */}
-        <Modal
-          visible={!!feedback}
-          transparent
-          animationType="slide"
-        >
-          <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.25)' }}>
-            <View style={{
-              width: '100%',
-              backgroundColor: feedback === 'correct' ? '#065F46' : '#7F1D1D',
-              borderTopLeftRadius: 24,
-              borderTopRightRadius: 24,
-              borderWidth: 1,
-              borderColor: feedback === 'correct' ? '#10B981' : '#EF4444',
-              alignItems: 'center',
-              padding: 28,
-              paddingBottom: 36,
-              minHeight: 180
-            }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, justifyContent: 'center' }}>
-                <View style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
-                  backgroundColor: feedback === 'correct' ? '#10B981' : '#EF4444',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: 12
-                }}>
-                  <Ionicons 
-                    name={feedback === 'correct' ? "checkmark" : "close"} 
-                    size={18} 
-                    color="white" 
-                  />
-                </View>
-                <TypographyComponent
-                  style={{ fontSize: 18, fontWeight: '600' }}
-                  color={feedback === 'correct' ? '#6EE7B7' : '#FCA5A5'}
-                >
-                  {feedback === 'correct' ? 'Bonne réponse !' : 'Mauvaise réponse'}
-                </TypographyComponent>
-              </View>
-              {feedback === 'incorrect' && (
-                <TypographyComponent
-                  style={{ fontSize: 16, lineHeight: 22, marginBottom: 12 }}
-                  color='#D1D5DB'
-                >
-                  Bonne réponse : <TypographyComponent style={{ fontWeight: '600' }} color='#6EE7B7'>{question.correct_answer}</TypographyComponent>
-                </TypographyComponent>
-              )}
-              {/* Bouton suivant dans la modal */}
-              {canGoNext && (
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: '#10B981',
-                    paddingVertical: 12,
-                    paddingHorizontal: 32,
-                    borderRadius: 10,
-                    alignItems: 'center',
-                    marginTop: 8,
-                    minWidth: 160
-                  }}
-                  onPress={onNext}
-                >
-                  <TypographyComponent
-                    style={{ fontWeight: 'bold', fontSize: 16 }}
-                    color='#fff'
-                  >
-                    {questionIndex === totalQuestions - 1 ? 'Voir mes résultats' : 'Question suivante'}
-                  </TypographyComponent>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-        </Modal>
       </ScrollView>
+
+      {/* BottomSheet pour le feedback */}
+      <BottomSheetComponent
+        ref={bottomSheetRef as React.RefObject<BottomSheetModal>}
+        snapPoints={['40%']}
+        index={feedback ? 0 : -1}
+      >
+        <View style={{
+          alignItems: 'center',
+          padding: 28,
+          paddingBottom: 36,
+          minHeight: 180,
+        }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, justifyContent: 'center' }}>
+            <View style={{
+              width: 32,
+              height: 32,
+              borderRadius: 16,
+              backgroundColor: feedback === 'correct' ? '#10B981' : '#EF4444',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: 12
+            }}>
+              <Ionicons
+                name={feedback === 'correct' ? "checkmark" : "close"}
+                size={18}
+                color="white"
+              />
+            </View>
+            <TypographyComponent
+              style={{ fontSize: 18 }}
+              color={feedback === 'correct' ? 'green' : 'red'}
+            >
+              {feedback === 'correct' ? 'Bonne réponse !' : 'Mauvaise réponse'}
+            </TypographyComponent>
+          </View>
+          {feedback === 'incorrect' && (
+            <TypographyComponent
+              style={{ fontSize: 16, lineHeight: 22, marginBottom: 12 }}
+              color='#D1D5DB'
+            >
+              Bonne réponse : <TypographyComponent style={{ fontWeight: '600' }} color='#6EE7B7'>{question.correct_answer}</TypographyComponent>
+            </TypographyComponent>
+          )}
+          {/* Bouton suivant dans le bottom sheet */}
+          {canGoNext && (
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#4F46E5',
+                paddingVertical: 12,
+                paddingHorizontal: 32,
+                borderRadius: 20,
+                alignItems: 'center',
+                marginTop: 8,
+                minWidth: 160
+              }}
+              onPress={() => {
+                bottomSheetRef.current?.dismiss();
+                onNext?.();
+              }}
+            >
+              <TypographyComponent
+                style={{ fontWeight: 'bold', fontSize: 16 }}
+                color='#fff'
+              >
+                {questionIndex === totalQuestions - 1 ? 'Voir mes résultats' : 'Question suivante'}
+              </TypographyComponent>
+            </TouchableOpacity>
+          )}
+        </View>
+      </BottomSheetComponent>
     </View>
   );
 };

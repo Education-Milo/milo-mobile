@@ -32,12 +32,18 @@ APIAxios.interceptors.response.use(
   res => {
     return res;
   },
-  (err: AxiosError) => {
+  async (err: AxiosError) => {
     if (
       err.response?.status === 401 &&
       (err.response as any)?.data?.message !== 'CODE_NOT_CORRECT'
     ) {
-      console.error('Unauthorized access - redirecting to login');
+      console.error('Unauthorized access - token expired, logging out');
+      try {
+        const { useAuthStore } = await import('@store/auth/auth.store');
+        await useAuthStore.getState().logout();
+      } catch (logoutError) {
+        console.error('Error during automatic logout:', logoutError);
+      }
     }
 
     return Promise.reject(err);

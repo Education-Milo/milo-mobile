@@ -6,6 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { RouteProp } from '@react-navigation/native';
 import { useIAStore } from '@store/ia/ia.store';
 import QuestionComponent from '@components/Lesson/QuestionComponent';
+import TypographyComponent from '@components/Typography.component';
+import { colors } from '@themes/colors';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -77,26 +79,6 @@ function ExercicesScreen({ navigation, route }: ExercicesScreenProps) {
     navigation.goBack();
   };
 
-  const handleValidateQuiz = () => {
-    if (!currentQCM) return;
-
-    const totalQuestions = currentQCM.qcm.length;
-    const answeredQuestions = Object.keys(userAnswers).length;
-
-    if (answeredQuestions < totalQuestions) {
-      Alert.alert(
-        'Quiz incomplet',
-        `Vous avez répondu à ${answeredQuestions} questions sur ${totalQuestions}. Voulez-vous valider quand même ?`,
-        [
-          { text: 'Annuler', style: 'cancel' },
-          { text: 'Valider', onPress: calculateScore }
-        ]
-      );
-    } else {
-      calculateScore();
-    }
-  };
-
   const calculateScore = () => {
     if (!currentQCM) return;
 
@@ -130,15 +112,14 @@ function ExercicesScreen({ navigation, route }: ExercicesScreenProps) {
           padding: 10,
           backgroundColor: '#FFF8F1'
         }}>
-          <ActivityIndicator size="large" color="#10B981" />
-          <Text style={{
-            marginTop: 20,
-            textAlign: 'center',
-            color: '#FFFFFF',
-            fontSize: 16
-          }}>
+          <ActivityIndicator size="large" color="#11181C" />
+          <TypographyComponent
+            variant="body"
+            style={{ marginTop: 10, textAlign: 'center' }}
+            color={colors.text.title}
+            >
             Génération du QCM en cours...
-          </Text>
+          </TypographyComponent>
         </View>
     );
   }
@@ -146,32 +127,32 @@ function ExercicesScreen({ navigation, route }: ExercicesScreenProps) {
   // Écran d'erreur
   if (error) {
     return (
-        <View style={{ 
-          flex: 1, 
-          justifyContent: 'center', 
+        <View style={{
+          flex: 1,
+          justifyContent: 'center',
           alignItems: 'center',
-          padding: 20, 
+          padding: 20,
           backgroundColor: '#1F2937'
         }}>
-          <View style={{ 
-            padding: 30, 
-            alignItems: 'center', 
+          <View style={{
+            padding: 30,
+            alignItems: 'center',
             width: '100%',
             backgroundColor: '#374151',
             borderRadius: 16
           }}>
             <Text style={{ fontSize: 48, marginBottom: 20 }}>⚠️</Text>
-            <Text style={{ 
-              fontSize: 20, 
+            <Text style={{
+              fontSize: 20,
               fontWeight: 'bold',
-              marginBottom: 15, 
+              marginBottom: 15,
               textAlign: 'center',
               color: '#FFFFFF'
             }}>
               Erreur
             </Text>
-            <Text style={{ 
-              marginBottom: 25, 
+            <Text style={{
+              marginBottom: 25,
               textAlign: 'center',
               color: '#9CA3AF',
               fontSize: 16,
@@ -179,21 +160,21 @@ function ExercicesScreen({ navigation, route }: ExercicesScreenProps) {
             }}>
               {error}
             </Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={{
                 backgroundColor: '#10B981',
                 paddingVertical: 16,
                 paddingHorizontal: 32,
                 borderRadius: 12,
                 minWidth: 120
-              }} 
+              }}
               onPress={generateQCM}
             >
-              <Text style={{ 
-                color: '#FFFFFF', 
-                fontWeight: 'bold', 
-                fontSize: 16, 
-                textAlign: 'center' 
+              <Text style={{
+                color: '#FFFFFF',
+                fontWeight: 'bold',
+                fontSize: 16,
+                textAlign: 'center'
               }}>
                 Réessayer
               </Text>
@@ -219,26 +200,25 @@ function ExercicesScreen({ navigation, route }: ExercicesScreenProps) {
             height: 44,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'rgba(55,65,81,0.8)',
             borderRadius: 22
           }}
         >
-          <Ionicons name="arrow-back" size={26} color="#fff" />
+          <Ionicons name="arrow-back" size={26} color="#9CA3AF" />
         </TouchableOpacity>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#1F2937' }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#FFF8F1' }}>
           <View style={{ padding: 30, alignItems: 'center', width: '100%', backgroundColor: '#374151', borderRadius: 16 }}>
             <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#10B981', marginBottom: 16 }}>Résultat</Text>
             <Text style={{ fontSize: 22, color: '#FFFFFF', marginBottom: 10 }}>{score}% de bonnes réponses</Text>
             <Text style={{ fontSize: 16, color: '#9CA3AF', marginBottom: 30 }}>
               {`Vous avez répondu correctement à ${score !== null && currentQCM ? Math.round((score/100)*currentQCM.qcm.length) : 0} question(s) sur ${currentQCM?.qcm.length || 0}.`}
             </Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={{ backgroundColor: '#10B981', paddingVertical: 16, paddingHorizontal: 32, borderRadius: 12, minWidth: 120, marginBottom: 10 }}
               onPress={generateQCM}
             >
               <Text style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: 16, textAlign: 'center' }}>Nouveau QCM</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={{ backgroundColor: '#6B7280', paddingVertical: 16, paddingHorizontal: 32, borderRadius: 12, minWidth: 120 }}
               onPress={resetQuiz}
             >

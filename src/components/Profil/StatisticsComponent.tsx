@@ -214,7 +214,6 @@ const StatisticsComponent: React.FC<StatisticsComponentProps> = ({
               <View key={index} style={{ alignItems: 'center' }}>
                 <View
                   style={{
-                    height: day.value,
                     width: 30,
                     backgroundColor: colors[index],
                     borderRadius: 5,

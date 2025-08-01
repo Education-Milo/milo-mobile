@@ -33,8 +33,8 @@ interface Course {
   subject: string;
   title: string;
   lastAccessed: string;
-  progress: number; // Ajout du pourcentage de progression
-  color: string; // Couleur pour chaque matière
+  progress: number;
+  color: string;
 }
 
 interface Achievement {
@@ -92,7 +92,12 @@ function Home({ navigation }: HomeScreenProps) {
 
   // Navigation vers la page cours
   const navigateToCourse = (courseId: number) => {
-    navigation.navigate('Lesson');
+    const course = recentCourses.find(c => c.id === courseId);
+    if (course) {
+      navigation.navigate('LessonChapter', { matiere: course.subject });
+    } else {
+      navigation.navigate('Lesson');
+    }
   };
 
   const handleMenuPress = (courseId: number) => {
@@ -106,13 +111,17 @@ function Home({ navigation }: HomeScreenProps) {
   };
 
   const handleDeleteCourse = () => {
-    // Logique de suppression à implémenter
     handleMenuClose();
   };
 
   const handleAccessCourse = () => {
     if (selectedCourseId) {
-      navigateToCourse(selectedCourseId);
+      const course = recentCourses.find(c => c.id === selectedCourseId);
+      if (course) {
+        navigation.navigate('LessonChapter', { matiere: course.subject });
+      } else {
+        navigation.navigate('Lesson');
+      }
     }
     handleMenuClose();
   };
