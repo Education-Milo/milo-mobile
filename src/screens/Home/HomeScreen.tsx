@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Image, ScrollView, TouchableOpacity, View, Modal } from 'react-native';
 import styles from '@navigation/constants/Colors';
 import Layout from '@components/Layout';
@@ -8,9 +8,11 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import TypographyComponent from '@components/Typography.component';
 import { colors } from '@themes/colors';
 import HomeFooter from '@components/Home/HomeFooter.component';
-import { fakeRecentCourses, fakeDailyMissions } from '@api/fake-data-api';
 import HomeGame from '@components/Home/HomeGame.component';
 import Card from '@components/Card.component';
+import WelcomeCard from '@components/WelcomeCard.component';
+import { useHomeScreen } from '@hook/useHomeScreen';
+import { useUserStore } from '@store/user/user.store';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -18,7 +20,6 @@ interface HomeScreenProps {
   navigation: NavigationProp;
 }
 
-// Types pour les missions et cours
 interface Mission {
   id: number;
   title: string;
@@ -45,86 +46,26 @@ interface Achievement {
 }
 
 function Home({ navigation }: HomeScreenProps) {
-  const [recentCourses, setRecentCourses] = useState<Course[]>([]);
-  const [dailyMissions, setDailyMissions] = useState<Mission[]>([]);
-  const [recentAchievements] = useState<Achievement[]>([
+  const {
+    recentCourses,
+    dailyMissions,
+    completedMissions,
+    totalMissions,
+    error,
+    showMenu,
+    handleMenuPress,
+    handleMenuClose,
+    handleDeleteCourse,
+    handleAccessCourse,
+    navigateToCourse,
+  } = useHomeScreen({ navigation });
+
+  const user = useUserStore(state => state.user);
+
+  const recentAchievements: Achievement[] = [
     { id: 1, title: "Mathématicien", date: "15/01/2024", icon: "🏅" },
     { id: 2, title: "Lecteur assidu", date: "20/01/2024", icon: "🏅" },
-  ]);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
-  const [showMenu, setShowMenu] = useState(false);
-
-  useEffect(() => {
-    // Remplace par ton appel API réel
-    fetch('/api/courses')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.length > 0) {
-          setRecentCourses(data);
-        } else {
-          setError('Aucun cours trouvé.');
-          setRecentCourses([]);
-        }
-      })
-      .catch(() => {
-        setRecentCourses(fakeRecentCourses);
-      });
-
-    fetch('/api/missions')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.length > 0) {
-          setDailyMissions(data);
-        } else {
-          setError('Aucune mission trouvée.');
-          setDailyMissions([]);
-        }
-      })
-      .catch(() => {
-        setDailyMissions(fakeDailyMissions);
-      });
-  }, []);
-
-  // Calcul des missions complétées
-  const completedMissions = dailyMissions.filter(mission => mission.isCompleted).length;
-  const totalMissions = dailyMissions.length;
-
-  // Navigation vers la page cours
-  const navigateToCourse = (courseId: number) => {
-    const course = recentCourses.find(c => c.id === courseId);
-    if (course) {
-      navigation.navigate('LessonChapter', { matiere: course.subject });
-    } else {
-      navigation.navigate('Lesson');
-    }
-  };
-
-  const handleMenuPress = (courseId: number) => {
-    setSelectedCourseId(courseId);
-    setShowMenu(true);
-  };
-
-  const handleMenuClose = () => {
-    setShowMenu(false);
-    setSelectedCourseId(null);
-  };
-
-  const handleDeleteCourse = () => {
-    handleMenuClose();
-  };
-
-  const handleAccessCourse = () => {
-    if (selectedCourseId) {
-      const course = recentCourses.find(c => c.id === selectedCourseId);
-      if (course) {
-        navigation.navigate('LessonChapter', { matiere: course.subject });
-      } else {
-        navigation.navigate('Lesson');
-      }
-    }
-    handleMenuClose();
-  };
+  ];
 
   return (
     <Layout navigation={navigation}>
@@ -138,7 +79,13 @@ function Home({ navigation }: HomeScreenProps) {
           showSettings={false}
           navigation={navigation}
         />
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* ← AJOUT : Carte de bienvenue */}
+          <WelcomeCard
+            userName={user?.prenom}
+            // onPress={() => navigation.navigate('Courses')}
+          />
+
           <HomeGame
             dailyMissions={dailyMissions}
             completedMissions={completedMissions}
@@ -147,25 +94,24 @@ function Home({ navigation }: HomeScreenProps) {
             colors={colors}
           />
 
-        <View style={styles.achievementsSection}>
-          <View style={styles.sectionHeader}>
-            <TypographyComponent variant='h4' color={colors.primary}>
-              Derniers succès 🏆
-            </TypographyComponent>
+          <View style={styles.achievementsSection}>
+            <View style={styles.sectionHeader}>
+              <TypographyComponent variant='h4' color={colors.primary}>
+                Derniers succès 🏆
+              </TypographyComponent>
+            </View>
+            <View style={{ flexDirection: 'row', paddingHorizontal: 10 }}>
+              {recentAchievements.map((achievement) => (
+                <Card
+                  key={achievement.id}
+                  variant='achievement'
+                  title={achievement.title}
+                  description={achievement.date}
+                  style={{ width: 150, height: 120, marginRight: 5 }}
+                />
+              ))}
+            </View>
           </View>
-          {/* Conteneur avec flexDirection row */}
-          <View style={{ flexDirection: 'row', paddingHorizontal: 10 }}>
-            {recentAchievements.map((achievement) => (
-              <Card
-                key={achievement.id}
-                variant='achievement'
-                title={achievement.title}
-                description={achievement.date}
-                style={{ width: 150, height: 120, marginRight: 5 }}
-              />
-            ))}
-          </View>
-        </View>
 
           {/* Section Mes Cours */}
           <HomeFooter
@@ -224,7 +170,9 @@ function Home({ navigation }: HomeScreenProps) {
         </Modal>
 
         {error && (
-          <TypographyComponent style={{ color: 'red', textAlign: 'center', margin: 10 }}>{error}</TypographyComponent>
+          <TypographyComponent style={{ color: 'red', textAlign: 'center', margin: 10 }}>
+            {error}
+          </TypographyComponent>
         )}
       </View>
     </Layout>
