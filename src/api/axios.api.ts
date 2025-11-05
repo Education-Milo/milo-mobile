@@ -13,11 +13,27 @@ const APIAxios = axios.create({
   },
 } as CreateAxiosDefaults);
 
+
+const PUBLIC_ROUTES = [
+  '/register',
+  '/token',
+  '/forgotPassword',
+  '/auth/request-confirm-email',
+];
+
+const isPublicRoute = (url?: string): boolean => {
+  if (!url) return false;
+  return PUBLIC_ROUTES.some(route => url.includes(route));
+};
+
 APIAxios.interceptors.request.use(
   async config => {
     const { useAuthStore } = await import('@store/auth/auth.store');
     try {
-      await useAuthStore.getState().ensureTokenValid();
+      if (!isPublicRoute(config.url)) {
+        await useAuthStore.getState().ensureTokenValid();
+      }
+
       const accessToken = useAuthStore.getState().accessToken;
       if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
       return config;
@@ -35,8 +51,13 @@ APIAxios.interceptors.response.use(
     return res;
   },
   async (err: AxiosError) => {
+    const originalRequest = err.config
+
     if (err.response?.status === 401 ) {
-      console.error('Unauthorized access - token expired, logging out');
+      if (isPublicRoute(originalRequest?.url)) {
+        return Promise.reject(err);
+      }
+        console.error('Unauthorized access - token expired, logging out');
 
       try {
         const { useAuthStore } = await import('@store/auth/auth.store');

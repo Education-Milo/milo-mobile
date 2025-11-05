@@ -8,7 +8,7 @@ import {
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@navigation/types';
 import { Ionicons } from '@expo/vector-icons';
-import { colors }from '@themes/colors';
+import { colors } from '@themes/colors';
 import MainButton from '@components/MainButtonComponent';
 import TypographyComponent from '@components/Typography.component';
 import TextFieldComponent from '@components/TextField.component';
@@ -47,6 +47,20 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
       >
         Se connecter
       </TypographyComponent>
+
+      {/* ✅ AJOUT : Affichage de l'erreur générale */}
+      {errors.general && (
+        <View style={localStyles.errorContainer}>
+          <Ionicons name="alert-circle" size={20} color="#DC2626" />
+          <TypographyComponent
+            variant='bodySmall'
+            style={localStyles.errorText}
+          >
+            {errors.general}
+          </TypographyComponent>
+        </View>
+      )}
+
       <View style={localStyles.inputContainer}>
         <TextFieldComponent
           placeholder="Votre adresse email"
@@ -97,14 +111,29 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
 
 const localStyles = {
   inputContainer: {
-      width: '100%' as const,
-      marginBottom: 15,
-    },
+    width: '100%' as const,
+    marginBottom: 15,
+  },
   forgotPasswordContainer: {
-      alignItems: 'flex-end' as const,
-      marginTop: 8,
-    },
-  }
-
+    alignItems: 'flex-end' as const,
+    marginTop: 8,
+  },
+  // ✅ AJOUT : Style pour l'erreur générale
+  errorContainer: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    backgroundColor: '#FEE2E2',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#DC2626',
+  },
+  errorText: {
+    color: '#DC2626',
+    marginLeft: 8,
+    flex: 1,
+  },
+};
 
 export default LoginForm;

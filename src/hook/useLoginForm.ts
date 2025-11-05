@@ -12,6 +12,7 @@ export interface UseLoginFormOptions {
 export interface LoginFormErrors {
   email?: string;
   password?: string;
+  general?: string;
 }
 
 export interface UseLoginFormReturn {
@@ -38,7 +39,7 @@ export function useLoginForm(options: UseLoginFormOptions): UseLoginFormReturn {
   const validateForm = (): boolean => {
     const newErrors: LoginFormErrors = {};
 
-    if (!email) {
+    if (!email || !email.trim()) {
       newErrors.email = "L'email est requis";
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = "Format d'email invalide";
@@ -46,8 +47,6 @@ export function useLoginForm(options: UseLoginFormOptions): UseLoginFormReturn {
 
     if (!password) {
       newErrors.password = 'Le mot de passe est requis';
-    } else if (password.length < 6) {
-      newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
     }
 
     setErrors(newErrors);
@@ -55,18 +54,52 @@ export function useLoginForm(options: UseLoginFormOptions): UseLoginFormReturn {
   };
 
   const handleLogin = async (): Promise<void> => {
+    setErrors(prev => ({ ...prev, general: undefined }));
+
     if (!validateForm()) return;
 
     setIsLoading(true);
     onLoadingChange?.(true);
     try {
-      await login(email, password);
+      await login(email.trim(), password);
       if (onLoginSuccess) {
         onLoginSuccess();
       }
-    } catch (error) {
-      // The error is logged in the caller/UI when needed
+    } catch (error: any) {
       console.error('Login error:', error);
+      let errorMessage = 'Email ou mot de passe incorrect';
+
+      if (error.response) {
+        const status = error.response.status;
+        const message = error.response.data?.message || error.response.data?.detail;
+
+        switch (status) {
+          case 401:
+            errorMessage = 'Email ou mot de passe incorrect';
+            break;
+          case 403:
+            errorMessage = 'Compte désactivé. Contactez le support.';
+            break;
+          case 429:
+            errorMessage = 'Trop de tentatives. Réessayez plus tard.';
+            break;
+          case 500:
+            errorMessage = 'Erreur serveur. Réessayez plus tard.';
+            break;
+          default:
+            if (message === 'EMAIL_NOT_VERIFIED') {
+              errorMessage = 'Veuillez vérifier votre email avant de vous connecter.';
+            } else if (message) {
+              errorMessage = message;
+            }
+        }
+      } else if (error.message === 'Network Error' || !error.response) {
+        errorMessage = 'Pas de connexion internet. Vérifiez votre réseau.';
+      }
+
+      setErrors({
+        general: errorMessage,
+      });
     } finally {
       setIsLoading(false);
       onLoadingChange?.(false);
@@ -81,12 +114,12 @@ export function useLoginForm(options: UseLoginFormOptions): UseLoginFormReturn {
     email,
     setEmail: (value: string) => {
       setEmail(value);
-      setErrors(prev => ({ ...prev, email: undefined }));
+      setErrors(prev => ({ ...prev, email: undefined, general: undefined }));
     },
     password,
     setPassword: (value: string) => {
       setPassword(value);
-      setErrors(prev => ({ ...prev, password: undefined }));
+      setErrors(prev => ({ ...prev, password: undefined, general: undefined }));
     },
     isLoading,
     errors,
