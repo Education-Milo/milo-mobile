@@ -1,8 +1,9 @@
 import React, { useEffect, ReactNode } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, AppState, AppStateStatus } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts } from '@hook/usefonts';
+import { useAuthStore } from '@store/auth/auth.store'; // ← AJOUT
 
 SplashScreen.preventAutoHideAsync();
 
@@ -11,7 +12,7 @@ interface AppInitializerProps {
 }
 
 const AppInitializer = ({ children }: AppInitializerProps) => {
-    const { fontsLoaded, error } = useFonts();
+  const { fontsLoaded, error } = useFonts();
 
   useEffect(() => {
     const hideSplash = async () => {
@@ -22,6 +23,28 @@ const AppInitializer = ({ children }: AppInitializerProps) => {
 
     hideSplash();
   }, [fontsLoaded]);
+
+  useEffect(() => {
+    const handleAppStateChange = async (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'active') {
+        const { isTokenExpired, logout, accessToken } = useAuthStore.getState();
+        // Si l'utilisateur est connecté
+        if (accessToken) {
+          // Vérifier si le token est expiré
+          if (isTokenExpired()) {
+            console.log('Token expired on app resume, logging out');
+            await logout();
+          }
+        }
+      }
+    };
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   if (!fontsLoaded) {
     return null;

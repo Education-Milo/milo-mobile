@@ -57,11 +57,13 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
     onLoadingChange?.(true);
     try {
       await login(email, password);
+      console.log('Login successful');
       // Suppression de navigation.navigate('Home') car onLoginSuccess va gérer le changement de navigateur
       if (onLoginSuccess) {
         onLoginSuccess();
       }
     } catch (error) {
+      console.log(email, password);
       console.error('Login error:', error);
     } finally {
       setIsLoading(false);

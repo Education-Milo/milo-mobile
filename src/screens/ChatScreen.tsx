@@ -4,6 +4,7 @@ import { RootStackParamList } from '@navigation/types';
 import { View, Text } from 'react-native';
 import styles from '@navigation/constants/Colors';
 import { RouteProp } from '@react-navigation/native';
+import React from 'react';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

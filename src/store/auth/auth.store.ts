@@ -3,13 +3,38 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { AuthStore } from '@store/auth/auth.model';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import APIAxios, { APIRoutes } from '@api/axios.api';
+import { jwtDecode } from 'jwt-decode';
 import qs from 'qs';
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       loading: false,
       accessToken: '',
+
+      isTokenExpired: () => {
+        const { accessToken } = get();
+        if (!accessToken) return true;
+
+        try {
+          const decoded: any = jwtDecode(accessToken);
+          const currentTime = Date.now() / 1000;
+          // Marge de 5 minutes avant expiration
+          return decoded.exp < currentTime + 300;
+        } catch (error) {
+          return true;
+        }
+      },
+
+      ensureTokenValid: async () => {
+        if (get().isTokenExpired()) {
+          // Option 1: Tenter le refresh
+          // await get().refreshToken();
+          // Option 2: Forcer la déconnexion
+          await get().logout();
+          throw new Error('TOKEN_EXPIRED');
+        }
+      },
 
       login: async (email, password) => {
         try {

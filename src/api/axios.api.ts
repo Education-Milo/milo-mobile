@@ -4,6 +4,7 @@ import axios, {
   CreateAxiosDefaults,
 } from 'axios';
 import { API_URL } from '@env';
+import { use } from 'react';
 
 const APIAxios = axios.create({
   baseURL: API_URL,
@@ -15,8 +16,9 @@ const APIAxios = axios.create({
 APIAxios.interceptors.request.use(
   async config => {
     const { useAuthStore } = await import('@store/auth/auth.store');
-    const accessToken = useAuthStore.getState().accessToken;
     try {
+      await useAuthStore.getState().ensureTokenValid();
+      const accessToken = useAuthStore.getState().accessToken;
       if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
       return config;
     } catch (err) {
@@ -33,11 +35,9 @@ APIAxios.interceptors.response.use(
     return res;
   },
   async (err: AxiosError) => {
-    if (
-      err.response?.status === 401 &&
-      (err.response as any)?.data?.message !== 'CODE_NOT_CORRECT'
-    ) {
+    if (err.response?.status === 401 ) {
       console.error('Unauthorized access - token expired, logging out');
+
       try {
         const { useAuthStore } = await import('@store/auth/auth.store');
         await useAuthStore.getState().logout();
@@ -57,7 +57,7 @@ export const APIRoutes = {
   POST_RequestConfirmEmail: '/auth/request-confirm-email',
   GET_Me: '/users/me',
 
-  POST_CREATE_QCM: '/qcm'
+  POST_CREATE_QCM: '/qcm',
 
   /* AUTH */
   //   POSTLogin: (): AxiosRequestConfig => ({method: 'POST', url: '/auth/login'}),
