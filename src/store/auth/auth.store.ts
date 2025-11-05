@@ -90,7 +90,7 @@ export const useAuthStore = create<AuthStore>()(
         }
       },
 
-      forgetPassword: async (email) => {
+      forgotPassword: async (email) => {
         try {
           await APIAxios.post(APIRoutes.POST_ForgotPassword, {
             email,

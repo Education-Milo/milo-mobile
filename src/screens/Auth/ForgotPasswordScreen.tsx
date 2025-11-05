@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   Text,
@@ -21,6 +21,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import TypographyComponent from '@components/Typography.component';
 import { colors } from '@themes/colors';
 import TextFieldComponent from '@components/TextField.component';
+import { useForgotPassword } from '@hook/useForgotPassword';
 
 type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -32,43 +33,15 @@ interface ForgetPasswordScreenProps {
 }
 
 function ForgetPasswordScreen({ navigation }: ForgetPasswordScreenProps) {
-  const [email, setEmail] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [emailError, setEmailError] = useState('');
-
-  const handleSubmit = async () => {
-    if (!email.trim()) {
-      setEmailError('Veuillez saisir votre adresse email');
-      return;
-    }
-
-    // Validation basique du format email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setEmailError('Veuillez saisir une adresse email valide');
-      return;
-    }
-
-    setIsLoading(true);
-    // Simulation d'un appel API
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSubmitted(true);
-    }, 2000);
-  };
-
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
-
-  const handleEmailChange = (text: string) => {
-    setEmail(text);
-    // Reset error quand l'utilisateur tape
-    if (emailError) {
-      setEmailError('');
-    }
-  };
+  const {
+    email,
+    setEmail,
+    isLoading,
+    isSubmitted,
+    emailError,
+    handleSubmit,
+    handleGoBack,
+  } = useForgotPassword({ navigation });
 
   if (isSubmitted) {
     return (
@@ -161,7 +134,7 @@ function ForgetPasswordScreen({ navigation }: ForgetPasswordScreenProps) {
               placeholder="Votre adresse email"
               icon={<Ionicons name='mail-outline' size={20} color='#666' />}
               value={email}
-              onChangeText={handleEmailChange}
+              onChangeText={text => setEmail(text)}
               keyboardType="email-address"
               autoCapitalize="none"
               editable={!isLoading}

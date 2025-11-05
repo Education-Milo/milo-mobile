@@ -1,13 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  ActivityIndicator,
-  Alert,
   ScrollView,
-  TextInput,
   TouchableOpacity,
   View,
-  KeyboardAvoidingView,
-  Platform,
   Image,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -19,7 +14,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import TextFieldComponent from '@components/TextField.component';
 import TypographyComponent from '@components/Typography.component';
 import { colors } from '@themes/colors';
-import { useAuthStore } from '@store/auth/auth.store';
+import { useRegisterForm } from '@hook/useRegisterForm';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Register'>;
 
@@ -28,98 +23,24 @@ interface RegisterScreenProps {
 }
 
 function RegisterScreen({ navigation }: RegisterScreenProps) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    password?: string;
-    confirmPassword?: string;
-    role?: string;
-  }>({});
-
-  // Récupération de la méthode register depuis le store
-  const { register, loading } = useAuthStore();
-
-  const roles = [
-    { key: 'Eleve', label: 'Élève' },
-    { key: 'Parent', label: 'Parent' },
-    { key: 'Prof', label: 'Professeur' },
-  ];
-
-  const validateForm = () => {
-    const newErrors: typeof errors = {};
-
-    if (!firstName.trim()) {
-      newErrors.firstName = 'Le prénom est requis';
-    }
-
-    if (!lastName.trim()) {
-      newErrors.lastName = 'Le nom est requis';
-    }
-
-    if (!email) {
-      newErrors.email = "L'email est requis";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Format d'email invalide";
-    }
-
-    if (!password) {
-      newErrors.password = 'Le mot de passe est requis';
-    } else if (password.length < 6) {
-      newErrors.password =
-        'Le mot de passe doit contenir au moins 6 caractères';
-    }
-
-    if (!confirmPassword) {
-      newErrors.confirmPassword = 'La confirmation du mot de passe est requise';
-    } else if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
-    }
-
-    if (!role) {
-      newErrors.role = 'Veuillez sélectionner un rôle';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleRegister = async () => {
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-    try {
-      await register(email, password, lastName, firstName, role);
-      Alert.alert(
-        'Inscription réussie',
-        'Votre compte a été créé avec succès !',
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.navigate('Login'),
-          },
-        ]
-      );
-    } catch (error: any) {
-      console.error('Erreur lors de l\'inscription:', error);
-      let errorMessage = 'Une erreur est survenue. Veuillez réessayer.';
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    role,
+    setRole,
+    roles,
+    errors,
+    isSubmitting,
+    handleRegister,
+  } = useRegisterForm({ navigation });
 
   return (
     <View style={styles.registerContainer}>
@@ -167,9 +88,8 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
               value={lastName}
               onChangeText={text => {
                 setLastName(text);
-                setErrors(prev => ({ ...prev, lastName: undefined }));
               }}
-              editable={!isLoading && !loading}
+              editable={!isSubmitting}
               error={errors.lastName}
             />
           </View>
@@ -182,9 +102,8 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
               value={firstName}
               onChangeText={text => {
                 setFirstName(text);
-                setErrors(prev => ({ ...prev, firstName: undefined }));
               }}
-              editable={!isLoading && !loading}
+              editable={!isSubmitting}
               error={errors.firstName}
             />
           </View>
@@ -197,11 +116,10 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
               value={email}
               onChangeText={text => {
                 setEmail(text);
-                setErrors(prev => ({ ...prev, email: undefined }));
               }}
               keyboardType="email-address"
               autoCapitalize="none"
-              editable={!isLoading && !loading}
+              editable={!isSubmitting}
               error={errors.email}
             />
           </View>
@@ -214,10 +132,9 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
               value={password}
               onChangeText={text => {
                 setPassword(text);
-                setErrors(prev => ({ ...prev, password: undefined }));
               }}
               type="password"
-              editable={!isLoading && !loading}
+              editable={!isSubmitting}
               error={errors.password}
             />
           </View>
@@ -230,10 +147,9 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
               value={confirmPassword}
               onChangeText={text => {
                 setConfirmPassword(text);
-                setErrors(prev => ({ ...prev, confirmPassword: undefined }));
               }}
               type="password"
-              editable={!isLoading && !loading}
+              editable={!isSubmitting}
               error={errors.confirmPassword}
             />
           </View>
@@ -257,9 +173,8 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
                   ]}
                   onPress={() => {
                     setRole(roleOption.key);
-                    setErrors(prev => ({ ...prev, role: undefined }));
                   }}
-                  disabled={isLoading || loading}
+                  disabled={isSubmitting}
                 >
                   <TypographyComponent
                     style={[
@@ -289,7 +204,7 @@ function RegisterScreen({ navigation }: RegisterScreenProps) {
           </View>
           <MainButton
             onPress={handleRegister}
-            loading={isLoading || loading}
+            loading={isSubmitting}
             title="S'inscrire"
             style={{ marginBottom: 20 }}
           />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -12,7 +12,7 @@ import { colors }from '@themes/colors';
 import MainButton from '@components/MainButtonComponent';
 import TypographyComponent from '@components/Typography.component';
 import TextFieldComponent from '@components/TextField.component';
-import { useAuthStore } from '@store/auth/auth.store';
+import { useLoginForm } from '@hook/useLoginForm';
 
 export interface LoginFormProps {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -23,53 +23,16 @@ export interface LoginFormProps {
 }
 
 function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormProps) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-
-  const login = useAuthStore(state => state.login);
-
-  const validateForm = () => {
-    const newErrors: { email?: string; password?: string } = {};
-
-    if (!email) {
-      newErrors.email = "L'email est requis";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Format d'email invalide";
-    }
-
-    if (!password) {
-      newErrors.password = 'Le mot de passe est requis';
-    } else if (password.length < 6) {
-      newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleLogin = async () => {
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-    onLoadingChange?.(true);
-    try {
-      await login(email, password);
-      console.log('Login successful');
-      // Suppression de navigation.navigate('Home') car onLoginSuccess va gérer le changement de navigateur
-      if (onLoginSuccess) {
-        onLoginSuccess();
-      }
-    } catch (error) {
-      console.log(email, password);
-      console.error('Login error:', error);
-    } finally {
-      setIsLoading(false);
-      onLoadingChange?.(false);
-    }
-  };
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    isLoading,
+    errors,
+    handleLogin,
+    goToForgotPassword,
+  } = useLoginForm({ navigation, onLoginSuccess, onLoadingChange });
 
   return (
     <>
@@ -89,10 +52,7 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
           placeholder="Votre adresse email"
           icon={<Ionicons name='mail-outline' size={20} color='#666' />}
           value={email}
-          onChangeText={text => {
-            setEmail(text);
-            setErrors(prev => ({ ...prev, email: undefined }));
-          }}
+          onChangeText={text => setEmail(text)}
           keyboardType="email-address"
           autoComplete='email'
           autoCapitalize="none"
@@ -106,10 +66,7 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
           placeholder="Votre mot de passe"
           icon={<Ionicons name='lock-closed-outline' size={20} color='#666' />}
           value={password}
-          onChangeText={text => {
-            setPassword(text);
-            setErrors(prev => ({ ...prev, password: undefined }));
-          }}
+          onChangeText={text => setPassword(text)}
           type="password"
           autoComplete='password'
           editable={!isLoading}
@@ -118,7 +75,7 @@ function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormPro
         <TouchableOpacity
           disabled={isLoading}
           style={localStyles.forgotPasswordContainer}
-          onPress={() => navigation.navigate('ForgotPassword')}
+          onPress={goToForgotPassword}
         >
           <TypographyComponent
             variant='bodySmall'
