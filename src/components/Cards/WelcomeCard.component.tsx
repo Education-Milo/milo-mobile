@@ -9,9 +9,9 @@ interface WelcomeCardProps {
   onPress?: () => void;
 }
 
-const WelcomeCard: React.FC<WelcomeCardProps> = ({ 
-  userName = 'Test',
-  onPress 
+const WelcomeCard: React.FC<WelcomeCardProps> = ({
+  userName = '...',
+  onPress
 }) => {
   const CardContent = (
     <LinearGradient
@@ -27,16 +27,16 @@ const WelcomeCard: React.FC<WelcomeCardProps> = ({
           resizeMode="contain"
         />
       </View>
-      
+
       <View style={styles.textContainer}>
-        <TypographyComponent 
-          variant="h3" 
+        <TypographyComponent
+          variant="h3"
           style={styles.title}
         >
           Bonjour {userName} !
         </TypographyComponent>
-        <TypographyComponent 
-          variant="body" 
+        <TypographyComponent
+          variant="body"
           style={styles.subtitle}
         >
           Prêt à explorer de nouvelles matières ? Choisis un cours pour commencer.
@@ -47,8 +47,8 @@ const WelcomeCard: React.FC<WelcomeCardProps> = ({
 
   if (onPress) {
     return (
-      <TouchableOpacity 
-        activeOpacity={0.9} 
+      <TouchableOpacity
+        activeOpacity={0.9}
         onPress={onPress}
         style={styles.container}
       >

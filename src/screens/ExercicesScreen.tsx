@@ -1,254 +1,103 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '@navigation/types';
-import { View, Text, TouchableOpacity, ActivityIndicator, Alert, SafeAreaView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { RouteProp } from '@react-navigation/native';
-import { useIAStore } from '@store/ia/ia.store';
-import QuestionComponent from '@components/Lesson/QuestionComponent';
-import TypographyComponent from '@components/Typography.component';
-import { colors } from '@themes/colors';
+import { RootStackParamList } from '../navigation/types';
+import QCMScreen from './Exercices/QCMScreen';
+import QCMResultsScreen from './Exercices/QCMResultsScreen';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'ExercicesScreen'>;
+type ExercicesRouteProp = RouteProp<RootStackParamList, 'ExercicesScreen'>;
+
+interface Question {
+  id: number;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+}
 
 interface ExercicesScreenProps {
   navigation: NavigationProp;
-  route: RouteProp<RootStackParamList, 'ExercicesScreen'>;
+  route: ExercicesRouteProp;
 }
 
-function ExercicesScreen({ navigation, route }: ExercicesScreenProps) {
-  const { matiere, chapitre } = route.params;
-  const { create_qcm, currentQCM, isLoading, error } = useIAStore();
-  const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [feedback, setFeedback] = useState<string | null>(null);
-  const [score, setScore] = useState<number | null>(null);
-  const [quizCompleted, setQuizCompleted] = useState(false);
-  const [canGoNext, setCanGoNext] = useState(false);
+const ExercicesScreen: React.FC<ExercicesScreenProps> = ({ navigation, route }) => {
+  // Données d'exemple pour le QCM
+  const [questions] = useState<Question[]>([
+    {
+      id: 1,
+      question: "Quelle est la capitale de la France?",
+      options: ["Londres", "Berlin", "Paris", "Madrid"],
+      correctAnswer: "Paris"
+    },
+    {
+      id: 2,
+      question: "Quel est le plus grand océan du monde?",
+      options: ["Atlantique", "Indien", "Arctique", "Pacifique"],
+      correctAnswer: "Pacifique"
+    },
+    {
+      id: 3,
+      question: "Combien de côtés a un hexagone?",
+      options: ["4", "5", "6", "8"],
+      correctAnswer: "6"
+    }
+  ]);
+
+  const [showResultsScreen, setShowResultsScreen] = useState(false);
+  const [score, setScore] = useState(0);
+  const [totalTime, setTotalTime] = useState(0);
+  const [xpEarned, setXpEarned] = useState(0);
 
   useEffect(() => {
-    generateQCM();
-  }, []);
-
-  const generateQCM = async () => {
-    try {
-      const theme = `${matiere} - ${chapitre}`;
-      await create_qcm(theme);
-      setUserAnswers({});
-      setCurrentQuestionIndex(0);
-      setFeedback(null);
-      setScore(null);
-      setQuizCompleted(false);
-    } catch (error) {
-      Alert.alert(
-        'Erreur',
-        'Impossible de générer le QCM. Veuillez réessayer.',
-        [{ text: 'OK' }]
-      );
+    // Calcul des XP gagnés basé sur le score
+    if (showResultsScreen) {
+      const baseXP = 10;
+      const bonusXP = Math.round((score / questions.length) * 10);
+      setXpEarned(baseXP + bonusXP);
     }
+  }, [showResultsScreen, score, questions.length]);
+
+  const handleQuizComplete = (finalScore: number, timeTaken: number) => {
+    setScore(finalScore);
+    setTotalTime(timeTaken);
+    setShowResultsScreen(true);
   };
 
-  const handleAnswerSelect = (selectedAnswer: string) => {
-    setUserAnswers(prev => ({
-      ...prev,
-      [currentQuestionIndex]: selectedAnswer
-    }));
-    if (!currentQCM) return;
-    const isCorrect = selectedAnswer === currentQCM.qcm[currentQuestionIndex].correct_answer;
-    setFeedback(isCorrect ? 'correct' : 'incorrect');
-    setCanGoNext(true);
-  };
-
-  const handleNext = () => {
-    setFeedback(null);
-    setCanGoNext(false);
-    if (currentQCM && currentQuestionIndex < currentQCM.qcm.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-    } else {
-      calculateScore();
-    }
-  };
-
-  const handlePreviousQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
-    }
-  };
-
-  const handleGoBack = () => {
+  const handleQuit = () => {
     navigation.goBack();
   };
 
-  const calculateScore = () => {
-    if (!currentQCM) return;
-
-    let correctAnswers = 0;
-    currentQCM.qcm.forEach((question, index) => {
-      if (userAnswers[index] === question.correct_answer) {
-        correctAnswers++;
-      }
-    });
-
-    const finalScore = Math.round((correctAnswers / currentQCM.qcm.length) * 100);
-    setScore(finalScore);
-    setQuizCompleted(true);
+  const handleRestartQuiz = () => {
+    setShowResultsScreen(false);
+    setScore(0);
+    setTotalTime(0);
+    setXpEarned(0);
   };
 
-  const resetQuiz = () => {
-    setUserAnswers({});
-    setCurrentQuestionIndex(0);
-    setFeedback(null);
-    setScore(null);
-    setQuizCompleted(false);
+  const handleBackToHome = () => {
+    navigation.goBack();
   };
 
-  // Écran de chargement
-  if (isLoading) {
+  if (showResultsScreen) {
     return (
-        <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: 10,
-          backgroundColor: '#FFF8F1'
-        }}>
-          <ActivityIndicator size="large" color="#11181C" />
-          <TypographyComponent
-            variant="body"
-            style={{ marginTop: 10, textAlign: 'center' }}
-            color={colors.text.title}
-            >
-            Génération du QCM en cours...
-          </TypographyComponent>
-        </View>
+      <QCMResultsScreen
+        score={score}
+        totalQuestions={questions.length}
+        totalTime={totalTime}
+        xpEarned={xpEarned}
+        onRestart={handleRestartQuiz}
+        onBackToHome={handleBackToHome}
+      />
     );
   }
 
-  // Écran d'erreur
-  if (error) {
-    return (
-        <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: 20,
-          backgroundColor: '#1F2937'
-        }}>
-          <View style={{
-            padding: 30,
-            alignItems: 'center',
-            width: '100%',
-            backgroundColor: '#374151',
-            borderRadius: 16
-          }}>
-            <Text style={{ fontSize: 48, marginBottom: 20 }}>⚠️</Text>
-            <Text style={{
-              fontSize: 20,
-              fontWeight: 'bold',
-              marginBottom: 15,
-              textAlign: 'center',
-              color: '#FFFFFF'
-            }}>
-              Erreur
-            </Text>
-            <Text style={{
-              marginBottom: 25,
-              textAlign: 'center',
-              color: '#9CA3AF',
-              fontSize: 16,
-              lineHeight: 22
-            }}>
-              {error}
-            </Text>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#10B981',
-                paddingVertical: 16,
-                paddingHorizontal: 32,
-                borderRadius: 12,
-                minWidth: 120
-              }}
-              onPress={generateQCM}
-            >
-              <Text style={{
-                color: '#FFFFFF',
-                fontWeight: 'bold',
-                fontSize: 16,
-                textAlign: 'center'
-              }}>
-                Réessayer
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-    );
-  }
-
-  // Écran de fin de quiz
-  if (quizCompleted) {
-    return (
-      <View style={{ flex: 1, backgroundColor: '#FFF8F1' }}>
-        {/* Bouton retour chapitre */}
-        <TouchableOpacity
-          onPress={handleGoBack}
-          style={{
-            position: 'absolute',
-            top: 30,
-            left: 20,
-            zIndex: 10,
-            width: 44,
-            height: 44,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 22
-          }}
-        >
-          <Ionicons name="arrow-back" size={26} color="#9CA3AF" />
-        </TouchableOpacity>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#FFF8F1' }}>
-          <View style={{ padding: 30, alignItems: 'center', width: '100%', backgroundColor: '#374151', borderRadius: 16 }}>
-            <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#10B981', marginBottom: 16 }}>Résultat</Text>
-            <Text style={{ fontSize: 22, color: '#FFFFFF', marginBottom: 10 }}>{score}% de bonnes réponses</Text>
-            <Text style={{ fontSize: 16, color: '#9CA3AF', marginBottom: 30 }}>
-              {`Vous avez répondu correctement à ${score !== null && currentQCM ? Math.round((score/100)*currentQCM.qcm.length) : 0} question(s) sur ${currentQCM?.qcm.length || 0}.`}
-            </Text>
-            <TouchableOpacity
-              style={{ backgroundColor: '#10B981', paddingVertical: 16, paddingHorizontal: 32, borderRadius: 12, minWidth: 120, marginBottom: 10 }}
-              onPress={generateQCM}
-            >
-              <Text style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: 16, textAlign: 'center' }}>Nouveau QCM</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ backgroundColor: '#6B7280', paddingVertical: 16, paddingHorizontal: 32, borderRadius: 12, minWidth: 120 }}
-              onPress={resetQuiz}
-            >
-              <Text style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: 16, textAlign: 'center' }}>Recommencer</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    );
-  }
-
-  // Vue principale du quiz avec question
   return (
-    <View style={{ flex: 1, backgroundColor: '#FFF8F1' }}>
-      {currentQCM && (
-        <QuestionComponent
-          question={currentQCM.qcm[currentQuestionIndex]}
-          questionIndex={currentQuestionIndex}
-          totalQuestions={currentQCM.qcm.length}
-          onAnswerSelect={handleAnswerSelect}
-          selectedAnswer={userAnswers[currentQuestionIndex]}
-          showCorrection={!!feedback}
-          feedback={feedback}
-          onGoBack={handleGoBack}
-          onNext={handleNext}
-          canGoNext={canGoNext}
-        />
-      )}
-    </View>
+    <QCMScreen
+      questions={questions}
+      onQuizComplete={handleQuizComplete}
+      onQuit={handleQuit}
+    />
   );
-}
+};
 
 export default ExercicesScreen;

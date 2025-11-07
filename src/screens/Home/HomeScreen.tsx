@@ -10,7 +10,7 @@ import { colors } from '@themes/colors';
 import HomeFooter from '@components/Home/HomeFooter.component';
 import HomeGame from '@components/Home/HomeGame.component';
 import Card from '@components/Card.component';
-import WelcomeCard from '@components/WelcomeCard.component';
+import WelcomeCard from '@components/Cards/WelcomeCard.component';
 import { useHomeScreen } from '@hook/useHomeScreen';
 import { useUserStore } from '@store/user/user.store';
 
@@ -80,10 +80,9 @@ function Home({ navigation }: HomeScreenProps) {
           navigation={navigation}
         />
         <ScrollView showsVerticalScrollIndicator={false}>
-          {/* ← AJOUT : Carte de bienvenue */}
           <WelcomeCard
             userName={user?.prenom}
-            // onPress={() => navigation.navigate('Courses')}
+            onPress={() => navigation.navigate('Lesson')}
           />
 
           <HomeGame
@@ -100,14 +99,14 @@ function Home({ navigation }: HomeScreenProps) {
                 Derniers succès 🏆
               </TypographyComponent>
             </View>
-            <View style={{ flexDirection: 'row', paddingHorizontal: 10 }}>
+            <View style={{ flexDirection: 'column', paddingHorizontal: 10 }}>
               {recentAchievements.map((achievement) => (
                 <Card
                   key={achievement.id}
                   variant='achievement'
                   title={achievement.title}
                   description={achievement.date}
-                  style={{ width: 150, height: 120, marginRight: 5 }}
+                  style={{ height: 120, marginRight: 5 }}
                 />
               ))}
             </View>
