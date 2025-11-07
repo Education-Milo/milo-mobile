@@ -1,10 +1,5 @@
-import axios, {
-  AxiosError,
-  AxiosRequestConfig,
-  CreateAxiosDefaults,
-} from 'axios';
+import axios, { AxiosError, CreateAxiosDefaults } from 'axios';
 import { API_URL } from '@env';
-import { use } from 'react';
 
 const APIAxios = axios.create({
   baseURL: API_URL,
@@ -29,13 +24,14 @@ const isPublicRoute = (url?: string): boolean => {
 APIAxios.interceptors.request.use(
   async config => {
     const { useAuthStore } = await import('@store/auth/auth.store');
+    const accessToken = useAuthStore.getState().accessToken;
     try {
       if (!isPublicRoute(config.url)) {
         await useAuthStore.getState().ensureTokenValid();
       }
-
-      const accessToken = useAuthStore.getState().accessToken;
-      if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
+      if (accessToken){
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
       return config;
     } catch (err) {
       return Promise.reject(err);
@@ -51,19 +47,28 @@ APIAxios.interceptors.response.use(
     return res;
   },
   async (err: AxiosError) => {
+    if (err.config){
+      console.log(
+        `Error with ${err.config.method?.toUpperCase()} to ${
+          APIAxios.defaults.baseURL
+        }${err.config.url}`
+      );
+    }
+    if (err.response){
+      const { useAuthStore } = await import('@store/auth/auth.store');
+      if (err.response.status === 403) {
+        await useAuthStore.getState().logout();
+      }
+    } else if (err.request) {
+      console.error('Error request:', err.request);
+    } else {
+      console.error('Error message:', err.message);
+    }
     const originalRequest = err.config
 
     if (err.response?.status === 401 ) {
       if (isPublicRoute(originalRequest?.url)) {
         return Promise.reject(err);
-      }
-        console.error('Unauthorized access - token expired, logging out');
-
-      try {
-        const { useAuthStore } = await import('@store/auth/auth.store');
-        await useAuthStore.getState().logout();
-      } catch (logoutError) {
-        console.error('Error during automatic logout:', logoutError);
       }
     }
 

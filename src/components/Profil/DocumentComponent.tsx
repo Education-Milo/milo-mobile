@@ -3,8 +3,8 @@ import { Text, View, TouchableOpacity, Alert, Button } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '@navigation/types';
-import MainButtonComponent from '@components/MainButtonComponent';
+import { RootStackParamList } from '@navigation/HoldVersion/types';
+import MainButtonComponent from '@components/MainButton.component';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

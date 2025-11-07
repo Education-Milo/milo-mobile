@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import TypographyComponent from '@components/Typography.component';
-import { colors } from '@themes/colors';
+import { colors } from '@theme/colors';
 
 interface LessonCardProps {
   userName?: string;

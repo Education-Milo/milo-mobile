@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import TypographyComponent from '@components/Typography.component';
-import { colors } from '@themes/colors';
+import { colors } from '@theme/colors';
 import Card from '@components/Card.component';
 
 interface Course {

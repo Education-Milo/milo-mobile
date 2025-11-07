@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Image, TouchableOpacity, View, ViewStyle, ImageStyle, Modal, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import TypographyComponent from './Typography.component';
-import { colors } from '@themes/colors';
+import { colors } from '@theme/colors';
 interface HeaderProps {
   notificationCount?: number;
   userPoints?: number;

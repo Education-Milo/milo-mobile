@@ -1,139 +1,190 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  TouchableOpacity,
   View,
+  TextInput,
+  TouchableOpacity,
+  Animated,
+  StyleSheet,
 } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '@navigation/types';
-import { Ionicons } from '@expo/vector-icons';
-import { colors } from '@themes/colors';
-import MainButton from '@components/MainButtonComponent';
-import TypographyComponent from '@components/Typography.component';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Typography from '@components/Typography.component';
 import TextFieldComponent from '@components/TextField.component';
-import { useLoginForm } from '@hook/useLoginForm';
+import MainButtonComponent from '@components/MainButton.component';
+import { colors } from '@theme/colors';
+import { UnAuthScreenNames } from '@navigation/UnAuth/unAuthNavigator.model';
+import { Ionicons } from '@expo/vector-icons';
+import type { UnAuthStackParamList } from '@navigation/UnAuth/unAuthNavigator.model';
+import type { LoginFormData } from 'src/validations/login.validation.yup';
+import { useTranslation } from 'react-i18next';
 
-export interface LoginFormProps {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
-  onLoginSuccess?: () => void;
-  onLoadingChange: (loading: boolean) => void;
-  onFocus?: () => void;
-  onBlur?: () => void;
+interface FormErrors {
+  email?: string;
+  password?: string;
 }
 
-function LoginForm({ navigation, onLoginSuccess, onLoadingChange }: LoginFormProps) {
-  const {
-    email,
-    setEmail,
-    password,
-    setPassword,
-    isLoading,
-    errors,
-    handleLogin,
-    goToForgotPassword,
-  } = useLoginForm({ navigation, onLoginSuccess, onLoadingChange });
+interface LoginFormProps {
+  formData: LoginFormData;
+  errors: FormErrors;
+  loading: boolean;
+  onEmailChange: (text: string) => void;
+  onPasswordChange: (text: string) => void;
+  onSubmit: () => void;
+  onFocus: () => void;
+  onBlur: () => void;
+  animations: {
+    titleOpacity: Animated.Value;
+    titleTranslateY: Animated.Value;
+    emailOpacity: Animated.Value;
+    emailTranslateY: Animated.Value;
+    passwordOpacity: Animated.Value;
+    passwordTranslateY: Animated.Value;
+    forgotPasswordOpacity: Animated.Value;
+    forgotPasswordTranslateY: Animated.Value;
+    buttonOpacity: Animated.Value;
+    buttonTranslateY: Animated.Value;
+    buttonScale: Animated.Value;
+    animateButtonPress: () => void;
+  };
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({
+  formData,
+  errors,
+  loading,
+  onEmailChange,
+  onPasswordChange,
+  onSubmit,
+  onFocus,
+  onBlur,
+  animations,
+}) => {
+  const { t } = useTranslation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<UnAuthStackParamList>>();
+  const passwordRef = useRef<TextInput>(null);
+
+  const navigateToForgotPassword = () => {
+    navigation.navigate(UnAuthScreenNames.ForgotPassword);
+  };
+
+  const handleButtonPress = () => {
+    animations.animateButtonPress();
+    onSubmit();
+  };
 
   return (
-    <>
-      <TypographyComponent
-        variant='h3'
+    <View style={styles.container}>
+      <Animated.View
         style={{
-          alignSelf: 'flex-start',
-          marginLeft: 10,
-          marginBottom: 15,
+          opacity: animations.titleOpacity,
+          transform: [{ translateY: animations.titleTranslateY }],
         }}
-        color={colors.text.title}
       >
-        Se connecter
-      </TypographyComponent>
+        <Typography variant='h2' color={colors.text.title}>
+          {t('login.title')}
+        </Typography>
+      </Animated.View>
 
-      {/* ✅ AJOUT : Affichage de l'erreur générale */}
-      {errors.general && (
-        <View style={localStyles.errorContainer}>
-          <Ionicons name="alert-circle" size={20} color="#DC2626" />
-          <TypographyComponent
-            variant='bodySmall'
-            style={localStyles.errorText}
-          >
-            {errors.general}
-          </TypographyComponent>
-        </View>
-      )}
-
-      <View style={localStyles.inputContainer}>
+      <Animated.View
+        style={{
+          opacity: animations.emailOpacity,
+          transform: [{ translateY: animations.emailTranslateY }],
+        }}
+      >
         <TextFieldComponent
-          placeholder="Votre adresse email"
+          placeholder={t('login.email')}
           icon={<Ionicons name='mail-outline' size={20} color='#666' />}
-          value={email}
-          onChangeText={text => setEmail(text)}
-          keyboardType="email-address"
+          type='email'
+          returnKeyType='next'
+          onSubmitEditing={() => passwordRef.current?.focus()}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          importantForAutofill='yes'
+          textContentType='emailAddress'
+          autoCapitalize='none'
           autoComplete='email'
-          autoCapitalize="none"
-          editable={!isLoading}
+          value={formData.email}
+          onChangeText={onEmailChange}
           error={errors.email}
         />
-      </View>
+      </Animated.View>
 
-      <View style={localStyles.inputContainer}>
+      <Animated.View
+        style={{
+          opacity: animations.passwordOpacity,
+          transform: [{ translateY: animations.passwordTranslateY }],
+        }}
+      >
         <TextFieldComponent
-          placeholder="Votre mot de passe"
+          ref={passwordRef}
+          placeholder={t('login.password')}
           icon={<Ionicons name='lock-closed-outline' size={20} color='#666' />}
-          value={password}
-          onChangeText={text => setPassword(text)}
-          type="password"
+          type='password'
+          returnKeyType='done'
+          onSubmitEditing={handleButtonPress}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          importantForAutofill='yes'
+          textContentType='password'
           autoComplete='password'
-          editable={!isLoading}
+          autoCapitalize='none'
+          value={formData.password}
+          onChangeText={onPasswordChange}
           error={errors.password}
         />
+      </Animated.View>
+
+      <Animated.View
+        style={{
+          opacity: animations.forgotPasswordOpacity,
+          transform: [{ translateY: animations.forgotPasswordTranslateY }],
+        }}
+      >
         <TouchableOpacity
-          disabled={isLoading}
-          style={localStyles.forgotPasswordContainer}
-          onPress={goToForgotPassword}
+          style={styles.forgotPasswordButton}
+          onPress={navigateToForgotPassword}
+          disabled={loading}
         >
-          <TypographyComponent
-            variant='bodySmall'
-            style={{ color: '#FF8C00', textDecorationLine: 'underline' }}
+          <Typography
+            variant='bodyLarge'
+            color={colors.buttonText}
+            style={styles.forgotPasswordText}
           >
-            Mot de passe oublié ?
-          </TypographyComponent>
+            {t('login.forgotPassword')}
+          </Typography>
         </TouchableOpacity>
-      </View>
+      </Animated.View>
 
-      <MainButton
-        onPress={handleLogin}
-        loading={isLoading}
-        title="Se connecter"
-      />
-    </>
+      <Animated.View
+        style={{
+          opacity: animations.buttonOpacity,
+          transform: [
+            { translateY: animations.buttonTranslateY },
+            { scale: animations.buttonScale },
+          ],
+        }}
+      >
+        <MainButtonComponent
+          title={t('login.title')}
+          onPress={handleButtonPress}
+          loading={loading}
+        />
+      </Animated.View>
+    </View>
   );
-}
-
-const localStyles = {
-  inputContainer: {
-    width: '100%' as const,
-    marginBottom: 15,
-  },
-  forgotPasswordContainer: {
-    alignItems: 'flex-end' as const,
-    marginTop: 8,
-  },
-  // ✅ AJOUT : Style pour l'erreur générale
-  errorContainer: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    backgroundColor: '#FEE2E2',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: '#DC2626',
-  },
-  errorText: {
-    color: '#DC2626',
-    marginLeft: 8,
-    flex: 1,
-  },
 };
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 20,
+  },
+  forgotPasswordButton: {
+    alignSelf: 'flex-end',
+  },
+  forgotPasswordText: {
+    textDecorationLine: 'underline',
+  },
+});
 
 export default LoginForm;

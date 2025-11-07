@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../navigation/types';
-import QCMScreen from './Exercices/QCMScreen';
-import QCMResultsScreen from './Exercices/QCMResultsScreen';
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'ExercicesScreen'>;
-type ExercicesRouteProp = RouteProp<RootStackParamList, 'ExercicesScreen'>;
+import QCMScreen from './QCMScreen';
+import QCMResultsScreen from './QCMResultsScreen';
+import { useNavigation } from '@react-navigation/native';
 
 interface Question {
   id: number;
@@ -15,13 +11,9 @@ interface Question {
   correctAnswer: string;
 }
 
-interface ExercicesScreenProps {
-  navigation: NavigationProp;
-  route: ExercicesRouteProp;
-}
 
-const ExercicesScreen: React.FC<ExercicesScreenProps> = ({ navigation, route }) => {
-  // Données d'exemple pour le QCM
+const ExercicesScreen = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [questions] = useState<Question[]>([
     {
       id: 1,
@@ -49,7 +41,6 @@ const ExercicesScreen: React.FC<ExercicesScreenProps> = ({ navigation, route }) 
   const [xpEarned, setXpEarned] = useState(0);
 
   useEffect(() => {
-    // Calcul des XP gagnés basé sur le score
     if (showResultsScreen) {
       const baseXP = 10;
       const bonusXP = Math.round((score / questions.length) * 10);
