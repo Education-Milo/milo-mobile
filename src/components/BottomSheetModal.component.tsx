@@ -5,8 +5,9 @@ import {
   BottomSheetModalProps,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
-import { colors } from '@themes/colors';
+import { colors } from '@theme/colors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React from 'react';
 
 interface BottomSheetComponentProps extends BottomSheetModalProps {
   children: React.ReactNode;

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '@navigation/types';
+import { AuthStackParamList } from '@navigation/Auth/authNavigator.model';
 import { fakeRecentCourses, fakeDailyMissions } from '@api/fake-data-api';
 
 interface Mission {
@@ -22,7 +22,7 @@ interface Course {
 }
 
 export interface UseHomeScreenOptions {
-  navigation?: NativeStackNavigationProp<RootStackParamList>;
+  navigation?: NativeStackNavigationProp<AuthStackParamList>;
 }
 
 export interface UseHomeScreenReturn {
@@ -49,7 +49,6 @@ export function useHomeScreen(options: UseHomeScreenOptions = {}): UseHomeScreen
   const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
-    // À remplacer par de vrais appels API
     fetch('/api/courses')
       .then(res => res.json())
       .then((data: Course[]) => {
@@ -91,7 +90,7 @@ export function useHomeScreen(options: UseHomeScreenOptions = {}): UseHomeScreen
     if (course) {
       navigation.navigate('LessonChapter', { matiere: course.subject });
     } else {
-      navigation.navigate('Lesson');
+      navigation.navigate('Lessons');
     }
   };
 
@@ -115,7 +114,7 @@ export function useHomeScreen(options: UseHomeScreenOptions = {}): UseHomeScreen
       if (course) {
         navigation.navigate('LessonChapter', { matiere: course.subject });
       } else {
-        navigation.navigate('Lesson');
+        navigation.navigate('Lessons');
       }
     }
     handleMenuClose();

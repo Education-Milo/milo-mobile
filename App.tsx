@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import AppNavigator from './src/navigation/AppNavigator';
 import AppInitializer from '@screens/AppInitializer';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import React from 'react';
+import RootNavigator from '@navigation/Root/rootNavigator';
 
 export default function App() {
   return (
@@ -11,7 +11,7 @@ export default function App() {
       <BottomSheetModalProvider>
         <AppInitializer>
           <StatusBar style="auto" />
-          <AppNavigator />
+          <RootNavigator />
         </AppInitializer>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>

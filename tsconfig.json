@@ -5,16 +5,20 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
+      "@api/*": ["src/api/*"],
+      "@screens/*": ["src/screens/*"],
       "@components/*": ["src/components/*"],
+      "@navigation/*": ["src/navigation/*"],
+      "@store/*": ["src/store/*"],
+      "@theme/*": ["src/theme/*"],
+      "@utils/*": ["src/utils/*"],
+      "@i18n/*": ["src/i18n/*"],
+      "@hooks/*": ["src/hook/*"],
+      "@validations/*": ["src/validations/*"],
       "@constants/*": ["src/navigation/constants/*"],
       "@assets/*": ["assets/*"],
-      "@screens/*": ["src/screens/*"],
-      "@navigation/*": ["src/navigation/*"],
-      "@themes/*": ["src/theme/*"],
-      "@store/*": ["src/store/*"],
-      "@api/*": ["src/api/*"],
       "@env": ["./node_modules/react-native-dotenv"],
-      "@hook/*": ["src/hook/*"],
+      "@/*": ["src/*"]
     }
   }
 }

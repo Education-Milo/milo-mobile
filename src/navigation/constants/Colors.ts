@@ -110,23 +110,6 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontSize: 14,
   },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 20,
-    width: '100%',
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#DDD',
-  },
-  dividerText: {
-    marginHorizontal: 15,
-    color: '#666',
-    fontSize: 14,
-    fontWeight: '500',
-  },
   signupContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -239,29 +222,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 10,
   },
-  roleButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#DDD',
-    alignItems: 'center',
-  },
-  roleButtonActive: {
-    backgroundColor: '#FF8C00',
-    borderColor: '#FF8C00',
-  },
-  roleButtonText: {
-    color: '#11181C',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  roleButtonTextActive: {
-    color: '#FFF',
-    fontWeight: 'bold',
-  },
   termsContainer: {
     marginBottom: 10,
   },
@@ -302,31 +262,31 @@ const styles = StyleSheet.create({
 
   // Styles pour la NavBar - À ajouter dans Colors.ts
 
-  navBarContainer: {
-    // position: 'absolute',
-    // bottom: 0,
-    // left: 0,
-    // right: 0,
-    backgroundColor: '#FFF',
-    borderTopWidth: 1,
-    borderTopColor: '#E5E5E5',
-    paddingBottom: Platform.OS === 'ios' ? 20 : 10,
-    paddingTop: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 5,
-  },
-  navBarContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
+  // navBarContainer: {
+  //   // position: 'absolute',
+  //   // bottom: 0,
+  //   // left: 0,
+  //   // right: 0,
+  //   backgroundColor: '#FFF',
+  //   borderTopWidth: 1,
+  //   borderTopColor: '#E5E5E5',
+  //   paddingBottom: Platform.OS === 'ios' ? 20 : 10,
+  //   paddingTop: 10,
+  //   shadowColor: '#000',
+  //   shadowOffset: {
+  //     width: 0,
+  //     height: -2,
+  //   },
+  //   shadowOpacity: 0.1,
+  //   shadowRadius: 3,
+  //   elevation: 5,
+  // },
+  // navBarContent: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-around',
+  //   alignItems: 'center',
+  //   paddingHorizontal: 20,
+  // },
   navItem: {
     flex: 1,
     alignItems: 'center',

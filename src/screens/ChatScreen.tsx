@@ -1,6 +1,6 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Layout from '@components/Layout';
-import { RootStackParamList } from '@navigation/types';
+import { RootStackParamList } from '@navigation/HoldVersion/types';
 import { View, Text } from 'react-native';
 import styles from '@navigation/constants/Colors';
 import { RouteProp } from '@react-navigation/native';

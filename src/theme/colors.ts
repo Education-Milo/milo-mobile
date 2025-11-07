@@ -51,4 +51,19 @@ export const colors = {
     background: '#f0f8ff',
     button: '#6200ee',
   },
+
+  buttonText:'#FF8C00',
+  IconColor: '#666',
+
+  white_2: 'rgba(255, 255, 255, 0.02)',
+  white_4: 'rgba(255, 255, 255, 0.04)',
+  white_5: 'rgba(255, 255, 255, 0.05)',
+  white_10: 'rgba(255, 255, 255, 0.1)',
+  white_15: 'rgba(255, 255, 255, 0.15)',
+  white_20: 'rgba(255, 255, 255, 0.2)',
+  white_25: 'rgba(255, 255, 255, 0.25)',
+  white_30: 'rgba(255, 255, 255, 0.3)',
+  white_40: 'rgba(255, 255, 255, 0.4)',
+  white_50: 'rgba(255, 255, 255, 0.5)',
+  white_70: 'rgba(255, 255, 255, 0.7)',
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import TypographyComponent from '@components/Typography.component';
-import { colors } from '@themes/colors';
+import { colors } from '@theme/colors';
 
 // Types simplifiés
 export type CardVariant = 'mission' | 'achievement' | 'course' | 'custom';

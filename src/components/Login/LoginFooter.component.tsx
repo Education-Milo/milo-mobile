@@ -1,41 +1,133 @@
-import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '@navigation/types';
-import styles from '@navigation/constants/Colors';
-import TypographyComponent from '@components/Typography.component';
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
+import React, { useRef, useEffect } from 'react';
+import { TouchableOpacity, Animated, Easing, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Typography from '@components/Typography.component';
+import { colors } from '@theme/colors';
+import { UnAuthScreenNames } from '@navigation/UnAuth/unAuthNavigator.model';
+import type { UnAuthStackParamList } from '@navigation/UnAuth/unAuthNavigator.model';
 
 interface LoginFooterProps {
-  navigation: NavigationProp;
-  isLoading: boolean;
+  loading: boolean;
+  isFieldFocused: boolean;
 }
 
-function LoginFooter({ navigation, isLoading }: LoginFooterProps) {
+const LoginFooter: React.FC<LoginFooterProps> = ({
+  loading,
+  isFieldFocused,
+}) => {
+  const { t } = useTranslation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<UnAuthStackParamList>>();
+
+  // Animation values
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(30)).current;
+  const scale = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (!isFieldFocused) {
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 600,
+          delay: 800,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 600,
+          delay: 800,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [isFieldFocused]);
+
+  const navigateToRegister = () => {
+    Animated.sequence([
+      Animated.timing(scale, {
+        toValue: 0.95,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scale, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    navigation.navigate(UnAuthScreenNames.Register);
+  };
+
+  if (isFieldFocused) {
+    return null;
+  }
+
   return (
-    <>
+    <Animated.View
+      style={{
+        opacity,
+        transform: [{ translateY }, { scale }],
+      }}
+    >
       <View style={styles.dividerContainer}>
         <View style={styles.dividerLine} />
-        <TypographyComponent variant="bodySmall" style={styles.dividerText}>
+        <Typography variant="bodySmall" style={styles.dividerText}>
           OU
-        </TypographyComponent>
+        </Typography>
         <View style={styles.dividerLine} />
       </View>
+
       <TouchableOpacity
-        onPress={() => navigation.navigate('Register')}
-        disabled={isLoading}
-        style={styles.signupContainer}
+        style={styles.button}
+        onPress={navigateToRegister}
+        disabled={loading}
+        activeOpacity={0.8}
       >
-      <TypographyComponent variant="bodySmall">
-        Vous n'avez pas de compte ?
-      </TypographyComponent>
-        <TypographyComponent variant="body" style={{ color: '#FF8C00', textDecorationLine: 'underline'}}>
-          Inscrivez-vous
-        </TypographyComponent>
+        <Typography variant='body'>
+          {t('login.noAccount')}
+        </Typography>
+        <Typography
+          variant='bodyLarge'
+          color={colors.buttonText}
+          style={styles.registerText}
+        >
+          {` ${t('login.register')}`}
+        </Typography>
       </TouchableOpacity>
-    </>
+    </Animated.View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  registerText: {
+    textDecorationLine: 'underline',
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+    width: '100%',
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#DDD',
+  },
+  dividerText: {
+    marginHorizontal: 15,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+});
 
 export default LoginFooter;
