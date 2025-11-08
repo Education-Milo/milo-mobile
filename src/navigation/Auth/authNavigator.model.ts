@@ -15,7 +15,7 @@ export enum AuthScreenNames {
     Lessons: undefined;
     Scan: undefined;
     Game: undefined;
-    Profile: undefined;
+    More: undefined;
   };
 
   export type AuthStackParamList = {

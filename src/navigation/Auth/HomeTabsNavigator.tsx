@@ -7,10 +7,10 @@ import {
 import { useUserStore } from '@store/user/user.store';
 import HomeScreen from '@screens/HomeScreen';
 import LessonScreen from '@screens/LessonScreen';
-import ProfileScreen from '@screens/ProfileScreen';
 import GameScreen from '@screens/GameScreen';
 import BottomNavBar from '@components/BottomNavBar';
 import SelectDocumentScreen from '@screens/SelectDocumentScreen';
+import { View } from 'react-native';
 
 const Tab = createBottomTabNavigator<HomeTabsParamList>();
 
@@ -34,7 +34,7 @@ const HomeTabsNavigator = () => {
         <Tab.Screen name="Lessons" component={LessonScreen} />
         <Tab.Screen name="Scan" component={SelectDocumentScreen} />
         <Tab.Screen name="Game" component={GameScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
+        <Tab.Screen name="More" component={View} />
     </Tab.Navigator>
   );
 };

@@ -2,7 +2,7 @@ import React, { useEffect, ReactNode } from 'react';
 import { StyleSheet, AppState, AppStateStatus } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { useFonts } from '@hook/usefonts';
+import { useFonts } from '@hooks/usefonts';
 import { useAuthStore } from '@store/auth/auth.store'; // ← AJOUT
 
 SplashScreen.preventAutoHideAsync();

@@ -1,9 +1,10 @@
-import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import React, { useMemo, useRef } from 'react';
+import { View, TouchableOpacity, StyleSheet, Platform, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Route } from '@react-navigation/native';
 import TypographyComponent from '@components/Typography.component';
+import { colors } from '@theme/colors';
 
 interface NavItem {
   icon: keyof typeof Ionicons.glyphMap;
@@ -14,15 +15,51 @@ interface NavItem {
 function BottomNavBar(props: BottomTabBarProps) {
   const { state, navigation } = props;
 
+  const [showMenu, setShowMenu] = React.useState(false);
+  const menuAnimation = useRef(new Animated.Value(0)).current;
+
+  const menuItems = useMemo(() => [
+    { 
+      label: 'Profile', 
+      icon: 'person-circle-outline', 
+      routeName: 'Profile',
+      color: '#6B9BD1' // Bleu
+    },
+    { 
+      label: 'Amis', 
+      icon: 'people-circle-outline', 
+      routeName: 'Friends',
+      color: '#D4A5D4' // Violet/Rose
+    },
+  ], []);
+
   const navItems: NavItem[] = [
     { icon: 'home', routeName: 'Home' },
     { icon: 'reader', routeName: 'Lessons' },
     { icon: 'add', routeName: 'Scan', isCenter: true },
     { icon: 'trophy', routeName: 'Game' },
-    { icon: 'person', routeName: 'Profile' },
+    { icon: 'ellipsis-horizontal', routeName: 'More' },
   ];
 
+  React.useEffect(() => {
+    Animated.timing(menuAnimation, {
+      toValue: showMenu ? 1 : 0,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  }, [showMenu, menuAnimation]);
+
   const handleTabPress = (route: Route<string>, isFocused: boolean) => {
+    if (route.name === 'More') {
+      setShowMenu(prev => !prev);
+      return;
+    }
+    
+    // Fermer le menu si ouvert
+    if (showMenu) {
+      setShowMenu(false);
+    }
+
     const event = navigation.emit({
       type: 'tabPress',
       target: route.key,
@@ -34,26 +71,73 @@ function BottomNavBar(props: BottomTabBarProps) {
     }
   };
 
+  const isMoreActive = showMenu;
+
+  const handleMenuItemPress = (routeName: string) => {
+    setShowMenu(false);
+    navigation.navigate(routeName);
+  };
+
   const routes = state.routes;
+  
+  const menuHeight = menuAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, menuItems.length * 60 + 16], // Hauteur ajustée
+  });
+
+
+
+  
+  const MenuModal = () => {
+    return (
+      <>
+        {menuItems.map((item, index) => (
+            <React.Fragment key={item.label}>
+                <TouchableOpacity
+                    // ... (votre code menuItem existant)
+                    style={styles.menuItem}
+                    onPress={() => handleMenuItemPress(item.routeName)}
+                    activeOpacity={0.7}
+                >
+                    <View style={[styles.menuIconContainer, { backgroundColor: item.color }]}>
+                        <Ionicons
+                            name={item.icon as any}
+                            size={28}
+                            color="#FFFFFF"
+                        />
+                    </View>
+                    <TypographyComponent variant="body" style={styles.menuItemText}>
+                        {item.label}
+                    </TypographyComponent>
+                </TouchableOpacity>
+                {/* Ajouter le séparateur après chaque élément sauf le dernier */}
+                {index < menuItems.length - 1 && <View style={styles.divider} />}
+            </React.Fragment>
+        ))}
+      </>
+    );
+  };
 
   return (
-    <View style={[styles.navBarContainer, { backgroundColor: '#FFF8F1' }]}>
-      <View style={styles.navBarContent}>
-        {routes.map((route, index) => {
-          const navItem = navItems.find(item => item.routeName === route.name);
-          const isFocused = state.index === index;
-
-          if (!navItem) return null;
+    <View style={styles.fullNavBarWrapper}>
+      {showMenu && <MenuModal />}
+      
+      <View style={[styles.navBarContainer, { backgroundColor: '#FFF8F1' }]}>
+        <View style={styles.navBarContent}>
+          {routes.map((route, index) => {
+            const navItem = navItems.find(item => item.routeName === route.name);
+            const isFocused = state.index === index;
+            if (!navItem) return null;
+            
             return (
               <TouchableOpacity
                 key={route.key}
                 style={[
                   styles.navItem,
                   navItem.isCenter && styles.navItemCenter,
-                  isFocused &&
-                    !navItem.isCenter && {
-                      transform: [{ scale: 1.1 }],
-                    },
+                  isFocused && !navItem.isCenter && {
+                    transform: [{ scale: 1.1 }],
+                  },
                 ]}
                 onPress={() => handleTabPress(route, isFocused)}
                 activeOpacity={0.7}
@@ -63,24 +147,26 @@ function BottomNavBar(props: BottomTabBarProps) {
                     <Ionicons name={navItem.icon} size={20} color='#FFF' />
                   </View>
                 ) : (
-                  <>
-                    <View style={{ position: 'relative' }}>
-                      <Ionicons
-                        name={navItem.icon}
-                        size={25}
-                        color={isFocused ? '#FF8C00' : '#8E8E93'}
-                      />
-                    </View>
-                  </>
+                  <View style={{ position: 'relative' }}>
+                    <Ionicons
+                      name={navItem.icon}
+                      size={25}
+                      color={
+                        navItem.routeName === 'More' 
+                          ? (isMoreActive ? '#FF8C00' : '#8E8E93')
+                          : (isFocused ? '#FF8C00' : '#8E8E93')
+                      }
+                    />
+                  </View>
                 )}
               </TouchableOpacity>
             );
           })}
         </View>
       </View>
-    );
+    </View>
+  );
 }
-
 
 const styles = StyleSheet.create({
   navItem: {
@@ -136,7 +222,60 @@ const styles = StyleSheet.create({
     flex: 0,
     marginHorizontal: 8,
   },
-})
-
+  fullNavBarWrapper: {
+    position: 'relative',
+    zIndex: 10,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    backgroundColor: "transparent",
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
+  menuContainer: {
+    position: 'absolute',
+    bottom: '100%',
+    left: 0,
+    right: 0,
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: -1 }, // Très légère ombre
+    shadowOpacity: 0.05, // Très faible opacité
+    shadowRadius: 1, // Très faible rayon
+    elevation: 2, // Faible élévation pour Android
+    zIndex: 2,
+},
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+  },
+  menuIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  menuItemText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#2C2C2E',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#E5E5E5', // Couleur du séparateur (gris clair)
+    marginHorizontal: 0, // Enlever les marges pour qu'il aille de bord à bord
+    // Vous pourriez ajuster la couleur et l'épaisseur pour correspondre à Duolingo si nécessaire.
+},
+});
 
 export default BottomNavBar;
