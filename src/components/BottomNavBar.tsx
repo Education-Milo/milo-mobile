@@ -19,18 +19,23 @@ function BottomNavBar(props: BottomTabBarProps) {
   const menuAnimation = useRef(new Animated.Value(0)).current;
 
   const menuItems = useMemo(() => [
-    { 
-      label: 'Profile', 
-      icon: 'person-circle-outline', 
+    {
+      label: 'Profile',
+      icon: 'person-circle-outline',
       routeName: 'Profile',
       color: '#6B9BD1' // Bleu
     },
-    { 
-      label: 'Amis', 
-      icon: 'people-circle-outline', 
+    {
+      label: 'Amis',
+      icon: 'people-circle-outline',
       routeName: 'Friends',
       color: '#D4A5D4' // Violet/Rose
     },
+    {
+      label: 'Missions',
+      icon: 'flag-outline',
+      routeName: 'Missions',
+    }
   ], []);
 
   const navItems: NavItem[] = [
@@ -54,8 +59,6 @@ function BottomNavBar(props: BottomTabBarProps) {
       setShowMenu(prev => !prev);
       return;
     }
-    
-    // Fermer le menu si ouvert
     if (showMenu) {
       setShowMenu(false);
     }
@@ -79,22 +82,20 @@ function BottomNavBar(props: BottomTabBarProps) {
   };
 
   const routes = state.routes;
-  
   const menuHeight = menuAnimation.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, menuItems.length * 60 + 16], // Hauteur ajustée
+    outputRange: [0, menuItems.length * 60 + 16],
   });
 
 
 
-  
+
   const MenuModal = () => {
     return (
       <>
         {menuItems.map((item, index) => (
             <React.Fragment key={item.label}>
                 <TouchableOpacity
-                    // ... (votre code menuItem existant)
                     style={styles.menuItem}
                     onPress={() => handleMenuItemPress(item.routeName)}
                     activeOpacity={0.7}
@@ -110,7 +111,6 @@ function BottomNavBar(props: BottomTabBarProps) {
                         {item.label}
                     </TypographyComponent>
                 </TouchableOpacity>
-                {/* Ajouter le séparateur après chaque élément sauf le dernier */}
                 {index < menuItems.length - 1 && <View style={styles.divider} />}
             </React.Fragment>
         ))}
@@ -121,14 +121,12 @@ function BottomNavBar(props: BottomTabBarProps) {
   return (
     <View style={styles.fullNavBarWrapper}>
       {showMenu && <MenuModal />}
-      
       <View style={[styles.navBarContainer, { backgroundColor: '#FFF8F1' }]}>
         <View style={styles.navBarContent}>
           {routes.map((route, index) => {
             const navItem = navItems.find(item => item.routeName === route.name);
             const isFocused = state.index === index;
             if (!navItem) return null;
-            
             return (
               <TouchableOpacity
                 key={route.key}
@@ -152,7 +150,7 @@ function BottomNavBar(props: BottomTabBarProps) {
                       name={navItem.icon}
                       size={25}
                       color={
-                        navItem.routeName === 'More' 
+                        navItem.routeName === 'More'
                           ? (isMoreActive ? '#FF8C00' : '#8E8E93')
                           : (isFocused ? '#FF8C00' : '#8E8E93')
                       }
@@ -244,7 +242,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     paddingVertical: 8,
     paddingHorizontal: 16,
-    shadowColor: '#000', 
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: -1 }, // Très légère ombre
     shadowOpacity: 0.05, // Très faible opacité
     shadowRadius: 1, // Très faible rayon
@@ -274,7 +272,6 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#E5E5E5', // Couleur du séparateur (gris clair)
     marginHorizontal: 0, // Enlever les marges pour qu'il aille de bord à bord
-    // Vous pourriez ajuster la couleur et l'épaisseur pour correspondre à Duolingo si nécessaire.
 },
 });
 

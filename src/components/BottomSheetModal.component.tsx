@@ -9,45 +9,50 @@ import { colors } from '@theme/colors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import React from 'react';
 
-interface BottomSheetComponentProps extends BottomSheetModalProps {
+interface BottomSheetComponentProps extends Omit<BottomSheetModalProps, 'children'> {
   children: React.ReactNode;
-  ref?: React.RefObject<BottomSheetModal>;
 }
 
-const BottomSheetComponent = (props: BottomSheetComponentProps) => {
-  const { children, ref, ...rest } = props;
-  const insets = useSafeAreaInsets();
+const BottomSheetComponent = React.forwardRef<BottomSheetModal, BottomSheetComponentProps>(
+  (props, ref) => {
+    const { children, ...rest } = props;
+    const insets = useSafeAreaInsets();
 
-  return (
-    <BottomSheetModal
-      ref={ref}
-      enablePanDownToClose={true}
-      enableHandlePanningGesture={true}
-      enableContentPanningGesture={true}
-      handleStyle={styles.handle}
-      handleIndicatorStyle={styles.handleIndicator}
-      backgroundStyle={styles.background}
-      backdropComponent={props => (
-        <BottomSheetBackdrop
-          {...props}
-          disappearsOnIndex={-1}
-          appearsOnIndex={0}
-          onPress={() => {
-            Keyboard.dismiss();
-            ref?.current?.dismiss();
-          }}
-        />
-      )}
-      {...rest}
-    >
-      <BottomSheetView
-        style={[styles.container, { paddingBottom: insets.bottom + 16 }]}
+    return (
+      <BottomSheetModal
+        ref={ref}
+        enablePanDownToClose={true}
+        enableHandlePanningGesture={true}
+        enableContentPanningGesture={true}
+        handleStyle={styles.handle}
+        handleIndicatorStyle={styles.handleIndicator}
+        backgroundStyle={styles.background}
+        backdropComponent={props => (
+          <BottomSheetBackdrop
+            {...props}
+            disappearsOnIndex={-1}
+            appearsOnIndex={0}
+            onPress={() => {
+              Keyboard.dismiss();
+              if (ref && typeof ref !== 'function' && ref.current) {
+                ref.current.dismiss();
+              }
+            }}
+          />
+        )}
+        {...rest}
       >
-        {children}
-      </BottomSheetView>
-    </BottomSheetModal>
-  );
-};
+        <BottomSheetView
+          style={[styles.container, { paddingBottom: insets.bottom + 16 }]}
+        >
+          {children}
+        </BottomSheetView>
+      </BottomSheetModal>
+    );
+  }
+);
+
+BottomSheetComponent.displayName = 'BottomSheetComponent';
 
 const styles = StyleSheet.create({
   container: {

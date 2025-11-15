@@ -6,12 +6,12 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
-  Modal,
   Animated,
-  Dimensions
 } from 'react-native';
-
-const { height } = Dimensions.get('window');
+import { Ionicons } from '@expo/vector-icons';
+import QCMErrorModal from '@components/QCMErrorModal.component';
+import QCMSuccessModal from '@components/QCMSuccessModal.component';
+import { colors } from '@theme/colors';
 
 interface Question {
   id: number;
@@ -29,12 +29,21 @@ interface QCMScreenProps {
 const QCMScreen: React.FC<QCMScreenProps> = ({ questions, onQuizComplete, onQuit }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [showResultModal, setShowResultModal] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
   const [progress, setProgress] = useState(0);
   const [startTime] = useState(Date.now());
   const [score, setScore] = useState(0);
-  const slideAnim = useState(new Animated.Value(height))[0];
+  const [lives, setLives] = useState(3);
+  const [streak, setStreak] = useState(0);
+  
+  // États pour les modals
+  const [isErrorModalVisible, setIsErrorModalVisible] = useState(false);
+  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+  const [currentCorrectAnswer, setCurrentCorrectAnswer] = useState('');
+  
+  // Animation pour les options
+  const [scaleAnims] = useState(
+    questions[0].options.map(() => new Animated.Value(1))
+  );
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -42,98 +51,158 @@ const QCMScreen: React.FC<QCMScreenProps> = ({ questions, onQuizComplete, onQuit
     setProgress(((currentQuestionIndex + 1) / questions.length) * 100);
   }, [currentQuestionIndex, questions.length]);
 
-  const handleAnswerSelect = (answer: string) => {
+  const handleAnswerSelect = (answer: string, index: number) => {
     setSelectedAnswer(answer);
+    
+    // Animation de "bounce" sur la sélection
+    Animated.sequence([
+      Animated.timing(scaleAnims[index], {
+        toValue: 0.95,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnims[index], {
+        toValue: 1,
+        friction: 3,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const handleNextQuestion = (isCorrect: boolean) => {
+    if (isCorrect) {
+      setScore(prev => prev + 1);
+      setStreak(prev => prev + 1);
+    } else {
+      setStreak(0);
+      setLives(prev => Math.max(0, prev - 1));
+    }
+    
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+      setSelectedAnswer(null);
+      // Réinitialiser les animations
+      scaleAnims.forEach(anim => anim.setValue(1));
+    } else {
+      const endTime = Date.now();
+      const timeTaken = Math.round((endTime - startTime) / 1000);
+      onQuizComplete(isCorrect ? score + 1 : score, timeTaken);
+    }
   };
 
   const handleValidate = () => {
+    if (!selectedAnswer) return;
+
     const correct = selectedAnswer === currentQuestion.correctAnswer;
-    setIsCorrect(correct);
     
     if (correct) {
-      setScore(prev => prev + 1);
+      setIsSuccessModalVisible(true);
+    } else {
+      setCurrentCorrectAnswer(currentQuestion.correctAnswer);
+      setIsErrorModalVisible(true);
     }
-    
-    setShowResultModal(true);
-    
-    Animated.timing(slideAnim, {
-      toValue: 0,
-      duration: 400,
-      useNativeDriver: true,
-    }).start();
   };
-
-  const handleContinue = () => {
-    Animated.timing(slideAnim, {
-      toValue: height,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      setShowResultModal(false);
-      
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(prev => prev + 1);
-        setSelectedAnswer(null);
-      } else {
-        const endTime = Date.now();
-        const timeTaken = Math.round((endTime - startTime) / 1000);
-        // Utiliser une fonction pour obtenir le score à jour
-        setScore(currentScore => {
-          onQuizComplete(currentScore, timeTaken);
-          return currentScore;
-        });
-      }
-    });
+  
+  const handleCloseErrorModal = () => {
+    setIsErrorModalVisible(false);
+    setSelectedAnswer(null);
+    handleNextQuestion(false);
+  };
+  
+  const handleCloseSuccessModal = () => {
+    setIsSuccessModalVisible(false);
+    setSelectedAnswer(null);
+    handleNextQuestion(true);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* En-tête avec croix de fermeture et progression */}
+      {/* En-tête amélioré avec vies */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.closeButton} onPress={onQuit}>
-          <Text style={styles.closeButtonText}>×</Text>
+          <Ionicons name="close" size={24} color="#FF6B6B" />
         </TouchableOpacity>
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progress}%` }]} />
+
+        <View style={styles.headerCenter}>
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBar}>
+              <View style={[styles.progressFill, { width: `${progress}%` }]} />
+            </View>
+            <Text style={styles.progressText}>
+              {currentQuestionIndex + 1}/{questions.length}
+            </Text>
           </View>
-          <Text style={styles.progressText}>
-            {currentQuestionIndex + 1}/{questions.length}
-          </Text>
+
+          {/* Affichage du streak si > 1 */}
+          {streak > 1 && (
+            <View style={styles.streakBadge}>
+              <Ionicons name="flame" size={16} color="#FF6B6B" />
+              <Text style={styles.streakText}>{streak}</Text>
+            </View>
+          )}
+        </View>
+
+        {/* Système de vies */}
+        <View style={styles.livesContainer}>
+          {[...Array(3)].map((_, i) => (
+            <Ionicons
+              key={i}
+              name={i < lives ? "heart" : "heart-outline"}
+              size={24}
+              color={i < lives ? "#FF6B6B" : "#DDD"}
+              style={styles.heartIcon}
+            />
+          ))}
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
+        {/* Icône de la question (personnalisable selon le type) */}
+        <View style={styles.questionIconContainer}>
+          <View style={styles.questionIconCircle}>
+            <Ionicons name="help-circle" size={40} color="#F4922A" />
+          </View>
+        </View>
         <Text style={styles.question}>{currentQuestion.question}</Text>
-        
         <View style={styles.optionsContainer}>
           {currentQuestion.options.map((option, index) => (
-            <TouchableOpacity
+            <Animated.View
               key={index}
-              style={[
-                styles.option,
-                selectedAnswer === option && styles.selectedOption
-              ]}
-              onPress={() => handleAnswerSelect(option)}
+              style={{ transform: [{ scale: scaleAnims[index] }] }}
             >
-              <View style={[
-                styles.optionIndicator,
-                selectedAnswer === option && styles.selectedOptionIndicator
-              ]}>
-                <Text style={[
-                  styles.optionIndicatorText,
-                  selectedAnswer === option && styles.selectedOptionIndicatorText
+              <TouchableOpacity
+                style={[
+                  styles.option,
+                  selectedAnswer === option && styles.selectedOption
+                ]}
+                onPress={() => handleAnswerSelect(option, index)}
+                activeOpacity={0.7}
+              >
+                <View style={[
+                  styles.optionIndicator,
+                  selectedAnswer === option && styles.selectedOptionIndicator
                 ]}>
-                  {String.fromCharCode(65 + index)}
+                  <Text style={[
+                    styles.optionIndicatorText,
+                    selectedAnswer === option && styles.selectedOptionIndicatorText
+                  ]}>
+                    {String.fromCharCode(65 + index)}
+                  </Text>
+                </View>
+                <Text style={[
+                  styles.optionText,
+                  selectedAnswer === option && styles.selectedOptionText
+                ]}>
+                  {option}
                 </Text>
-              </View>
-              <Text style={styles.optionText}>{option}</Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </Animated.View>
           ))}
         </View>
       </ScrollView>
 
-      {/* Bouton de validation */}
+      {/* Footer avec bouton de validation amélioré */}
       <View style={styles.footer}>
         <TouchableOpacity
           style={[
@@ -142,55 +211,28 @@ const QCMScreen: React.FC<QCMScreenProps> = ({ questions, onQuizComplete, onQuit
           ]}
           onPress={handleValidate}
           disabled={!selectedAnswer}
+          activeOpacity={0.8}
         >
-          <Text style={styles.validateButtonText}>Valider</Text>
+          <Text style={styles.validateButtonText}>
+            {selectedAnswer ? "Valider ma réponse" : "Sélectionne une réponse"}
+          </Text>
+          {selectedAnswer && (
+            <Ionicons name="checkmark-circle" size={24} color="#FFF" style={styles.buttonIcon} />
+          )}
         </TouchableOpacity>
       </View>
 
-      {/* Modal de résultat */}
-      <Modal
-        transparent={true}
-        visible={showResultModal}
-        animationType="none"
-      >
-        <View style={styles.modalOverlay}>
-          <Animated.View 
-            style={[
-              styles.modalContent,
-              { 
-                transform: [{ translateY: slideAnim }],
-                backgroundColor: isCorrect ? '#4CAF50' : '#E41C11'
-              }
-            ]}
-          >
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>
-                {isCorrect ? 'Bonne réponse !' : 'Incorrect'}
-              </Text>
-            </View>
-            
-            <View style={styles.modalBody}>
-              <Text style={styles.modalMessage}>
-                {isCorrect 
-                  ? 'Excellent travail ! Vous maîtrisez bien ce concept.' 
-                  : `Bonne réponse : ${currentQuestion.correctAnswer}`
-                }
-              </Text>
-            </View>
-            
-            <View style={styles.modalFooter}>
-              <TouchableOpacity 
-                style={styles.modalButton}
-                onPress={handleContinue}
-              >
-                <Text style={styles.modalButtonText}>
-                  {isCorrect ? 'Continuer' : 'D\'accord'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        </View>
-      </Modal>
+      {/* Modals */}
+      <QCMErrorModal
+        isVisible={isErrorModalVisible}
+        correctAnswer={currentCorrectAnswer}
+        onClose={handleCloseErrorModal}
+      />
+      <QCMSuccessModal
+        isVisible={isSuccessModalVisible}
+        onClose={handleCloseSuccessModal}
+        streak={streak}
+      />
     </SafeAreaView>
   );
 };
@@ -198,104 +240,142 @@ const QCMScreen: React.FC<QCMScreenProps> = ({ questions, onQuizComplete, onQuit
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8F1',
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: '#F6EBDF',
+    borderBottomColor: '#E8EAED',
   },
   closeButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F6EBDF',
+    backgroundColor: '#FFE8E8',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  closeButtonText: {
-    fontSize: 24,
-    color: '#ED3C1D',
-    fontWeight: 'bold',
+  headerCenter: {
+    flex: 1,
+    marginHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   progressContainer: {
     flex: 1,
-    marginLeft: 20,
-    alignItems: 'center',
   },
   progressBar: {
     width: '100%',
-    height: 8,
-    backgroundColor: '#F6EBDF',
-    borderRadius: 4,
+    height: 10,
+    backgroundColor: '#E8EAED',
+    borderRadius: 5,
     overflow: 'hidden',
-    marginBottom: 5,
   },
   progressFill: {
     height: '100%',
     backgroundColor: '#F4922A',
-    borderRadius: 4,
+    borderRadius: 5,
   },
   progressText: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#666',
-    fontFamily: 'System',
+    fontWeight: '600',
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  streakBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFE8E8',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginLeft: 8,
+  },
+  streakText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FF6B6B',
+    marginLeft: 4,
+  },
+  livesContainer: {
+    flexDirection: 'row',
+  },
+  heartIcon: {
+    marginLeft: 4,
   },
   content: {
     flexGrow: 1,
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingTop: 24,
     paddingBottom: 100,
   },
+  questionIconContainer: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  questionIconCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#FFF4E6',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   question: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 30,
-    lineHeight: 28,
-    fontFamily: 'System',
+    color: '#1A1A1A',
+    marginBottom: 32,
+    lineHeight: 32,
+    textAlign: 'center',
   },
   optionsContainer: {
-    marginTop: 10,
+    marginTop: 8,
   },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFF',
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 16,
-    marginBottom: 15,
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: '#E8EAED',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
     elevation: 2,
   },
   selectedOption: {
-    borderWidth: 2,
     borderColor: '#F4922A',
-    backgroundColor: '#F6EBDF',
+    backgroundColor: '#FFF4E6',
+    shadowColor: '#F4922A',
+    shadowOpacity: 0.15,
+    elevation: 4,
   },
   optionIndicator: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#F6EBDF',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F0F0F0',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 15,
+    marginRight: 12,
   },
   selectedOptionIndicator: {
     backgroundColor: '#F4922A',
   },
   optionIndicatorText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#666',
+    color: '#999',
   },
   selectedOptionIndicatorText: {
     color: '#FFF',
@@ -304,7 +384,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     flex: 1,
-    fontFamily: 'System',
+    lineHeight: 22,
+  },
+  selectedOptionText: {
+    color: '#1A1A1A',
+    fontWeight: '600',
   },
   footer: {
     position: 'absolute',
@@ -312,82 +396,36 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: '#FFF8F1',
+    paddingVertical: 16,
+    backgroundColor: colors.background,
     borderTopWidth: 1,
-    borderTopColor: '#F6EBDF',
+    borderTopColor: '#E8EAED',
   },
   validateButton: {
     backgroundColor: '#F4922A',
-    borderRadius: 12,
-    paddingVertical: 16,
+    borderRadius: 16,
+    paddingVertical: 18,
+    flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    justifyContent: 'center',
+    shadowColor: '#F4922A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   disabledButton: {
-    backgroundColor: '#F6EBDF',
+    backgroundColor: '#E8EAED',
+    shadowOpacity: 0,
   },
   validateButtonText: {
     color: '#FFF',
     fontSize: 18,
     fontWeight: 'bold',
-    fontFamily: 'System',
   },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
-    minHeight: height * 0.3,
-    justifyContent: 'space-between',
-  },
-  modalHeader: {
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFF',
-    fontFamily: 'System',
-  },
-  modalBody: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-  },
-  modalMessage: {
-    fontSize: 18,
-    color: '#FFF',
-    textAlign: 'center',
-    lineHeight: 24,
-    fontFamily: 'System',
-  },
-  modalFooter: {
-    marginTop: 20,
-  },
-  modalButton: {
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  modalButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    fontFamily: 'System',
+  buttonIcon: {
+    marginLeft: 8,
   },
 });
 
 export default QCMScreen;
-

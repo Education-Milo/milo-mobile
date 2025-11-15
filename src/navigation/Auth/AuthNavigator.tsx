@@ -10,7 +10,7 @@ import ExercicesScreen from '@screens/ExercicesScreen';
 import LessonScreen from '@screens/LessonScreen';
 import SelectDocumentScreen from '@screens/SelectDocumentScreen';
 import CameraOrImportScreen from '@screens/CameraOrImportScreen';
-import LessonChapterScreen from '@screens/LessonChapterScreent';
+import LessonChapterScreen from '@screens/LessonChapterScreen';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 

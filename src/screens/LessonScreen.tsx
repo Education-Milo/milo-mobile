@@ -102,7 +102,7 @@ const LessonScreen = () =>{
         style={styles.container}
         showsVerticalScrollIndicator={false}
       >
-                <LessonCard
+        <LessonCard
           userName={user?.prenom}
         />
         <View style={styles.header}>
