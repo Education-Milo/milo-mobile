@@ -7,6 +7,7 @@ export enum AuthScreenNames {
     CameraOrImport = 'CameraOrImport',
     LessonChapter = 'LessonChapter',
     ExercicesScreen = 'ExercicesScreen',
+    MissionScreen = 'MissionScreen',
 
   }
 
@@ -16,6 +17,9 @@ export enum AuthScreenNames {
     Scan: undefined;
     Game: undefined;
     More: undefined;
+    Profile: undefined;
+    Friends: undefined;
+    MissionScreen: undefined;
   };
 
   export type AuthStackParamList = {
@@ -26,6 +30,7 @@ export enum AuthScreenNames {
     Scan: undefined;
     CameraOrImport: { documentType: string };
     LessonChapter: { matiere: string };
+    MissionScreen: undefined;
     // ChatScreen: { matiere: string; chapitre: string };
     ExercicesScreen: { matiere: string; chapitre: string };
   };

@@ -11,6 +11,7 @@ import GameScreen from '@screens/GameScreen';
 import BottomNavBar from '@components/BottomNavBar';
 import SelectDocumentScreen from '@screens/SelectDocumentScreen';
 import { View } from 'react-native';
+import MissionsScreen from '@screens/MissionScreen';
 
 const Tab = createBottomTabNavigator<HomeTabsParamList>();
 
@@ -34,6 +35,9 @@ const HomeTabsNavigator = () => {
         <Tab.Screen name="Lessons" component={LessonScreen} />
         <Tab.Screen name="Scan" component={SelectDocumentScreen} />
         <Tab.Screen name="Game" component={GameScreen} />
+        <Tab.Screen name="Friends" component={View} />
+        <Tab.Screen name="Profile" component={View} />
+        <Tab.Screen name="MissionScreen" component={MissionsScreen} />
         <Tab.Screen name="More" component={View} />
     </Tab.Navigator>
   );
