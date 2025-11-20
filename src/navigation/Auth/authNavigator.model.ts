@@ -8,6 +8,7 @@ export enum AuthScreenNames {
     LessonChapter = 'LessonChapter',
     ExercicesScreen = 'ExercicesScreen',
     MissionScreen = 'MissionScreen',
+    ChatScreen = 'ChatScreen',
 
   }
 
@@ -31,6 +32,7 @@ export enum AuthScreenNames {
     CameraOrImport: { documentType: string };
     LessonChapter: { matiere: string };
     MissionScreen: undefined;
+    ChatScreen: undefined;
     // ChatScreen: { matiere: string; chapitre: string };
     ExercicesScreen: { matiere: string; chapitre: string };
   };

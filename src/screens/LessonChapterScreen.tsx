@@ -131,11 +131,15 @@ const LessonChapter = () => {
 
   const handleOptionPress = (type: 'cours' | 'exercices') => {
     bottomSheetRef.current?.dismiss();
+    if (type === 'cours') {
+      navigation.navigate('ChatScreen');
+    } else {
+      navigation.navigate('ExercicesScreen', { matiere: matiere.matiere, chapitre: 'test'});
+      console.log(`Navigation vers ${type} pour la leçon ${selectedLesson?.id}`);
+    }
     // Navigation vers les pages correspondantes
     // navigation.navigate('Cours', { lessonId: selectedLesson?.id });
     // ou
-    navigation.navigate('ExercicesScreen', { matiere: matiere.matiere, chapitre: 'test'});
-    console.log(`Navigation vers ${type} pour la leçon ${selectedLesson?.id}`);
   };
 
   return (
