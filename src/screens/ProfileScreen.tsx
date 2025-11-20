@@ -77,7 +77,7 @@ const ProfileScreen = () => {
           <TypographyComponent variant="labelSmall" color={colors.text.secondary} style={{marginBottom: 6}}>
             {desc}
           </TypographyComponent>
-          
+
           {/* Barre de progression */}
           <View style={styles.progressBarBg}>
             <View style={[styles.progressBarFill, { width: `${percent}%` }]} />
@@ -93,7 +93,6 @@ const ProfileScreen = () => {
   };
 
   return (
-    <Layout>
       <ScrollView
         style={styles.container} 
         contentContainerStyle={{ paddingBottom: 40 }}
@@ -102,9 +101,9 @@ const ProfileScreen = () => {
         {/* --- Header & Profil --- */}
         <View style={styles.header}>
           <View style={styles.headerTopRow}>
-            <TouchableOpacity style={styles.iconButton}>
+            {/* <TouchableOpacity style={styles.iconButton}>
               <UserPlus size={24} color={colors.primary} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity style={styles.iconButton}>
               <Settings size={24} color={colors.text.secondary} />
             </TouchableOpacity>
@@ -127,11 +126,12 @@ const ProfileScreen = () => {
             <TypographyComponent variant="body" color={colors.text.tertiary}>
               Élève motivé • A rejoint en 2024
             </TypographyComponent>
-
-            <TouchableOpacity style={styles.addFriendButton}>
-              <UserPlus size={18} color={colors.white} style={{marginRight: 8}} />
-              <TypographyComponent variant="button">AJOUTER DES AMIS</TypographyComponent>
+            <TouchableOpacity style={styles.addFriendButton} activeOpacity={0.8}>
+              <TypographyComponent variant="button" color="#FFF">
+                Modfier le profil
+              </TypographyComponent>
             </TouchableOpacity>
+
           </View>
         </View>
 
@@ -217,7 +217,6 @@ const ProfileScreen = () => {
         </View>
 
       </ScrollView>
-    </Layout>
   );
 };
 
@@ -236,8 +235,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   headerTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: 'row-reverse',
     marginBottom: 10,
   },
   iconButton: {
