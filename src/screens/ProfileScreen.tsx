@@ -1,599 +1,372 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Text,
-  View,
-  ScrollView,
+import React from 'react';
+import { 
+  View, 
+  StyleSheet, 
+  ScrollView, 
+  Image, 
   TouchableOpacity,
-  RefreshControl,
-  Image,
-  StyleSheet,
-  ActivityIndicator,
-  Dimensions,
-  Modal,
-  FlatList,
+  Dimensions 
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import styles from '@navigation/constants/Colors';
-import DocumentComponent from '@components/Profil/DocumentComponent';
-import StatisticsComponent from '@components/Profil/StatisticsComponent';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { 
+  Settings, 
+  UserPlus, 
+  Flame, 
+  Zap, 
+  Trophy, 
+  BookOpen, 
+  ChevronRight 
+} from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+
+// Imports internes
 import Layout from '@components/Layout';
-import { useUserStore } from '@store/user/user.store';
-import Header from '@components/Header.component';
 import TypographyComponent from '@components/Typography.component';
 import { colors } from '@theme/colors';
+import { useUserStore } from '@store/user/user.store';
 
-
-const { width } = Dimensions.get('window');
-
-const AVATAR_IMAGES = [
-  { id: 1, source: require('@assets/images/avatars/profil_picture1.png') },
-  { id: 2, source: require('@assets/images/avatars/profil_picture2.jpg') },
-  { id: 3, source: require('@assets/images/avatars/profil_picture3.png') },
-  { id: 4, source: require('@assets/images/avatars/profil_picture4.png') },
+// --- Mock Data pour l'exemple (à remplacer par vos vraies données) ---
+const BADGES_DU_MOIS = [
+  { id: '1', title: 'Défi Novembre', image: require('@assets/images/League/gold_league.webp'), status: 'completed' },
+  { id: '2', title: 'Roi du Calcul', image: require('@assets/images/League/ruby_league.webp'), status: 'progress' },
 ];
 
-const localStyles = StyleSheet.create({
-  headerSection: {
-    backgroundColor: '#FF8C00',
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    paddingBottom: 30,
+const SUCCES_RECENTS = [
+  { id: '1', title: 'Lève-tôt', desc: 'Terminer une leçon avant 8h', icon: 'sun', progress: 3, total: 3 },
+  { id: '2', title: 'Erudit', desc: 'Apprendre 50 nouveaux mots', icon: 'book', progress: 42, total: 50 },
+  { id: '3', title: 'Imbattable', desc: '10 leçons sans faute', icon: 'target', progress: 7, total: 10 },
+];
+
+const ProfileScreen = () => {
+  const navigation = useNavigation();
+  const user = useUserStore((state) => state.user);
+
+  // Données utilisateur fictives si non connectées au store complet
+  const stats = {
+    streak: 12,
+    totalXp: 2450,
+    league: 'Or',
+    lastCourse: 'Maths - Chap 2',
+  };
+
+  // --- Composants internes pour la lisibilité ---
+
+  const StatCard = ({ icon: Icon, color, value, label, onPress }: any) => (
+    <TouchableOpacity style={styles.statCard} onPress={onPress} activeOpacity={0.8}>
+      <View style={[styles.statIconContainer, { borderColor: color }]}>
+        <Icon size={20} color={color} fill={color} />
+      </View>
+      <View>
+        <TypographyComponent variant="h6" style={{fontSize: 15}}>{value}</TypographyComponent>
+        <TypographyComponent variant="labelSmall" color={colors.text.tertiary}>{label}</TypographyComponent>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const AchievementRow = ({ title, desc, progress, total }: any) => {
+    const isCompleted = progress >= total;
+    const percent = (progress / total) * 100;
+
+    return (
+      <View style={styles.achievementRow}>
+        <View style={[styles.achievementIcon, isCompleted ? styles.achievementCompleted : null]}>
+          <Trophy size={24} color={isCompleted ? '#FFD700' : '#CCC'} />
+        </View>
+        <View style={styles.achievementContent}>
+          <TypographyComponent variant="h6">{title}</TypographyComponent>
+          <TypographyComponent variant="labelSmall" color={colors.text.secondary} style={{marginBottom: 6}}>
+            {desc}
+          </TypographyComponent>
+          
+          {/* Barre de progression */}
+          <View style={styles.progressBarBg}>
+            <View style={[styles.progressBarFill, { width: `${percent}%` }]} />
+          </View>
+          <View style={{flexDirection:'row', justifyContent: 'flex-end', marginTop: 2}}>
+             <TypographyComponent variant="labelSmall" color={colors.text.tertiary}>
+               {progress} / {total}
+             </TypographyComponent>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <Layout>
+      <ScrollView
+        style={styles.container} 
+        contentContainerStyle={{ paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* --- Header & Profil --- */}
+        <View style={styles.header}>
+          <View style={styles.headerTopRow}>
+            <TouchableOpacity style={styles.iconButton}>
+              <UserPlus size={24} color={colors.primary} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <Settings size={24} color={colors.text.secondary} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.profileInfo}>
+            <View style={styles.avatarContainer}>
+              <Image 
+                source={require('@assets/images/avatars/profil_picture1.png')} 
+                style={styles.avatar} 
+              />
+              <View style={styles.flagBadge}>
+                <TypographyComponent variant="h6" style={{fontSize: 12}}>🇫🇷</TypographyComponent>
+              </View>
+            </View>
+            
+            <TypographyComponent variant="h3" style={{marginTop: 12}}>
+              {user?.prenom} {user?.nom}
+            </TypographyComponent>
+            <TypographyComponent variant="body" color={colors.text.tertiary}>
+              Élève motivé • A rejoint en 2024
+            </TypographyComponent>
+
+            <TouchableOpacity style={styles.addFriendButton}>
+              <UserPlus size={18} color={colors.white} style={{marginRight: 8}} />
+              <TypographyComponent variant="button">AJOUTER DES AMIS</TypographyComponent>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.separator} />
+
+        {/* --- Section 1: Statistiques (Récap) --- */}
+        <View style={styles.section}>
+          <TypographyComponent variant="h5" style={styles.sectionTitle}>Récapitulatif</TypographyComponent>
+          
+          <View style={styles.statsGrid}>
+            <StatCard 
+              icon={Flame} 
+              color="#FF9600" 
+              value={stats.streak} 
+              label="Jours streak" 
+            />
+            <StatCard 
+              icon={Zap} 
+              color="#FFD700" 
+              value={stats.totalXp} 
+              label="Total XP" 
+            />
+            <StatCard 
+              icon={Trophy} 
+              color="#1CB0F6" 
+              value={stats.league} 
+              label="Division" 
+            />
+            <StatCard 
+              icon={BookOpen} 
+              color="#2B70C9" 
+              value="Reprendre" 
+              label={stats.lastCourse} 
+              onPress={() => console.log("Reprendre cours")}
+            />
+          </View>
+        </View>
+
+        <View style={styles.separator} />
+
+        {/* --- Section 2: Badges du mois --- */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+             <TypographyComponent variant="h5">Badges du mois</TypographyComponent>
+             <TouchableOpacity>
+               <TypographyComponent variant="label" color={colors.primary}>TOUT VOIR</TypographyComponent>
+             </TouchableOpacity>
+          </View>
+
+          <View style={styles.badgesRow}>
+            {BADGES_DU_MOIS.map((badge) => (
+              <View key={badge.id} style={styles.badgeCard}>
+                <Image source={badge.image} style={styles.badgeImage} resizeMode="contain" />
+                <TypographyComponent variant="labelSmall" style={{marginTop: 8, textAlign: 'center'}}>
+                  {badge.title}
+                </TypographyComponent>
+              </View>
+            ))}
+            {/* Placeholder pour badges grisés */}
+            <View style={[styles.badgeCard, { opacity: 0.5 }]}>
+               <View style={[styles.badgeImage, { backgroundColor: '#EEE', borderRadius: 35 }]} />
+               <TypographyComponent variant="labelSmall" style={{marginTop: 8}}>À venir</TypographyComponent>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.separator} />
+
+        {/* --- Section 3: Succès --- */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+             <TypographyComponent variant="h5">Succès</TypographyComponent>
+             <TouchableOpacity>
+               <TypographyComponent variant="label" color={colors.primary}>TOUT VOIR</TypographyComponent>
+             </TouchableOpacity>
+          </View>
+
+          <View style={styles.achievementsList}>
+            {SUCCES_RECENTS.map((succes) => (
+              <AchievementRow key={succes.id} {...succes} />
+            ))}
+          </View>
+        </View>
+
+      </ScrollView>
+    </Layout>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
   },
-  headerContainer: {
+  separator: {
+    height: 2,
+    backgroundColor: '#E5E5E5',
+    marginVertical: 4,
+  },
+  // Header
+  header: {
+    padding: 20,
+  },
+  headerTopRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 25,
+    marginBottom: 10,
   },
-  headerButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 20,
+  iconButton: {
     padding: 8,
-    marginLeft: 10,
   },
-  profileContainer: {
+  profileInfo: {
     alignItems: 'center',
-    marginBottom: 20,
   },
   avatarContainer: {
     position: 'relative',
-    marginBottom: 15,
+    marginBottom: 8,
   },
   avatar: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#FF8C00',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 4,
-    borderColor: 'white',
+    borderWidth: 3,
+    borderColor: '#E5E5E5', // Ou pointillé
   },
-  avatarImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
-  avatarText: {
-    color: 'white',
-    fontSize: 32,
-    fontWeight: 'bold',
-  },
-  editAvatarButton: {
+  flagBadge: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: 'white',
-    borderRadius: 15,
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 5,
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    elevation: 2,
   },
-  profileName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 5,
-  },
-  joinedDate: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.7)',
-    marginBottom: 20,
-  },
-  statsRow: {
+  addFriendButton: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    paddingHorizontal: 40,
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  statLabel: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.7)',
-    marginTop: 2,
-  },
-  contentSection: {
-    backgroundColor: '#FFF8F1',
-    flex: 1,
-    paddingTop: 30,
-    paddingHorizontal: 20,
-  },
-  progressTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-  },
-  progressCard: {
-    backgroundColor: 'white',
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  progressRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  progressText: {
-    color: '#666',
-    fontSize: 14,
-  },
-  progressValue: {
-    color: '#FF8C00',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  chartContainer: {
-    backgroundColor: 'white',
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 20,
-    height: 200,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  chartTitle: {
-    color: '#333',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  chart: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    paddingHorizontal: 10,
-  },
-  chartBar: {
-    backgroundColor: '#FF8C00',
-    width: 20,
-    borderRadius: 10,
-    marginHorizontal: 5,
-  },
-  chartLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-    paddingHorizontal: 10,
-  },
-  chartLabel: {
-    color: '#666',
-    fontSize: 12,
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  tabButton: {
-    flex: 1,
+    backgroundColor: colors.primary,
     paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 16,
+    marginTop: 20,
     alignItems: 'center',
-    marginHorizontal: 5,
-    borderRadius: 25,
+    // Effet bouton 3D subtil
+    borderBottomWidth: 4,
+    borderBottomColor: '#CC7000', // Version plus foncée de la couleur primaire
   },
-  tabButtonActive: {
-    backgroundColor: '#FF8C00',
-  },
-  tabButtonInactive: {
-    backgroundColor: '#F5F5F5',
-  },
-  tabText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  tabTextActive: {
-    color: 'white',
-  },
-  tabTextInactive: {
-    color: '#666',
-  },
-  // Styles pour la modal de sélection d'avatar
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 20,
+
+  // Sections Communes
+  section: {
     padding: 20,
-    width: width * 0.85,
-    maxHeight: '80%',
   },
-  modalHeader: {
+  sectionTitle: {
+    marginBottom: 16,
+  },
+  sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+
+  // Grid Stats
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    justifyContent: 'space-between',
   },
-  closeButton: {
-    padding: 5,
+  statCard: {
+    width: '48%', // 2 par ligne
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: '#E5E5E5',
+    backgroundColor: '#FFF',
   },
-  avatarGrid: {
-    paddingBottom: 20,
+  statIconContainer: {
+    marginRight: 10,
   },
-  avatarOption: {
-    width: (width * 0.85 - 80) / 3,
-    aspectRatio: 1,
-    margin: 5,
-    borderRadius: 50,
-    overflow: 'hidden',
-    borderWidth: 3,
-    borderColor: 'transparent',
+
+  // Badges
+  badgesRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    gap: 16,
   },
-  avatarOptionSelected: {
-    borderColor: '#FF8C00',
+  badgeCard: {
+    width: 80,
+    alignItems: 'center',
   },
-  avatarOptionImage: {
+  badgeImage: {
+    width: 70,
+    height: 70,
+  },
+
+  // Succès (Achievements)
+  achievementsList: {
+    gap: 16,
+  },
+  achievementRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  achievementIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 12,
+    backgroundColor: '#F7F7F7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  achievementCompleted: {
+    backgroundColor: '#FFFBE6', // Jaune très pâle
+  },
+  achievementContent: {
+    flex: 1,
+    paddingVertical: 4,
+  },
+  progressBarBg: {
+    height: 8,
+    backgroundColor: '#E5E5E5',
+    borderRadius: 4,
     width: '100%',
+    overflow: 'hidden',
+  },
+  progressBarFill: {
     height: '100%',
-  },
-  resetAvatarButton: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 15,
-    padding: 15,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  resetAvatarText: {
-    color: '#666',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  saveButton: {
-    backgroundColor: '#FF8C00',
-    borderRadius: 15,
-    padding: 15,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+    backgroundColor: '#FFD700',
+    borderRadius: 4,
   },
 });
 
-function ProfilScreen({ navigation }: ProfilScreenProps) {
-  const [activeTab, setActiveTab] = useState<'statistics' | 'documents'>(
-    'statistics'
-  );
-  const [refreshing, setRefreshing] = useState(false);
-  const [showAvatarModal, setShowAvatarModal] = useState(false);
-  const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
-  const [currentAvatar, setCurrentAvatar] = useState<number | null>(null);
-
-  const { user, loading, getMe, getFullName, getInitials } = useUserStore();
-  useEffect(() => {
-    if (!user) {
-      getMe();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (user?.avatarId) {
-      setCurrentAvatar(user.avatarId);
-    }
-  }, [user]);
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    try {
-      await getMe(true);
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
-  const handleAvatarPress = () => {
-    setSelectedAvatar(currentAvatar);
-    setShowAvatarModal(true);
-  };
-
-  const handleAvatarSelect = (avatarId: number) => {
-    setSelectedAvatar(avatarId);
-  };
-
-  const handleResetAvatar = () => {
-    setSelectedAvatar(null);
-  };
-
-  const handleSaveAvatar = async () => {
-    try {
-      setCurrentAvatar(selectedAvatar);
-      setShowAvatarModal(false);
-      await getMe(true);
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde de l\'avatar:', error);
-    }
-  };
-
-  const renderAvatar = () => {
-    if (currentAvatar) {
-      const avatarImage = AVATAR_IMAGES.find(img => img.id === currentAvatar);
-      if (avatarImage) {
-        return (
-          <Image
-            source={avatarImage.source}
-            style={localStyles.avatarImage}
-            resizeMode="cover"
-          />
-        );
-      }
-    }
-    return (
-      <TypographyComponent style={localStyles.avatarText}>
-        {getInitials()}
-      </TypographyComponent>
-    );
-  };
-
-  const renderAvatarOption = ({ item }: { item: typeof AVATAR_IMAGES[0] }) => (
-    <TouchableOpacity
-      style={[
-        localStyles.avatarOption,
-        selectedAvatar === item.id && localStyles.avatarOptionSelected,
-      ]}
-      onPress={() => handleAvatarSelect(item.id)}
-    >
-      <Image
-        source={item.source}
-        style={localStyles.avatarOptionImage}
-        resizeMode="cover"
-      />
-    </TouchableOpacity>
-  );
-
-  if (loading && !user) {
-    return (
-      <Layout navigation={navigation}>
-        <View style={[styles.homeContainer, { justifyContent: 'center', alignItems: 'center' }]}>
-          <ActivityIndicator size="large" color="#FF8C00" />
-        </View>
-      </Layout>
-    );
-  }
-
-  return (
-    <Layout navigation={navigation}>
-      <View style={styles.homeContainer}>
-        <ScrollView
-          style={styles.scrollView}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={['#FF8C00']}
-            />
-          }
-        >
-          {/* Section Header avec profil */}
-          <View style={localStyles.headerSection}>
-            <Header
-              userPoints={450}
-              streakDays={3}
-              showNotifications={true}
-              showPoints={false}
-              showStreak={false}
-              navigation={navigation}
-            />
-            {/* Profil utilisateur centré */}
-            <View style={localStyles.profileContainer}>
-              <View style={localStyles.avatarContainer}>
-                <TouchableOpacity
-                  style={localStyles.avatar}
-                  onPress={handleAvatarPress}
-                  activeOpacity={0.8}
-                >
-                  {renderAvatar()}
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={localStyles.editAvatarButton}
-                  onPress={handleAvatarPress}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons name="pencil" size={16} color="#FF8C00" />
-                </TouchableOpacity>
-              </View>
-              <TypographyComponent
-                style={{}}
-                color={colors.text.white}
-                variant='h3'>
-                  {getFullName()}
-              </TypographyComponent>
-              <TypographyComponent style={localStyles.joinedDate}>
-                @{getFullName()} • {user?.classe || '6ème'}
-              </TypographyComponent>
-              {/* Statistiques en ligne */}
-              <View style={localStyles.statsRow}>
-                <View style={localStyles.statItem}>
-                  <TypographyComponent style={localStyles.statNumber}>{user?.miloro || 0}</TypographyComponent>
-                  <TypographyComponent style={localStyles.statLabel}>Miloro</TypographyComponent>
-                </View>
-                <View style={localStyles.statItem}>
-                  <TypographyComponent style={localStyles.statNumber}>{user?.level || 0}</TypographyComponent>
-                  <TypographyComponent style={localStyles.statLabel}>Niveau</TypographyComponent>
-                </View>
-                <View style={localStyles.statItem}>
-                  <TypographyComponent style={localStyles.statNumber}>{user?.points || 0}</TypographyComponent>
-                  <TypographyComponent style={localStyles.statLabel}>Points</TypographyComponent>
-                </View>
-              </View>
-            </View>
-          </View>
-
-          {/* Section contenu */}
-          <View style={localStyles.contentSection}>
-            <TypographyComponent style={localStyles.progressTitle}>Progression hebdomadaire</TypographyComponent>
-            {/* Carte de progression */}
-            <View style={localStyles.progressCard}>
-              <View style={localStyles.progressRow}>
-                <TypographyComponent style={localStyles.progressText}>Cette semaine</TypographyComponent>
-                <TypographyComponent style={localStyles.progressValue}>36 leçons</TypographyComponent>
-              </View>
-              <View style={localStyles.progressRow}>
-                <TypographyComponent style={localStyles.progressText}>Semaine dernière</TypographyComponent>
-                <TypographyComponent style={localStyles.progressValue}>74 leçons</TypographyComponent>
-              </View>
-            </View>
-
-            {/* Onglets */}
-            <View style={localStyles.tabsContainer}>
-              <TouchableOpacity
-                style={[
-                  localStyles.tabButton,
-                  activeTab === 'documents'
-                    ? localStyles.tabButtonActive
-                    : localStyles.tabButtonInactive,
-                ]}
-                onPress={() => setActiveTab('documents')}
-              >
-                <Text
-                  style={[
-                    localStyles.tabText,
-                    activeTab === 'documents'
-                      ? localStyles.tabTextActive
-                      : localStyles.tabTextInactive,
-                  ]}
-                >
-                  📁 Mes Documents
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  localStyles.tabButton,
-                  activeTab === 'statistics'
-                    ? localStyles.tabButtonActive
-                    : localStyles.tabButtonInactive,
-                ]}
-                onPress={() => setActiveTab('statistics')}
-              >
-                <Text
-                  style={[
-                    localStyles.tabText,
-                    activeTab === 'statistics'
-                      ? localStyles.tabTextActive
-                      : localStyles.tabTextInactive,
-                  ]}
-                >
-                  📊 Mes Statistiques
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Contenu selon l'onglet actif */}
-            {activeTab === 'statistics' ? (
-              <StatisticsComponent onRefresh={onRefresh} />
-            ) : (
-              <DocumentComponent onRefresh={onRefresh} />
-            )}
-          </View>
-        </ScrollView>
-
-        {/* Modal de sélection d'avatar */}
-        <Modal
-          visible={showAvatarModal}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={() => setShowAvatarModal(false)}
-        >
-          <View style={localStyles.modalOverlay}>
-            <View style={localStyles.modalContent}>
-              <View style={localStyles.modalHeader}>
-                <TypographyComponent style={localStyles.modalTitle}>
-                  Choisir un avatar
-                </TypographyComponent>
-                <TouchableOpacity
-                  style={localStyles.closeButton}
-                  onPress={() => setShowAvatarModal(false)}
-                >
-                  <Ionicons name="close" size={24} color="#666" />
-                </TouchableOpacity>
-              </View>
-
-              <FlatList
-                data={AVATAR_IMAGES}
-                renderItem={renderAvatarOption}
-                numColumns={3}
-                keyExtractor={(item) => item.id.toString()}
-                style={localStyles.avatarGrid}
-                columnWrapperStyle={{ justifyContent: 'space-between' }}
-              />
-
-              <TouchableOpacity
-                style={localStyles.resetAvatarButton}
-                onPress={handleResetAvatar}
-              >
-                <TypographyComponent style={localStyles.resetAvatarText}>
-                  Utiliser les initiales
-                </TypographyComponent>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={localStyles.saveButton}
-                onPress={handleSaveAvatar}
-              >
-                <TypographyComponent style={localStyles.saveButtonText}>
-                  Sauvegarder
-                </TypographyComponent>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      </View>
-    </Layout>
-  );
-}
-
-export default ProfilScreen;
+export default ProfileScreen;
