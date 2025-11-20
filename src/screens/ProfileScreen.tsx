@@ -101,9 +101,6 @@ const ProfileScreen = () => {
         {/* --- Header & Profil --- */}
         <View style={styles.header}>
           <View style={styles.headerTopRow}>
-            {/* <TouchableOpacity style={styles.iconButton}>
-              <UserPlus size={24} color={colors.primary} />
-            </TouchableOpacity> */}
             <TouchableOpacity style={styles.iconButton}>
               <Settings size={24} color={colors.text.secondary} />
             </TouchableOpacity>
@@ -274,9 +271,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginTop: 20,
     alignItems: 'center',
-    // Effet bouton 3D subtil
-    borderBottomWidth: 4,
-    borderBottomColor: '#CC7000', // Version plus foncée de la couleur primaire
   },
 
   // Sections Communes
