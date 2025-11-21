@@ -192,7 +192,7 @@ const FriendsScreen = () => {
           >
             <Users size={18} color={activeTab === 'list' ? colors.white : colors.text.secondary} />
             <TypographyComponent 
-              variant="label" 
+              variant="labelSmall" 
               style={{ color: activeTab === 'list' ? colors.white : colors.text.secondary, marginLeft: 8 }}
             >
               Mes Amis
@@ -208,7 +208,7 @@ const FriendsScreen = () => {
               {requests.length > 0 && <View style={styles.badge} />}
             </View>
             <TypographyComponent 
-              variant="label" 
+              variant="labelSmall" 
               style={{ color: activeTab === 'requests' ? colors.white : colors.text.secondary, marginLeft: 8 }}
             >
               Demandes
@@ -221,7 +221,7 @@ const FriendsScreen = () => {
           >
             <UserPlus size={18} color={activeTab === 'add' ? colors.white : colors.text.secondary} />
             <TypographyComponent 
-              variant="label" 
+              variant="labelSmall" 
               style={{ color: activeTab === 'add' ? colors.white : colors.text.secondary, marginLeft: 8 }}
             >
               Ajouter
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: colors.white,
     borderRadius: 16,
-    padding: 4,
+    padding: 8,
     marginBottom: 20,
     // Shadow
     shadowColor: colors.black,
