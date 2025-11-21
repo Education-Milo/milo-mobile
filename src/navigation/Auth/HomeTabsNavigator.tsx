@@ -1,26 +1,22 @@
 import React, { useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {
-  HomeTabsParamList,
-  AuthScreenNames,
-} from '@navigation/Auth/authNavigator.model';
+import { HomeTabsParamList } from '@navigation/Auth/authNavigator.model';
 import { useUserStore } from '@store/user/user.store';
-import HomeScreen from '@screens/HomeScreen';
-import LessonScreen from '@screens/LessonScreen';
-import GameScreen from '@screens/GameScreen';
 import BottomNavBar from '@components/BottomNavBar';
-import SelectDocumentScreen from '@screens/SelectDocumentScreen';
-import { View } from 'react-native';
-import MissionsScreen from '@screens/MissionScreen';
+import { getNavigationConfigForRole } from './role.configs';
 
 const Tab = createBottomTabNavigator<HomeTabsParamList>();
 
 const HomeTabsNavigator = () => {
   const { getMe } = useUserStore();
+  const userRole = useUserStore((state) => state.getRole());
 
   useEffect(() => {
     getMe();
   }, []);
+
+  // Obtenir la configuration des tabs selon le rôle
+  const navigationConfig = getNavigationConfigForRole(userRole);
 
   return (
     <Tab.Navigator
@@ -31,14 +27,13 @@ const HomeTabsNavigator = () => {
       }}
       tabBar={props => <BottomNavBar {...props} />}
     >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Lessons" component={LessonScreen} />
-        <Tab.Screen name="Scan" component={SelectDocumentScreen} />
-        <Tab.Screen name="Game" component={GameScreen} />
-        <Tab.Screen name="Friends" component={View} />
-        <Tab.Screen name="Profile" component={View} />
-        <Tab.Screen name="MissionScreen" component={MissionsScreen} />
-        <Tab.Screen name="More" component={View} />
+      {navigationConfig.tabs.map((tab, index) => (
+        <Tab.Screen
+          key={`${tab.name}-${index}`}
+          name={tab.name as keyof HomeTabsParamList}
+          component={tab.component}
+        />
+      ))}
     </Tab.Navigator>
   );
 };

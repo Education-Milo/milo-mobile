@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
+import { UserRole } from '@navigation/Auth/permissions.config';
 
-export type UserRole = 'USER' | 'PROF' | 'PARENT' | 'ADMIN' ;
+export type ApiRole = 'Élève' | 'Prof' | 'Parent' | 'Admin' ;
 export type ClassType = '6ème' | '5ème' | '4ème' | '3ème';
 export interface User {
 
@@ -44,5 +45,6 @@ export interface User {
     clearUserData: () => void;
     getFullName: () => string;
     getInitials: () => string;
+    getRole: () => UserRole | null;
   }
   export type UserStore = UserState & UserActions;

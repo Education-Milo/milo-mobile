@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { UserStore, User, UserStats } from '@store/user/user.model';
 import APIAxios, { APIRoutes } from '@api/axios.api';
+import { UserRole } from '@navigation/Auth/permissions.config';
 
 // Durée de cache en millisecondes (5 minutes)
 const CACHE_DURATION = 5 * 60 * 1000;
@@ -96,6 +97,23 @@ export const useUserStore = create<UserStore>((set, get) => ({
     const firstInitial = user.prenom?.charAt(0)?.toUpperCase() || '';
     const lastInitial = user.nom?.charAt(0)?.toUpperCase() || '';
     return `${firstInitial}${lastInitial}`;
+  },
+
+  getRole: () => {
+    const user = get().user;
+    if (!user) return null;
+    switch (user.role) {
+      case 'Élève':
+        return UserRole.STUDENT;
+      case 'Prof':
+        return UserRole.TEACHER;
+      case 'Parent':
+        return UserRole.PARENT;
+      case 'Admin':
+        return UserRole.ADMIN;
+      default:
+        return null;
+    }
   },
 
   clearUserData: () => {

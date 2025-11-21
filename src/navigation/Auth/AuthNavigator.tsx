@@ -5,6 +5,10 @@ import {
   AuthScreenNames,
   AuthStackParamList,
 } from '@navigation/Auth/authNavigator.model';
+import { useUserStore } from '@store/user/user.store';
+import { getNavigationConfigForRole } from './role.configs';
+
+// Import des screens
 import ProfileScreen from '@screens/ProfileScreen';
 import ExercicesScreen from '@screens/ExercicesScreen';
 import LessonScreen from '@screens/LessonScreen';
@@ -16,7 +20,23 @@ import ChatScreen from '@screens/ChatScreen';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
+// Mapping des noms de screens vers les composants
+const SCREEN_COMPONENTS = {
+  Profile: ProfileScreen,
+  Game: ExercicesScreen,
+  Lesson: LessonScreen,
+  Lessons: LessonScreen,
+  Scan: SelectDocumentScreen,
+  CameraOrImport: CameraOrImportScreen,
+  LessonChapter: LessonChapterScreen,
+  ExercicesScreen: ExercicesScreen,
+  MissionScreen: MissionsScreen,
+  ChatScreen: ChatScreen,
+};
+
 const AuthNavigator = () => {
+  const userRole = useUserStore((state) => state.getRole());
+  const navigationConfig = getNavigationConfigForRole(userRole);
 
   return (
     <Stack.Navigator
@@ -24,46 +44,27 @@ const AuthNavigator = () => {
         headerShown: false,
       }}
     >
-        <Stack.Screen
-            name={AuthScreenNames.HomeTabs}
-            component={HomeTabsNavigator}
-        />
-        <Stack.Screen
-            name={AuthScreenNames.Profile}
-            component={ProfileScreen}
-        />
-        <Stack.Screen
-            name={AuthScreenNames.Game}
-            component={ExercicesScreen}
-        />
-        <Stack.Screen
-            name={AuthScreenNames.Lesson}
-            component={LessonScreen}
-        />
-        <Stack.Screen
-            name={AuthScreenNames.Scan}
-            component={SelectDocumentScreen}
-        />
-        <Stack.Screen
-            name={AuthScreenNames.CameraOrImport}
-            component={CameraOrImportScreen}
-        />
-        <Stack.Screen
-            name={AuthScreenNames.LessonChapter}
-            component={LessonChapterScreen}
-        />
-        <Stack.Screen
-            name={AuthScreenNames.ExercicesScreen}
-            component={ExercicesScreen}
-        />
-        <Stack.Screen
-            name={AuthScreenNames.MissionScreen}
-            component={MissionsScreen}
-        />
-        <Stack.Screen
-            name={AuthScreenNames.ChatScreen}
-            component={ChatScreen}
-        />
+      <Stack.Screen
+        name={AuthScreenNames.HomeTabs}
+        component={HomeTabsNavigator}
+      />
+
+      {navigationConfig.stackScreens.map((screenName, index) => {
+        const Component = SCREEN_COMPONENTS[screenName as keyof typeof SCREEN_COMPONENTS];
+
+        if (!Component) {
+          console.warn(`Component not found for screen: ${screenName}`);
+          return null;
+        }
+
+        return (
+          <Stack.Screen
+            key={`${screenName}-${index}`}
+            name={screenName as keyof AuthStackParamList}
+            component={Component}
+          />
+        );
+      })}
     </Stack.Navigator>
   );
 };
