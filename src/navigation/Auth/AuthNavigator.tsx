@@ -64,6 +64,10 @@ const AuthNavigator = () => {
             name={AuthScreenNames.ChatScreen}
             component={ChatScreen}
         />
+        <Stack.Screen
+            name={AuthScreenNames.FriendsScreen}
+            component={MissionsScreen}
+        />
     </Stack.Navigator>
   );
 };
