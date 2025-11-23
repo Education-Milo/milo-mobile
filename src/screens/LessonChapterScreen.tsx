@@ -1,220 +1,129 @@
-import React, { useState, useRef } from 'react';
-import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import TypographyComponent from '@components/Typography.component';
-import Layout from '@components/Layout';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import {  ArrowLeft, BookOpen, PenTool } from 'lucide-react-native';
+
+import Layout from '@components/Layout';
+import TypographyComponent from '@components/Typography.component';
+import ChapterCard from '@components/Cards/ChapterCard.component';
+import BottomSheetComponent from '@components/BottomSheetModal.component';
 import { colors } from '@theme/colors';
 import { AuthStackParamList } from '@navigation/Auth/authNavigator.model';
-import { ChevronDown, CheckCircle, Lock, PlayCircle, ArrowLeft, BookOpen, PenTool } from 'lucide-react-native';
-import ChapterCard from '@components/Cards/ChapterCard.component';
 import { useUserStore } from '@store/user/user.store';
-import BottomSheetComponent from '@components/BottomSheetModal.component';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-
-const CHAPITRES: Record<string, { id: string; title: string; lessons: Array<{ id: string; title: string; status: 'completed' | 'in-progress' | 'locked' }> }[]> = {
-  'Mathématiques': [
-    {
-      id: 'ch1',
-      title: 'Nombres',
-      lessons: [
-        { id: 'l1', title: 'Les nombres entiers', status: 'completed' },
-        { id: 'l2', title: 'Les nombres décimaux', status: 'in-progress' },
-        { id: 'l3', title: 'Les fractions', status: 'locked' },
-      ]
-    },
-    {
-      id: 'ch2',
-      title: 'Géométrie',
-      lessons: [
-        { id: 'l4', title: 'Les formes de base', status: 'locked' },
-        { id: 'l5', title: 'Les angles', status: 'locked' },
-      ]
-    },
-  ],
-  'Français': [
-    {
-      id: 'ch1',
-      title: 'Grammaire',
-      lessons: [
-        { id: 'l1', title: 'Les noms', status: 'completed' },
-        { id: 'l2', title: 'Les verbes', status: 'in-progress' },
-      ]
-    },
-  ],
-};
+import { useCourseStore } from '@store/course/course.store';
+import { Lesson, Chapter } from '@store/course/course.model';
+import ChapterAccordion from '@components/Lesson/ChapterAccordion.component';
 
 type LessonChapterRouteProp = RouteProp<AuthStackParamList, 'LessonChapter'>;
 type LessonChapterNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
-interface SelectedLesson {
-  id: string;
-  title: string;
-  status: 'completed' | 'in-progress' | 'locked';
-}
-
-const ChapterAccordion = ({ chapter, chapterNumber, defaultOpen = false, onLessonPress }: any) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
-  const getLessonIcon = (status: 'completed' | 'in-progress' | 'locked') => {
-    switch (status) {
-      case 'completed':
-        return <CheckCircle size={18} color="#4CAF50" />;
-      case 'in-progress':
-        return <PlayCircle size={18} color="#FF9800" />;
-      case 'locked':
-      default:
-        return <Lock size={18} color="#9E9E9E" />;
-    }
-  };
-
-  return (
-    <View style={styles.chapterAccordion}>
-      <TouchableOpacity
-        style={styles.chapterHeader}
-        onPress={() => setIsOpen(!isOpen)}
-      >
-        <View style={styles.chapterHeaderLeft}>
-          <View style={styles.chapterHeaderTitle}>
-            <TypographyComponent variant='labelSmall' color={colors.text.secondary}>
-              Chapitre {chapterNumber}
-            </TypographyComponent>
-            <TypographyComponent variant="h6" style={{ marginTop: 4 }}>
-              {chapter.title}
-            </TypographyComponent>
-          </View>
-        </View>
-        <ChevronDown
-          size={24}
-          color={colors.text.secondary}
-          style={{ transform: [{ rotate: isOpen ? '180deg' : '0deg' }] }}
-        />
-      </TouchableOpacity>
-
-      {isOpen && (
-        <View style={styles.chapterContent}>
-          {chapter.lessons.map((lesson: any) => (
-            <TouchableOpacity
-              key={lesson.id}
-              style={[styles.lessonItem, styles[`lesson_${lesson.status}`]]}
-              onPress={() => lesson.status !== 'locked' && onLessonPress(lesson)}
-              disabled={lesson.status === 'locked'}
-            >
-              <View style={styles.lessonIcon}>
-                {getLessonIcon(lesson.status)}
-              </View>
-              <TypographyComponent variant="body" style={{ flex: 1 }}>
-                {lesson.title}
-              </TypographyComponent>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-    </View>
-  );
-};
-
 const LessonChapter = () => {
   const navigation = useNavigation<LessonChapterNavigationProp>();
   const route = useRoute<LessonChapterRouteProp>();
-  const matiere = route.params;
-  const chapitres = CHAPITRES[matiere.matiere] || [];
-  const user = useUserStore((state) => state.user);
-  
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const [selectedLesson, setSelectedLesson] = useState<SelectedLesson | null>(null);
+  const { matiere } = route.params;
 
-  const handleLessonPress = (lesson: SelectedLesson) => {
+  const user = useUserStore((state) => state.user);
+
+  const { currentCourse, fetchCourseBySubject, isLoading } = useCourseStore();
+
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+
+  useEffect(() => {
+    if (matiere) {
+      fetchCourseBySubject(matiere);
+    }
+  }, [matiere]);
+
+  const handleLessonPress = (lesson: Lesson) => {
     setSelectedLesson(lesson);
     bottomSheetRef.current?.present();
   };
 
   const handleOptionPress = (type: 'cours' | 'exercices') => {
     bottomSheetRef.current?.dismiss();
-    if (type === 'cours') {
-      navigation.navigate('ChatScreen');
+    if (type === 'cours' && selectedLesson) {
+      // ✅ C'est ici que l'interactivité commence !
+      // On envoie l'ID et le titre à l'écran de chat pour qu'il lance la leçon
+      navigation.navigate('ChatScreen', {
+        lessonId: selectedLesson.id,
+        lessonTitle: selectedLesson.title,
+        context: `Explique-moi la leçon : ${selectedLesson.title}`
+      });
     } else {
-      navigation.navigate('ExercicesScreen', { matiere: matiere.matiere, chapitre: 'test'});
-      console.log(`Navigation vers ${type} pour la leçon ${selectedLesson?.id}`);
+      navigation.navigate('ExercicesScreen', {
+        matiere: matiere,
+        chapitre: currentCourse?.title || 'Général'
+      });
     }
-    // Navigation vers les pages correspondantes
-    // navigation.navigate('Cours', { lessonId: selectedLesson?.id });
-    // ou
   };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <TypographyComponent style={{ marginTop: 16 }}>Chargement du programme...</TypographyComponent>
+        </View>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
       <View style={styles.container}>
-        <ScrollView style={styles.mainColumn} contentContainerStyle={styles.scrollContent}>
-          {/* Back Button */}
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <ArrowLeft size={24} color={colors.text.primary} />
-            <TypographyComponent variant="h6" style={{ marginLeft: 8 }}>
-              Mes matières
-            </TypographyComponent>
+            <TypographyComponent variant="h6" style={{ marginLeft: 8 }}>Retour</TypographyComponent>
           </TouchableOpacity>
 
           <ChapterCard
             userName={user?.prenom}
-            courseTitle={matiere.matiere}
+            courseTitle={matiere}
           />
 
-          {/* Chapters List */}
           <View style={styles.chapterList}>
-            {chapitres.map((chapter, index) => (
-              <ChapterAccordion
-                key={chapter.id}
-                chapter={chapter}
-                chapterNumber={index + 1}
-                defaultOpen={index === 0}
-                onLessonPress={handleLessonPress}
-              />
-            ))}
+            {currentCourse?.chapters?.length ? (
+              currentCourse.chapters.map((chapter, index) => (
+                <ChapterAccordion
+                  key={chapter.id}
+                  chapter={chapter}
+                  chapterNumber={index + 1}
+                  defaultOpen={index === 0}
+                  onLessonPress={handleLessonPress}
+                />
+              ))
+            ) : (
+              <TypographyComponent style={{ textAlign: 'center', marginTop: 20, color: '#999' }}>
+                Aucun chapitre trouvé pour cette matière.
+              </TypographyComponent>
+            )}
           </View>
         </ScrollView>
 
-        {/* Bottom Sheet Modal */}
         <BottomSheetComponent ref={bottomSheetRef} snapPoints={['40%']}>
           <View style={styles.modalContent}>
             <TypographyComponent variant="h5" style={styles.modalTitle}>
-              Choisissez une option
+              Que veux-tu faire ?
             </TypographyComponent>
             <TypographyComponent variant="body" color={colors.text.secondary} style={styles.modalSubtitle}>
               {selectedLesson?.title}
             </TypographyComponent>
 
             <View style={styles.optionsContainer}>
-              <TouchableOpacity
-                style={[styles.optionCard, styles.coursOption]}
-                onPress={() => handleOptionPress('cours')}
-              >
-                <View style={styles.optionIconContainer}>
-                  <BookOpen size={24} color="#FF6B35" />
-                </View>
-                <TypographyComponent variant="h6" style={styles.optionTitle}>
-                  Cours
-                </TypographyComponent>
-                <TypographyComponent variant="labelSmall" color={colors.text.secondary}>
-                  Apprendre la leçon
-                </TypographyComponent>
+              <TouchableOpacity style={[styles.optionCard, styles.coursOption]} onPress={() => handleOptionPress('cours')}>
+                <View style={styles.optionIconContainer}><BookOpen size={24} color="#FF6B35" /></View>
+                <TypographyComponent variant="h6" style={styles.optionTitle}>Apprendre</TypographyComponent>
+                <TypographyComponent variant="labelSmall" color={colors.text.secondary}>Cours interactif avec Milo</TypographyComponent>
               </TouchableOpacity>
 
-              <TouchableOpacity
-                style={[styles.optionCard, styles.exercicesOption]}
-                onPress={() => handleOptionPress('exercices')}
-              >
-                <View style={styles.optionIconContainer}>
-                  <PenTool size={24} color="#4CAF50" />
-                </View>
-                <TypographyComponent variant="h6" style={styles.optionTitle}>
-                  Exercices
-                </TypographyComponent>
-                <TypographyComponent variant="labelSmall" color={colors.text.secondary} style={{ textAlign: 'center' }}>
-                  S'entraîner et pratiquer
-                </TypographyComponent>
+              <TouchableOpacity style={[styles.optionCard, styles.exercicesOption]} onPress={() => handleOptionPress('exercices')}>
+                <View style={styles.optionIconContainer}><PenTool size={24} color="#4CAF50" /></View>
+                <TypographyComponent variant="h6" style={styles.optionTitle}>S'entraîner</TypographyComponent>
+                <TypographyComponent variant="labelSmall" color={colors.text.secondary}>Quiz et exercices</TypographyComponent>
               </TouchableOpacity>
             </View>
           </View>
@@ -227,101 +136,35 @@ const LessonChapter = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8F1',
+    backgroundColor: '#FFF8F1'
+  },
+  scrollContent: {
+    padding: 20
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  mainColumn: {
-  },
-  scrollContent: {
-    padding: 20,
-  },
-  programHeaderCard: {
-    backgroundColor: '#FF6B35',
-    borderRadius: 16,
-    padding: 24,
-    marginBottom: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 120,
-  },
-  miloFox: {
-    width: 80,
-    height: 80,
-    marginBottom: 12,
+    marginBottom: 20
   },
   chapterList: {
-    gap: 16,
+    gap: 16
   },
-  chapterAccordion: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    marginBottom: 16,
-    overflow: 'hidden',
-  },
-  chapterHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    backgroundColor: '#FFFFFF',
-  },
-  chapterHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  chapterHeaderTitle: {
-    flex: 1,
-  },
-  chapterContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-  },
-  lessonItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-    backgroundColor: '#F5F5F5',
-  },
-  lesson_completed: {
-    backgroundColor: '#E8F5E9',
-  },
-  lesson_in_progress: {
-    backgroundColor: '#FFF3E0',
-  },
-  lesson_locked: {
-    backgroundColor: '#F5F5F5',
-    opacity: 0.6,
-  },
-  lessonIcon: {
-    marginRight: 12,
-  },
-  // Modal Styles
   modalContent: {
     flex: 1,
+    padding: 20
   },
   modalTitle: {
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   modalSubtitle: {
     marginBottom: 24,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   optionsContainer: {
     flexDirection: 'row',
     gap: 12,
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   optionCard: {
     flex: 1,
@@ -330,21 +173,21 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#E0E0E0',
+    borderColor: '#E0E0E0'
   },
   coursOption: {
     borderColor: '#FF6B35',
-    backgroundColor: '#FFF5F2',
+    backgroundColor: '#FFF5F2'
   },
   exercicesOption: {
     borderColor: '#4CAF50',
-    backgroundColor: '#F1F8F4',
+    backgroundColor: '#F1F8F4'
   },
   optionIconContainer: {
-    marginBottom: 12,
+    marginBottom: 12
   },
   optionTitle: {
-    marginBottom: 4,
+    marginBottom: 4
   },
 });
 

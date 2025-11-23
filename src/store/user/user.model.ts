@@ -9,16 +9,17 @@ export interface User {
     prenom: string;
     nom: string;
     role: string;
-    level?: number;
-    points?: number;
-    streak?: number;
-    xp?: number;
-    miloro?: number;
-    maxXp?: number;
-    documentsScanned?: number;
-    challengesCompleted?: number;
-    avatarId?: number;
     classe: ClassType;
+
+    level: number;
+    points: number;
+    xp: number;
+    maxXp: number;
+    streak: number;
+
+    interests: string[]; // ex: ['Football', 'Minecraft', 'Espace']
+
+    avatarId: number;
   }
   export interface UserStats {
     documentsScanned: number;
@@ -38,9 +39,14 @@ export interface User {
 
   export interface UserActions {
     getMe: (forceRefresh?: boolean) => Promise<User>;
+    updateUser: (userData: Partial<User>) => Promise<User>;
+
     // getUserStats: (forceRefresh?: boolean) => Promise<UserStats>;
-    // updateUser: (userData: Partial<User>) => Promise<User>;
     // refreshUserData: () => Promise<void>;
+
+    addPoints:(amount: number) => void;
+    addXp:(amount: number) => void;
+
     clearUserData: () => void;
     getFullName: () => string;
     getInitials: () => string;

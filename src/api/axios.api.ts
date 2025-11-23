@@ -83,7 +83,15 @@ export const APIRoutes = {
   POST_RequestConfirmEmail: '/auth/request-confirm-email',
   GET_Me: '/users/me',
 
+  PUT_UpdateUser: '/users/update_user',
+
   POST_CREATE_QCM: '/qcm',
+
+
+  /* COURSES */
+  GET_Course: '/courses',
+  GET_Subjects: '/courses/subjects',
+  GET_RecentCourses: '/courses/recent',
 
   /* AUTH */
   //   POSTLogin: (): AxiosRequestConfig => ({method: 'POST', url: '/auth/login'}),

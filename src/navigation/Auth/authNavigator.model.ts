@@ -33,7 +33,7 @@ export enum AuthScreenNames {
     CameraOrImport: { documentType: string };
     LessonChapter: { matiere: string };
     MissionScreen: undefined;
-    ChatScreen: undefined;
+    ChatScreen: { lessonId: string; lessonTitle: string, context: string };
     // ChatScreen: { matiere: string; chapitre: string };
     ExercicesScreen: { matiere: string; chapitre: string };
     FriendsScreen: undefined;
