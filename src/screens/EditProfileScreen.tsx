@@ -1,64 +1,36 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  StyleSheet, 
-  ScrollView, 
-  Image, 
-  TouchableOpacity, 
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
   TextInput,
-  KeyboardAvoidingView, 
+  KeyboardAvoidingView,
   Platform,
-  Text 
+  Text
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { Camera, ChevronLeft, User, Mail, X, Plus } from 'lucide-react-native';
-
-// Imports internes
 import TypographyComponent from '@components/Typography.component';
 import TextFieldComponent from '@components/TextField.component';
+import InterestSelector from '@components/InterestSelector.component';
 import { colors } from '@theme/colors';
-import { useUserStore } from '@store/user/user.store';
+import { useEditProfile } from '@hooks/useEditProfileScreen';
+import { ClassType } from '@store/user/user.model';
 
 const EditProfileScreen = () => {
-  const navigation = useNavigation();
-  const user = useUserStore((state) => state.user);
-
-  const [formData, setFormData] = useState({
-    prenom: user?.prenom || 'Thomas',
-    nom: user?.nom || 'Dubois',
-    email: user?.email || 'thomas.dubois@email.com',
-  });
-
-  const [interests, setInterests] = useState<string[]>([
-    'Mathématiques',
-    'Fortnite',
-    'Barbie',
-    'Espace'
-  ]);
-
-  const [currentInterest, setCurrentInterest] = useState('');
-
-  const handleChange = (key: string, text: string) => {
-    setFormData(prev => ({ ...prev, [key]: text }));
-  };
-
-  const handleAddInterest = () => {
-    if (currentInterest.trim().length > 0) {
-      if (!interests.includes(currentInterest.trim())) {
-        setInterests([...interests, currentInterest.trim()]);
-      }
-      setCurrentInterest('');
-    }
-  };
-
-  const handleRemoveInterest = (indexToRemove: number) => {
-    setInterests(interests.filter((_, index) => index !== indexToRemove));
-  };
-
-  const handleSave = () => {
-    console.log('Données sauvegardées:', { ...formData, interests });
-    navigation.goBack();
-  };
+    const {
+        formData,
+        interests,
+        selectedClass,
+        handleChange,
+        setInterests,
+        setSelectedClass,
+        handleSave,
+        goBack,
+        loading
+    } = useEditProfile();
+  const classOptions: ClassType[] = ['6ème', '5ème', '4ème', '3ème'];
 
   const FormField = ({ label, value, fieldKey, icon: Icon, keyboardType }: any) => (
     <View style={styles.inputContainer}>
@@ -76,25 +48,22 @@ const EditProfileScreen = () => {
   );
 
   return (
-    <KeyboardAvoidingView 
-      style={{ flex: 1 }} 
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView 
-        style={styles.container} 
+      <ScrollView
+        style={styles.container}
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* --- Header --- */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <TouchableOpacity onPress={goBack} style={styles.backButton}>
             <ChevronLeft size={28} color={colors.text.primary} />
           </TouchableOpacity>
           <TypographyComponent variant="h4">Mon Profil</TypographyComponent>
           <View style={{ width: 28 }} />
         </View>
-
-        {/* --- Section Avatar --- */}
         <View style={styles.avatarSection}>
           <TouchableOpacity style={styles.avatarWrapper} activeOpacity={0.8}>
             <Image
@@ -112,75 +81,78 @@ const EditProfileScreen = () => {
           </View>
         </View>
 
-        {/* --- Formulaire --- */}
         <View style={styles.formSection}>
           <View style={styles.row}>
             <View style={{ flex: 1, marginRight: 8 }}>
-              <FormField 
-                label="Prénom" 
-                value={formData.prenom} 
-                fieldKey="prenom" 
-                icon={User} 
+              <FormField
+                label="Prénom"
+                value={formData.prenom}
+                fieldKey="prenom"
+                icon={User}
               />
             </View>
             <View style={{ flex: 1, marginLeft: 8 }}>
-              <FormField 
-                label="Nom" 
-                value={formData.nom} 
-                fieldKey="nom" 
+              <FormField
+                label="Nom"
+                value={formData.nom}
+                fieldKey="nom"
               />
             </View>
           </View>
 
-          <FormField 
-            label="Email" 
-            value={formData.email} 
-            fieldKey="email" 
-            icon={Mail} 
-            keyboardType="email-address" 
+          <FormField
+            label="Email"
+            value={formData.email}
+            fieldKey="email"
+            icon={Mail}
+            keyboardType="email-address"
           />
 
-          <View style={styles.inputContainer}>
+        <InterestSelector
+            selectedInterests={interests}
+            onInterestsChange={setInterests}
+        />
+        <View style={styles.inputContainer}>
             <TypographyComponent variant="labelSmall" color={colors.text.secondary} style={{ marginBottom: 8 }}>
-              Centres d'intérêt
+              Ma Classe
             </TypographyComponent>
-            <View style={styles.interestsContainer}>
-              <View style={styles.chipsWrapper}>
-                {interests.map((interest, index) => (
-                  <View key={index} style={styles.chip}>
-                    <Text style={styles.chipText}>{interest}</Text>
-                    <TouchableOpacity onPress={() => handleRemoveInterest(index)} style={styles.chipRemove}>
-                      <X size={14} color="#FFF" />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-                <TextInput
-                  style={styles.addTagInput}
-                  placeholder="Ajouter... (+ Entrée)"
-                  placeholderTextColor={colors.text.tertiary}
-                  value={currentInterest}
-                  onChangeText={setCurrentInterest}
-                  onSubmitEditing={handleAddInterest}
-                />
-              </View>
-              {currentInterest.length > 0 && (
-                <TouchableOpacity onPress={handleAddInterest} style={styles.addButton}>
-                   <Plus size={20} color={colors.primary} />
-                </TouchableOpacity>
-              )}
-            </View>
-            <TypographyComponent variant="labelSmall" color={colors.text.tertiary} style={{marginTop: 6, fontSize: 11}}>
-              Appuyez sur "+" pour valider un tag.
-            </TypographyComponent>
-          </View>
 
+            <View style={styles.classSelectorContainer}>
+                {classOptions.map((classeOption) => {
+                const isSelected = selectedClass === classeOption;
+                return (
+                    <TouchableOpacity
+                      key={classeOption}
+                      style={[
+                        styles.classChip,
+                        isSelected && styles.classChipSelected
+                      ]}
+                      onPress={() => setSelectedClass(classeOption)}
+                      activeOpacity={0.7}
+                    >
+                      <TypographyComponent
+                        variant="label"
+                        color={isSelected ? '#FFF' : colors.text.primary}
+                        style={{ fontWeight: isSelected ? '700' : '400' }}
+                      >
+                        {classeOption}
+                      </TypographyComponent>
+                    </TouchableOpacity>
+                    );
+                    })}
+                </View>
+            </View>
         </View>
 
-        {/* --- Footer --- */}
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={[styles.saveButton, loading && { opacity: 0.7 }]}
+            onPress={handleSave}
+            activeOpacity={0.8}
+            disabled={loading}
+          >
             <TypographyComponent variant="button" color="#FFF">
-              Enregistrer
+              {loading ? "Enregistrement..." : "Enregistrer"}
             </TypographyComponent>
           </TouchableOpacity>
           <TouchableOpacity style={{ marginTop: 20, alignSelf: 'center' }}>
@@ -246,61 +218,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginBottom: 4,
   },
-  interestsContainer: {
-    minHeight: 56, // Hauteur min comme les autres inputs
-    backgroundColor: '#FFF',
-    borderRadius: 16, // Arrondi rectangulaire
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: colors.border?.light || '#DDD',
-    // Ombres identiques à TextFieldComponent
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  chipsWrapper: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    alignItems: 'center',
-  },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.primary, // Ou une couleur secondaire
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-  },
-  chipText: {
-    color: '#FFF',
-    fontSize: 14,
-    fontWeight: '600',
-    marginRight: 6,
-  },
-  chipRemove: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 10,
-    padding: 2,
-  },
-  addTagInput: {
-    fontSize: 15,
-    color: colors.text.primary,
-    minWidth: 100,
-    paddingVertical: 4,
-  },
-  addButton: {
-    padding: 8,
-    marginLeft: 4,
-  },
-
-  // --- Footer ---
   footer: {
     padding: 20,
     marginTop: 10,
@@ -316,6 +233,34 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 4,
+  },
+  classSelectorContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Répartit les boutons sur la largeur
+    gap: 8,
+  },
+  classChip: {
+    flex: 1, // Chaque bouton prend la même largeur
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: '#FFF',
+    borderWidth: 1,
+    borderColor: colors.border?.light || '#DDD',
+    // Ombres légères
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  classChipSelected: {
+    backgroundColor: colors.primary, // Votre couleur principale (ex: Bleu/Violet)
+    borderColor: colors.primary,
+    // Ombre un peu plus marquée pour l'effet "activé"
+    shadowOpacity: 0.2,
+    elevation: 3,
   },
 });
 

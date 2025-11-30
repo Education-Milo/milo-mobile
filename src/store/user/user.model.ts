@@ -17,7 +17,7 @@ export interface User {
     maxXp: number;
     streak: number;
 
-    interests: string[]; // ex: ['Football', 'Minecraft', 'Espace']
+    interests: string[];
 
     avatarId: number;
   }

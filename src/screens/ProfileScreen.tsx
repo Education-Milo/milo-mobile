@@ -24,8 +24,6 @@ const SUCCES_RECENTS = [
 
 const ProfileScreen = () => {
   const user = useUserStore((state) => state.user);
-
-  // Données utilisateur fictives
   const stats = {
     streak: 12,
     totalXp: 2450,
