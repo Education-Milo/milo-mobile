@@ -61,14 +61,20 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
 
   updateUser: async (userData: Partial<User>) => {
+    const currentUser = get().user;
+    if (!currentUser) throw new Error("Utilisateur non connecté");
+
     try {
       set({ loading: true });
-      const response = await APIAxios.put(APIRoutes.PUT_UpdateUser, userData);
+      const url = APIRoutes.PUT_UpdateUser.replace('{userId}', currentUser.id);
+      const response = await APIAxios.put(url, userData);
       const updatedUser: User = response.data;
-      set((state) => ({
-        user: { ...state.user, ...updatedUser },
+
+      set({
+        user: updatedUser,
         loading: false,
-      }));
+      });
+
       return updatedUser;
     } catch (error) {
       set({ loading: false });

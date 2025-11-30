@@ -144,7 +144,7 @@ const QCMScreen: React.FC<QCMScreenProps> = ({ questions, onQuizComplete, onQuit
         </View>
 
         {/* Système de vies */}
-        <View style={styles.livesContainer}>
+        {/* <View style={styles.livesContainer}>
           {[...Array(3)].map((_, i) => (
             <Ionicons
               key={i}
@@ -154,7 +154,7 @@ const QCMScreen: React.FC<QCMScreenProps> = ({ questions, onQuizComplete, onQuit
               style={styles.heartIcon}
             />
           ))}
-        </View>
+        </View> */}
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>

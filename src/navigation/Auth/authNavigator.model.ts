@@ -10,6 +10,7 @@ export enum AuthScreenNames {
     MissionScreen = 'MissionScreen',
     ChatScreen = 'ChatScreen',
     FriendsScreen = 'FriendsScreen',
+    EditProfileScreen = 'EditProfileScreen',
 
   }
 
@@ -36,5 +37,6 @@ export enum AuthScreenNames {
     ChatScreen: { lessonId: string; lessonTitle: string, context: string };
     // ChatScreen: { matiere: string; chapitre: string };
     ExercicesScreen: { matiere: string; chapitre: string };
+    EditProfileScreen: undefined;
     FriendsScreen: undefined;
   };
