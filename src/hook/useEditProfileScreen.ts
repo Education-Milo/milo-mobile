@@ -9,23 +9,23 @@ export const useEditProfile = () => {
   const { user, updateUser, loading } = useUserStore();
 
   const [formData, setFormData] = useState({
-    prenom: '',
-    nom: '',
+    first_name: '',
+    last_name: '',
     email: '',
+    classe: '' as ClassType,
   });
 
   const [interests, setInterests] = useState<string[]>([]);
-  const [selectedClass, setSelectedClass] = useState<ClassType>('6ème');
 
   useEffect(() => {
     if (user) {
       setFormData({
-        prenom: user.prenom || '',
-        nom: user.nom || '',
+        first_name: user.first_name || '',
+        last_name: user.last_name || '',
         email: user.email || '',
+        classe: user.classe || user.class_,
       });
       setInterests(user.interests || []);
-      setSelectedClass(user.classe || '6ème');
     }
   }, [user]);
 
@@ -36,11 +36,11 @@ export const useEditProfile = () => {
   const handleSave = async () => {
     try {
       await updateUser({
-        prenom: formData.prenom,
-        nom: formData.nom,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
         email: formData.email,
         interests: interests,
-        classe: selectedClass,
+        classe: formData.classe,
       });
       navigation.goBack();
     } catch (error) {
@@ -51,12 +51,10 @@ export const useEditProfile = () => {
   return {
     formData,
     interests,
-    selectedClass,
     loading,
     userAvatar: user?.avatarId,
     handleChange,
     setInterests,
-    setSelectedClass,
     handleSave,
     goBack: navigation.goBack,
   };

@@ -88,7 +88,7 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 
         {/* Boutons */}
         <View style={styles.resultsButtons}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.resultButton, styles.restartButton]}
             onPress={onRestart}
           >
@@ -96,7 +96,7 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
               Recommencer le quiz
             </TypographyComponent>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.resultButton, styles.homeButton]}
             onPress={onBackToHome}
           >

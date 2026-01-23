@@ -35,7 +35,7 @@ const ProfileHeader = ({ user }: ProfileHeaderProps) => {
           </View>
         </View>
         <TypographyComponent variant="h3" style={{ marginTop: 12 }}>
-          {user?.prenom} {user?.nom}
+          {user?.first_name} {user?.last_name}
         </TypographyComponent>
         <TypographyComponent variant="body" color={colors.text.tertiary}>
           Élève motivé • A rejoint en 2024

@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   Animated,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRegisterForm } from '@hooks/useRegisterForm';
@@ -42,6 +43,7 @@ const RegisterScreen = () => {
     handleRoleChange,
     handleConfirmPasswordChange,
     handleRegister,
+    handleClasseChange,
   } = useRegisterForm();
 
   const {
@@ -88,7 +90,7 @@ const RegisterScreen = () => {
   ];
 
   return (
-    <View style={styles.keyboardAvoidingView}>
+    <ScrollView style={styles.keyboardAvoidingView}>
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.wrapper}>
           <Animated.View
@@ -130,6 +132,7 @@ const RegisterScreen = () => {
                 onNomChange={handleNomChange}
                 onPrenomChange={handlePrenomChange}
                 onRoleChange={handleRoleChange}
+                onClasseChange={handleClasseChange}
                 onPasswordChange={handlePasswordChange}
                 onConfirmPasswordChange={handleConfirmPasswordChange}
                 onSubmit={handleRegister}
@@ -162,7 +165,7 @@ const RegisterScreen = () => {
           </Animated.View>
         </View>
       </TouchableWithoutFeedback>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -213,7 +216,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   logoWrapper: {
-    width: 120,                 // ajuste selon ton logo
+    width: 120,
     height: 50,
   },
 });

@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { UserStore, User, UserStats } from '@store/user/user.model';
 import APIAxios, { APIRoutes } from '@api/axios.api';
 
-// Durée de cache en millisecondes (5 minutes)
 const CACHE_DURATION = 5 * 60 * 1000;
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -22,7 +21,11 @@ export const useUserStore = create<UserStore>((set, get) => ({
     try {
       set({ loading: true });
       const response = await APIAxios.get(APIRoutes.GET_Me);
-      const userData: User = response.data;
+      const backData = response.data;
+      const userData: User = {
+        ...backData,
+        classe: backData.class_,
+      };
       set({
         user: userData,
         lastUserFetch: now,
@@ -66,8 +69,11 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
     try {
       set({ loading: true });
-      const url = APIRoutes.PUT_UpdateUser.replace('{userId}', currentUser.id);
-      const response = await APIAxios.put(url, userData);
+      const {classe, ...rest} = userData;
+      const response = await APIAxios.put(APIRoutes.PUT_Update_user(currentUser.id), {
+        ...rest,
+        class_: userData.classe,
+      });
       const updatedUser: User = response.data;
 
       set({
@@ -85,14 +91,14 @@ export const useUserStore = create<UserStore>((set, get) => ({
   getFullName: () => {
     const user = get().user;
     if (!user) return '';
-    return `${user.prenom} ${user.nom}`.trim();
+    return `${user.first_name} ${user.last_name}`.trim();
   },
 
   getInitials: () => {
     const user = get().user;
     if (!user) return '';
-    const firstInitial = user.prenom?.charAt(0)?.toUpperCase() || '';
-    const lastInitial = user.nom?.charAt(0)?.toUpperCase() || '';
+    const firstInitial = user.first_name?.charAt(0)?.toUpperCase() || '';
+    const lastInitial = user.last_name?.charAt(0)?.toUpperCase() || '';
     return `${firstInitial}${lastInitial}`;
   },
 

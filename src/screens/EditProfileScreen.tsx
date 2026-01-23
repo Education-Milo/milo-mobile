@@ -18,34 +18,33 @@ import { colors } from '@theme/colors';
 import { useEditProfile } from '@hooks/useEditProfileScreen';
 import { ClassType } from '@store/user/user.model';
 
+const FormField = ({ label, value, fieldKey, icon: Icon, keyboardType, onChange }: any) => (
+  <View style={styles.inputContainer}>
+    <TypographyComponent variant="labelSmall" color={colors.text.secondary} style={{ marginBottom: 8 }}>
+      {label}
+    </TypographyComponent>
+    <TextFieldComponent
+      value={value}
+      onChangeText={(text) => onChange(fieldKey, text)}
+      placeholder={label}
+      keyboardType={keyboardType}
+      icon={Icon ? <Icon size={20} color={colors.text.tertiary} /> : undefined}
+    />
+  </View>
+);
+
 const EditProfileScreen = () => {
     const {
         formData,
         interests,
-        selectedClass,
         handleChange,
         setInterests,
-        setSelectedClass,
         handleSave,
         goBack,
         loading
     } = useEditProfile();
   const classOptions: ClassType[] = ['6ème', '5ème', '4ème', '3ème'];
 
-  const FormField = ({ label, value, fieldKey, icon: Icon, keyboardType }: any) => (
-    <View style={styles.inputContainer}>
-      <TypographyComponent variant="labelSmall" color={colors.text.secondary} style={{ marginBottom: 8 }}>
-        {label}
-      </TypographyComponent>
-      <TextFieldComponent
-        value={value}
-        onChangeText={(text) => handleChange(fieldKey, text)}
-        placeholder={label}
-        keyboardType={keyboardType}
-        icon={Icon ? <Icon size={20} color={colors.text.tertiary} /> : undefined}
-      />
-    </View>
-  );
 
   return (
     <KeyboardAvoidingView
@@ -86,16 +85,18 @@ const EditProfileScreen = () => {
             <View style={{ flex: 1, marginRight: 8 }}>
               <FormField
                 label="Prénom"
-                value={formData.prenom}
-                fieldKey="prenom"
+                value={formData.first_name}
+                fieldKey="first_name"
+                onChange={handleChange}
                 icon={User}
               />
             </View>
             <View style={{ flex: 1, marginLeft: 8 }}>
               <FormField
                 label="Nom"
-                value={formData.nom}
-                fieldKey="nom"
+                value={formData.last_name}
+                fieldKey="last_name"
+                onChange={handleChange}
               />
             </View>
           </View>
@@ -104,6 +105,7 @@ const EditProfileScreen = () => {
             label="Email"
             value={formData.email}
             fieldKey="email"
+            onChange={handleChange}
             icon={Mail}
             keyboardType="email-address"
           />
@@ -112,36 +114,35 @@ const EditProfileScreen = () => {
             selectedInterests={interests}
             onInterestsChange={setInterests}
         />
-        <View style={styles.inputContainer}>
+          <View style={styles.inputContainer}>
             <TypographyComponent variant="labelSmall" color={colors.text.secondary} style={{ marginBottom: 8 }}>
               Ma Classe
             </TypographyComponent>
-
             <View style={styles.classSelectorContainer}>
-                {classOptions.map((classeOption) => {
-                const isSelected = selectedClass === classeOption;
+              {classOptions.map((item) => {
+                const isSelected = formData.classe === item;
                 return (
-                    <TouchableOpacity
-                      key={classeOption}
-                      style={[
-                        styles.classChip,
-                        isSelected && styles.classChipSelected
-                      ]}
-                      onPress={() => setSelectedClass(classeOption)}
-                      activeOpacity={0.7}
+                  <TouchableOpacity
+                    key={item}
+                    style={[
+                      styles.classChip,
+                      isSelected && styles.classChipSelected
+                    ]}
+                    onPress={() => handleChange('classe', item)}
+                    activeOpacity={0.7}
+                  >
+                    <TypographyComponent
+                      variant="label"
+                      color={isSelected ? '#FFF' : colors.text.primary}
+                      style={{ fontWeight: isSelected ? '700' : '400' }}
                     >
-                      <TypographyComponent
-                        variant="label"
-                        color={isSelected ? '#FFF' : colors.text.primary}
-                        style={{ fontWeight: isSelected ? '700' : '400' }}
-                      >
-                        {classeOption}
-                      </TypographyComponent>
-                    </TouchableOpacity>
-                    );
-                    })}
-                </View>
+                      {item}
+                    </TypographyComponent>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
+          </View>
         </View>
 
         <View style={styles.footer}>
@@ -236,11 +237,11 @@ const styles = StyleSheet.create({
   },
   classSelectorContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Répartit les boutons sur la largeur
+    justifyContent: 'space-between',
     gap: 8,
   },
   classChip: {
-    flex: 1, // Chaque bouton prend la même largeur
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
@@ -248,7 +249,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderWidth: 1,
     borderColor: colors.border?.light || '#DDD',
-    // Ombres légères
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -256,9 +256,8 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   classChipSelected: {
-    backgroundColor: colors.primary, // Votre couleur principale (ex: Bleu/Violet)
+    backgroundColor: colors.primary,
     borderColor: colors.primary,
-    // Ombre un peu plus marquée pour l'effet "activé"
     shadowOpacity: 0.2,
     elevation: 3,
   },

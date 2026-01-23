@@ -28,9 +28,7 @@ const AppInitializer = ({ children }: AppInitializerProps) => {
     const handleAppStateChange = async (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
         const { isTokenExpired, logout, accessToken } = useAuthStore.getState();
-        // Si l'utilisateur est connecté
         if (accessToken) {
-          // Vérifier si le token est expiré
           if (isTokenExpired()) {
             console.log('Token expired on app resume, logging out');
             await logout();

@@ -2,11 +2,11 @@ import * as yup from 'yup';
 import i18n from '@i18n/index';
 
 export const registerValidationSchema = yup.object({
-  prenom: yup
+  first_name: yup
     .string()
     .trim()
     .required(i18n.t('validation.prenom.required')),
-  nom: yup
+  last_name: yup
     .string()
     .trim()
     .required(i18n.t('validation.nom.required')),
@@ -24,7 +24,7 @@ export const registerValidationSchema = yup.object({
       i18n.t('validation.password.complexity'),
       function (value) {
         if (!value) {
-          return true; // Let required handle empty case
+          return true;
         }
         return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/.test(
           value
@@ -36,7 +36,7 @@ export const registerValidationSchema = yup.object({
       i18n.t('validation.password.minLength'),
       function (value) {
         if (!value) {
-          return true; // Let required handle empty case
+          return true;
         }
         return value.length >= 8;
       }
@@ -49,17 +49,20 @@ export const registerValidationSchema = yup.object({
       'passwords-match',
       i18n.t('validation.confirmPassword.match'),
       function (value) {
-        // Only check match if both passwords exist
         if (!value || !this.parent.password) {
-          return true; // Let required handle empty case
+          return true;
         }
         return value === this.parent.password;
       }
     ),
     role: yup
     .string()
-    .oneOf(['Élève', 'Parent', 'Prof'], i18n.t('validation.role.invalid'))
+    .oneOf(['Enfant', 'Parent', 'Professeur'], i18n.t('validation.role.invalid'))
     .required(i18n.t('validation.role.required')),
+    classe: yup
+    .string()
+    .oneOf(['6ème', '5ème', '4ème', '3ème'], i18n.t('validation.classe.invalid'))
+    .required(i18n.t('validation.classe.required')),
 });
 
 export type RegisterFormData = yup.InferType<typeof registerValidationSchema>;

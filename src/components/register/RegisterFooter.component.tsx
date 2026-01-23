@@ -18,7 +18,6 @@ const RegisterFooter: React.FC<RegisterFooterProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // Animation values
   const buttonOpacity = useRef(new Animated.Value(0)).current;
   const buttonTranslateY = useRef(new Animated.Value(20)).current;
   const buttonScale = useRef(new Animated.Value(1)).current;
@@ -98,7 +97,6 @@ const RegisterFooter: React.FC<RegisterFooterProps> = ({
         }),
       ]).start();
     } else {
-      // Disappear instantly when a field is focused
       buttonOpacity.setValue(0);
       buttonTranslateY.setValue(20);
       linkOpacity.setValue(0);
@@ -107,7 +105,6 @@ const RegisterFooter: React.FC<RegisterFooterProps> = ({
   }, [isFieldFocused]);
 
   const handleRegisterPress = () => {
-    // Button press animation
     Animated.sequence([
       Animated.timing(buttonScale, {
         toValue: 0.95,

@@ -83,7 +83,7 @@ export const APIRoutes = {
   POST_RequestConfirmEmail: '/auth/request-confirm-email',
   GET_Me: '/users/me',
 
-  PUT_UpdateUser: '/users/{userId}',
+  PUT_Update_user: (userId: string) => `/users/${userId}`,
 
   POST_CREATE_QCM: '/qcm',
 

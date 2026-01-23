@@ -28,12 +28,13 @@ export const useRegisterForm = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<UnAuthStackParamList>>();
   const [formData, setFormData] = useState<RegisterFormData>({
-    prenom: '',
-    nom: '',
+    first_name: '',
+    last_name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'Élève',
+    role: 'Enfant',
+    classe: '6ème',
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -95,14 +96,19 @@ export const useRegisterForm = () => {
     setErrors(prev => ({ ...prev, role: undefined }));
   }, []);
 
+  const handleClasseChange = useCallback((newClasse: RegisterFormData['classe']) => {
+    setFormData(prev => ({ ...prev, classe: newClasse }));
+    setErrors(prev => ({ ...prev, classe: undefined }));
+  }, []);
+
 
   const handleRegister = useCallback(async () => {
     const isValid = await validateForm();
     if (isValid) {
-      await register(formData.email, formData.password, formData.nom, formData.prenom, formData.role);
+      await register(formData.email, formData.password, formData.last_name, formData.first_name, formData.role, formData.classe);
       Keyboard.dismiss();
     }
-  }, [validateForm, register, formData.email, formData.nom, formData.password, formData.prenom, formData.role, navigation]);
+  }, [validateForm, register, formData, navigation]);
 
   return {
     formData,
@@ -114,6 +120,7 @@ export const useRegisterForm = () => {
     handleNomChange,
     handleRoleChange,
     handlePrenomChange,
+    handleClasseChange,
     handleRegister,
   };
 };

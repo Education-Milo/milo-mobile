@@ -18,10 +18,12 @@ interface FormErrors {
     confirmPassword?: string;
 }
 const roles = [
-  { key: 'Élève', label: 'Élève' },
+  { key: 'Enfant', label: 'Élève' },
   { key: 'Parent', label: 'Parent' },
-  { key: 'Prof', label: 'Professeur' },
+  { key: 'Professeur', label: 'Professeur' },
 ];
+
+const classes: RegisterFormData['classe'][] = ['6ème', '5ème', '4ème', '3ème'];
 
 interface RegisterFormProps {
   formData: RegisterFormData;
@@ -34,6 +36,7 @@ interface RegisterFormProps {
   onPrenomChange: (text: string) => void;
   onConfirmPasswordChange: (text: string) => void;
   onRoleChange: (role: RegisterFormData['role']) => void;
+  onClasseChange: (classe: RegisterFormData['classe']) => void;
   onSubmit: () => void;
   onFocus: () => void;
   onBlur: () => void;
@@ -64,6 +67,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     onNomChange,
     onPrenomChange,
     onRoleChange,
+    onClasseChange,
     onConfirmPasswordChange,
     onSubmit,
     onFocus,
@@ -112,7 +116,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           autoCapitalize='words'
           autoComplete='off'
           blurOnSubmit={false}
-          value={formData.nom}
+          value={formData.last_name}
           onChangeText={onNomChange}
           error={errors.nom}
         />
@@ -137,7 +141,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           autoCapitalize='words'
           autoComplete='off'
           blurOnSubmit={false}
-          value={formData.prenom}
+          value={formData.first_name}
           onChangeText={onPrenomChange}
           error={errors.prenom}
         />
@@ -229,29 +233,62 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           {t('register.selectRole')}
         </Typography>
         <View style={styles.roleContainer}>
-          {roles.map(roleOption => (
-            <TouchableOpacity
-              key={roleOption.key}
-              style={[
-                styles.roleButton,
-                formData.role === roleOption.key && styles.roleButtonActive,
-              ]}
-              onPress={() => onRoleChange(roleOption.key as "Élève" | "Parent" | "Prof")}
-              disabled={loading}
-            >
-              <Typography
+          {roles.map(roleOption => {
+            const isBlocked = roleOption.key !== 'Enfant';
+            return (
+              <TouchableOpacity
+                key={roleOption.key}
+                disabled={isBlocked || loading}
                 style={[
-                  styles.roleButtonText,
-                  formData.role === roleOption.key && styles.roleButtonTextActive,
+                  styles.roleButton,
+                  formData.role === roleOption.key && styles.roleButtonActive,
+                  isBlocked && { opacity: 0.4, backgroundColor: '#f0f0f0' }
                 ]}
+                onPress={() => onRoleChange(roleOption.key as any)}
               >
-                {roleOption.label}
-              </Typography>
-            </TouchableOpacity>
-          ))}
+                <Typography
+                  style={[
+                    styles.roleButtonText,
+                    formData.role === roleOption.key && styles.roleButtonTextActive,
+                  ]}
+                >
+                  {roleOption.label}
+                  {isBlocked}
+                </Typography>
+              </TouchableOpacity>
+            );
+          })}
         </View>
         {errors.role && <Typography variant='bodySmall' style={styles.errorText}>{errors.role}</Typography>}
       </Animated.View>
+      {formData.role === 'Enfant' && (
+        <Animated.View style={{ opacity: animations.emailOpacity }}>
+          <Typography variant='labelLarge' style={styles.roleTitle} color={colors.IconColor}>
+            {t('register.selectClasse')}
+          </Typography>
+          <View style={styles.roleContainer}>
+            {['6ème', '5ème', '4ème', '3ème'].map(classeOption => (
+              <TouchableOpacity
+                key={classeOption}
+                style={[
+                  styles.roleButton,
+                  formData.classe === classeOption && styles.roleButtonActive,
+                ]}
+                onPress={() => onClasseChange(classeOption as any)}
+              >
+                <Typography
+                  style={[
+                    styles.roleButtonText,
+                    formData.classe === classeOption && styles.roleButtonTextActive,
+                  ]}
+                >
+                  {classeOption}
+                </Typography>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Animated.View>
+      )}
 
       {isFieldFocused && (
         <Animated.View
