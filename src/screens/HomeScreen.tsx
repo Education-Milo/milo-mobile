@@ -86,7 +86,7 @@ const HomeScreen = () => {
         />
         <ScrollView showsVerticalScrollIndicator={false}>
           <WelcomeCard
-            userName={user?.prenom}
+            userName={user?.first_name}
             onPress={() => navigation.navigate(AuthScreenNames.Lesson)}
           />
 

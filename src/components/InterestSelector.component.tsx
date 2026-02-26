@@ -61,7 +61,7 @@ const InterestSelector: React.FC<InterestSelectorProps> = ({
       <View style={styles.inputWrapper}>
         <View style={styles.chipsContainer}>
           {selectedInterests.map((interest, index) => (
-            <View key={index} style={styles.chip}>
+            <View key={interest} style={styles.chip}>
               <Text style={styles.chipText}>{interest}</Text>
               <TouchableOpacity onPress={() => handleRemove(index)} style={styles.chipRemove}>
                 <X size={14} color="#FFF" />

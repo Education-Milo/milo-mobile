@@ -1,8 +1,8 @@
-export type UserRole = 'Enfant' | 'Professeur' | 'Parent' | 'Admin' ;
-export type ClassType = '6ème' | '5ème' | '4ème' | '3ème';
+export type UserRole = 'Enfant' | 'Prof' | 'Parent' | 'Admin' ;
+export type ClassType = '6eme' | '5eme' | '4eme' | '3eme';
 export interface User {
 
-    id: string;
+    id: number;
     email: string;
     first_name: string;
     last_name: string;
@@ -16,10 +16,16 @@ export interface User {
     maxXp: number;
     streak: number;
 
-    interests: string[];
-
     avatarId: number;
+    Interests?: UserInterest[];
   }
+
+  export interface UserInterest {
+    id: number;
+    name: string;
+  }
+
+
   export interface UserStats {
     documentsScanned: number;
     challengesCompleted: number;
@@ -39,6 +45,8 @@ export interface User {
   export interface UserActions {
     getMe: (forceRefresh?: boolean) => Promise<User>;
     updateUser: (userData: Partial<User>) => Promise<User>;
+    addUserInterest: (interestName: string) => Promise<void>;
+    deleteUserInterest: (interestId: number) => Promise<void>;
 
     // getUserStats: (forceRefresh?: boolean) => Promise<UserStats>;
     // refreshUserData: () => Promise<void>;

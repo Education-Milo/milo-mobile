@@ -43,7 +43,7 @@ const EditProfileScreen = () => {
         goBack,
         loading
     } = useEditProfile();
-  const classOptions: ClassType[] = ['6ème', '5ème', '4ème', '3ème'];
+  const classOptions: ClassType[] = ['6eme', '5eme', '4eme', '3eme'];
 
 
   return (

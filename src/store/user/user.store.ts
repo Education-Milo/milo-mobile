@@ -21,17 +21,16 @@ export const useUserStore = create<UserStore>((set, get) => ({
     try {
       set({ loading: true });
       const response = await APIAxios.get(APIRoutes.GET_Me);
-      const backData = response.data;
-      const userData: User = {
-        ...backData,
-        classe: backData.class_,
-      };
       set({
-        user: userData,
+        user: {
+          ...response.data,
+          classe: response.data.class_,
+          Interests: response.data.Interests || response.data.interests || [],
+        },
         lastUserFetch: now,
         loading: false,
       });
-      return userData;
+      return response.data;
     } catch (error) {
       set({ loading: false });
       throw error;
@@ -53,7 +52,6 @@ export const useUserStore = create<UserStore>((set, get) => ({
   addXp: (amount: number) => {
     set((state) => {
       if(!state.user) return {};
-      if(!state.user) return {};
       return {
         user: {
           ...state.user,
@@ -74,14 +72,71 @@ export const useUserStore = create<UserStore>((set, get) => ({
         ...rest,
         class_: userData.classe,
       });
-      const updatedUser: User = response.data;
-
       set({
-        user: updatedUser,
+        user: {
+          ...currentUser,
+          ...response.data,
+          Interests: currentUser.Interests,
+          classe: response.data.class_,
+        },
         loading: false,
       });
 
-      return updatedUser;
+      return response.data;
+    } catch (error) {
+      set({ loading: false });
+      throw error;
+    }
+  },
+
+  addUserInterest: async (interestName: string) => {
+    const currentUser = get().user;
+    if (!currentUser) {
+      throw new Error('No user logged in');
+    }
+    const tempInterest = { id: Date.now(), name: interestName };
+    set({
+      user: {
+        ...currentUser,
+        Interests: [...(currentUser.Interests || []), tempInterest]
+      }
+    });
+    try {
+      const response = await APIAxios.post(APIRoutes.POST_Add_User_Interest(currentUser.id), { name: interestName.trim().toLowerCase() });
+      const newUser = get().user;
+      const newInterest = response.data
+      if (newUser) {
+        set({
+          user: { ...newUser,
+          Interests: [...(newUser.Interests || []), newInterest]
+          },
+        });
+    }
+    } catch (error) {
+      set({
+        user: {
+          ...currentUser,
+          Interests: currentUser.Interests
+        }
+      })
+      set({ loading: false });
+      throw error;
+    }
+  },
+
+  deleteUserInterest: async (interestId: number) => {
+    const currentUser = get().user;
+    if (!currentUser) throw new Error('No user logged in');
+    try {
+      set({ loading: true });
+      await APIAxios.delete(APIRoutes.DELETE_User_Interest(currentUser.id, interestId));
+      set({
+        user: {
+          ...currentUser,
+          Interests: currentUser.Interests?.filter(i => i.id !== interestId) || []
+        },
+        loading: false,
+      });
     } catch (error) {
       set({ loading: false });
       throw error;

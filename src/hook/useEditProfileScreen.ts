@@ -6,7 +6,7 @@ import { ClassType } from '@store/user/user.model';
 export const useEditProfile = () => {
   const navigation = useNavigation();
 
-  const { user, updateUser, loading } = useUserStore();
+  const { user, updateUser, getMe, loading, addUserInterest, deleteUserInterest } = useUserStore();
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -25,7 +25,7 @@ export const useEditProfile = () => {
         email: user.email || '',
         classe: user.classe || user.class_,
       });
-      setInterests(user.interests || []);
+      setInterests(user.Interests?.map(i => i.name) || []);
     }
   }, [user]);
 
@@ -39,12 +39,24 @@ export const useEditProfile = () => {
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,
-        interests: interests,
         classe: formData.classe,
       });
-      navigation.goBack();
     } catch (error) {
       console.error("Erreur lors de la mise à jour du profil:", error);
+    }
+    try {
+      const currentInterestNames = user?.Interests?.map(i => i.name) || [];
+      const toAdd = interests.filter(name => !currentInterestNames.includes(name));
+      const interestsToRemove = user?.Interests?.filter(i => !interests.includes(i.name)) || [];
+      await Promise.all([
+        ...toAdd.map(name => addUserInterest(name)),
+        ...interestsToRemove.map(i => deleteUserInterest(i.id)),
+      ]);
+    } catch (error) {
+      console.error("Erreur update interests:", error);
+    } finally {
+      await getMe(true);
+      navigation.goBack();
     }
   };
 
