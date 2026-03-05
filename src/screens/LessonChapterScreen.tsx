@@ -1,8 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import React from 'react';
+import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import {  ArrowLeft, BookOpen, PenTool } from 'lucide-react-native';
 
 import Layout from '@components/Layout';
@@ -10,64 +7,26 @@ import TypographyComponent from '@components/Typography.component';
 import ChapterCard from '@components/Cards/ChapterCard.component';
 import BottomSheetComponent from '@components/BottomSheetModal.component';
 import { colors } from '@theme/colors';
-import { AuthStackParamList } from '@navigation/Auth/authNavigator.model';
-import { useUserStore } from '@store/user/user.store';
-import { useCourseStore } from '@store/course/course.store';
-import { Lesson, Chapter } from '@store/course/course.model';
 import ChapterAccordion from '@components/Lesson/ChapterAccordion.component';
-
-type LessonChapterRouteProp = RouteProp<AuthStackParamList, 'LessonChapter'>;
-type LessonChapterNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
+import LoadingScreen from './LoadingScreen';
+import { useLessonChapterScreen } from '@hooks/useLessonChapterScreen';
 
 const LessonChapter = () => {
-  const navigation = useNavigation<LessonChapterNavigationProp>();
-  const route = useRoute<LessonChapterRouteProp>();
-  const { matiere } = route.params;
-
-  const user = useUserStore((state) => state.user);
-
-  const { currentCourse, fetchCourseBySubject, isLoading } = useCourseStore();
-
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
-
-  useEffect(() => {
-    if (matiere) {
-      fetchCourseBySubject(matiere);
-    }
-  }, [matiere]);
-
-  const handleLessonPress = (lesson: Lesson) => {
-    setSelectedLesson(lesson);
-    bottomSheetRef.current?.present();
-  };
-
-  const handleOptionPress = (type: 'cours' | 'exercices') => {
-    bottomSheetRef.current?.dismiss();
-    if (type === 'cours' && selectedLesson) {
-      // ✅ C'est ici que l'interactivité commence !
-      // On envoie l'ID et le titre à l'écran de chat pour qu'il lance la leçon
-      navigation.navigate('ChatScreen', {
-        lessonId: selectedLesson.id,
-        lessonTitle: selectedLesson.title,
-        context: `Explique-moi la leçon : ${selectedLesson.title}`
-      });
-    } else {
-      navigation.navigate('ExercicesScreen', {
-        matiere: matiere,
-        chapitre: currentCourse?.title || 'Général'
-      });
-    }
-  };
+  const {
+    user,
+    matiere,
+    isLoading,
+    coursesWithChapters,
+    selectedLesson,
+    bottomSheetRef,
+    handleLessonPress,
+    handleOptionPress,
+    handleGoBack,
+  } = useLessonChapterScreen();
 
   if (isLoading) {
     return (
-      <Layout>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <TypographyComponent style={{ marginTop: 16 }}>Chargement du programme...</TypographyComponent>
-        </View>
-      </Layout>
+        <LoadingScreen />
     );
   }
 
@@ -75,33 +34,39 @@ const LessonChapter = () => {
     <Layout>
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
             <ArrowLeft size={24} color={colors.text.primary} />
             <TypographyComponent variant="h6" style={{ marginLeft: 8 }}>Retour</TypographyComponent>
           </TouchableOpacity>
 
           <ChapterCard
-            userName={user?.prenom}
+            userName={user?.first_name}
             courseTitle={matiere}
           />
-
-          <View style={styles.chapterList}>
-            {currentCourse?.chapters?.length ? (
-              currentCourse.chapters.map((chapter, index) => (
-                <ChapterAccordion
-                  key={chapter.id}
-                  chapter={chapter}
-                  chapterNumber={index + 1}
-                  defaultOpen={index === 0}
-                  onLessonPress={handleLessonPress}
-                />
-              ))
-            ) : (
-              <TypographyComponent style={{ textAlign: 'center', marginTop: 20, color: '#999' }}>
-                Aucun chapitre trouvé pour cette matière.
-              </TypographyComponent>
-            )}
-          </View>
+        <View style={styles.chapterList}>
+          {coursesWithChapters.length ? (
+            coursesWithChapters.map((course) => (
+              <View key={course.id}>
+                <TypographyComponent variant="h5" style={{ marginBottom: 12 }}>
+                  {course.title}
+                </TypographyComponent>
+                {course.chapters.map((chapter, index) => (
+                  <ChapterAccordion
+                    key={chapter.id}
+                    chapter={chapter}
+                    chapterNumber={index + 1}
+                    defaultOpen={index === 0}
+                    onLessonPress={handleLessonPress}
+                  />
+                ))}
+              </View>
+            ))
+          ) : (
+            <TypographyComponent style={{ textAlign: 'center', marginTop: 20, color: '#999' }}>
+              Aucun chapitre trouvé pour cette matière.
+            </TypographyComponent>
+          )}
+        </View>
         </ScrollView>
 
         <BottomSheetComponent ref={bottomSheetRef} snapPoints={['40%']}>

@@ -1,18 +1,45 @@
 import TypographyComponent from '@components/Typography.component';
-import { colors } from '@themes/colors';
-import React from 'react';
-import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
 
-export default function LoadingScreen() {
+// Import de votre image Sprite Sheet (la bande horizontale avec les 8 têtes)
+const spriteImage = require('@assets/images/Loading_screen_animation.png');
+
+const LoadingScreen: React.FC = () => {
+  const totalFrames = 8;
+  const frameWidth = 237;
+  const frameHeight = 144;
+
+  const [currentFrame, setCurrentFrame] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentFrame((prevFrame) => (prevFrame + 1) % totalFrames);
+    }, 100);
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0066CC" />
-        <TypographyComponent variant="h4" style={styles.text} color={colors.text.title}>
-            Chargement en cours...
-        </TypographyComponent>
+
+      <View style={[styles.spriteWindow, { width: frameWidth, height: frameHeight }]}>
+        <Image
+          source={spriteImage}
+          style={{
+            width: frameWidth * totalFrames,
+            height: frameHeight,
+            transform: [{ translateX: -currentFrame * frameWidth }]
+          }}
+        />
+      </View>
+
+      <TypographyComponent>
+        Chargement...
+      </TypographyComponent>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -20,9 +47,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFF8F1',
+    gap: 20,
   },
-  text: {
-    marginTop: 20,
-    fontSize: 16,
+  spriteWindow: {
+    overflow: 'hidden',
   },
 });
+
+export default LoadingScreen;

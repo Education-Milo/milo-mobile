@@ -4,12 +4,13 @@ import { ChevronDown, CheckCircle, Lock, PlayCircle } from 'lucide-react-native'
 import TypographyComponent from '@components/Typography.component';
 import { colors } from '@theme/colors';
 import { Chapter, Lesson } from '@store/course/course.model';
+import { ChapterWithLessons, LessonWithStatus } from '@hooks/useLessonChapterScreen';
 
 interface ChapterAccordionProps {
-  chapter: Chapter;
+  chapter: ChapterWithLessons;
   chapterNumber: number;
   defaultOpen?: boolean;
-  onLessonPress: (lesson: Lesson) => void;
+  onLessonPress: (lesson: LessonWithStatus) => void;
 }
 
 const ChapterAccordion = ({

@@ -19,11 +19,11 @@ const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 const AuthNavigator = () => {
 
-  return (
+return (
     <Stack.Navigator
-      screenOptions={{
+        screenOptions={{
         headerShown: false,
-      }}
+    }}
     >
         <Stack.Screen
             name={AuthScreenNames.HomeTabs}
@@ -74,7 +74,7 @@ const AuthNavigator = () => {
             component={EditProfileScreen}
         />
     </Stack.Navigator>
-  );
+    );
 };
 
 export default AuthNavigator;

@@ -1,59 +1,49 @@
+import type { ClassType } from "@store/user/user.model";
+
+export interface Subject {
+	id: number;
+	title: string;
+	level: ClassType;
+	cycle: string;
+}
+
+export interface Chapter {
+	id: number;
+	course_id: number;
+	title: string;
+	context_info: string;
+}
+
 export interface Lesson {
-    id: string;
-    title: string; // ex: "Écrire et lire les entiers"
-    status: 'completed' | 'in-progress' | 'locked';
+	id: number;
+	chapter_id: number;
+	title: string;
+	learning_objectives: string;
+	boundaries: string;
+	success_criteria: string;
+}
 
-    // --- CHAMPS POUR L'IA (Le "Cerveau") ---
-    // Ces champs ne sont pas forcément affichés, mais envoyés au prompt
-    learning_objectives: string[]; // Ce que l'élève doit apprendre
-    boundaries: string;            // Les limites (ex: "Pas de puissances de 10")
-    success_criteria: string[];    // Exemples pour générer les QCM
-    content?: string;
-  }
+export interface Course {
+	id: number;
+	title: string;
+	description: string;
+	subject_id: number;
+}
 
-  export interface Chapter {
-    id: string;
-    title: string; // ex: "Les nombres entiers" (L'accordéon)
-    context_info?: string; // Contexte global pour l'IA
-    lessons: Lesson[];
-    order: number;
-    isCompleted?: boolean;
-  }
+export interface CourseState {
+	subjects: Subject[];
+	courses: Course[];
+	chapters: Chapter[];
+	lessons: Lesson[];
+	isLoading: boolean;
+	error: string | null;
+}
 
-  export interface Course {
-    id: string;
-    title: string; // ex: "Nombres et calculs" (Le grand thème)
-    description?: string;
-    subjectId: string; // ex: "maths"
-    chapters: Chapter[];
-    progress: number;
-  }
-
-  export interface Subject {
-    id: string;
-    name: string;
-    description: string;
-    icon: string;
-    borderColor: string;
-    iconBackground: string;
-  }
-
-  export interface CourseState {
-    subjects: Subject[];
-    currentCourse: Course | null;
-    recentCourses: Course[];
-    isLoading: boolean;
-    error: string | null;
-  }
-
-  export interface CourseActions {
-    fetchSubjects: () => Promise<void>;
-
-    fetchCourseBySubject: (subjectName: string) => Promise<void>;
-
-    generateLessonContent: (lessonId: string) => Promise<Lesson>;
-    getCourseById: (courseId: string) => Promise<Course>;
-    generateCourseFromDocument: (formData: FormData) => Promise<Course>;
-  }
+export interface CourseActions {
+	get_subjects: () => Promise<Subject[]>;
+	get_courses: (subjectId: number) => Promise<Course[]>;
+	get_chapters: (courseId: number) => Promise<Chapter[]>;
+	get_lessons: (chapterId: number) => Promise<Lesson[]>;
+}
 
 export type CourseStore = CourseState & CourseActions;

@@ -36,7 +36,7 @@ export enum AuthScreenNames {
     MissionScreen: undefined;
     ChatScreen: { lessonId: string; lessonTitle: string, context: string };
     // ChatScreen: { matiere: string; chapitre: string };
-    ExercicesScreen: { matiere: string; chapitre: string };
+    ExercicesScreen: { lessonId: string };
     EditProfileScreen: undefined;
     FriendsScreen: undefined;
   };

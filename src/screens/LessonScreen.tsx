@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Picker } from '@react-native-picker/picker';
 
@@ -9,24 +7,18 @@ import Layout from '@components/Layout';
 import TypographyComponent from '@components/Typography.component';
 import SubjectCard from '@components/SubjectCard.component';
 import { colors } from '@theme/colors';
-import { AuthStackParamList } from '@navigation/Auth/authNavigator.model';
-
-import { useUserStore } from '@store/user/user.store';
-import { useCourseStore } from '@store/course/course.store';
 import LessonCard from '@components/Cards/LessonCard.component';
-
-type LessonScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
+import { useLessonScreen } from '@hooks/useLessonScreen';
 
 const LessonScreen = () => {
-  const navigation = useNavigation<LessonScreenNavigationProp>();
-  const user = useUserStore(state => state.user);
-
-  const { subjects, fetchSubjects, isLoading } = useCourseStore();
-  const [currentClass, setCurrentClass] = useState('6eme'); // Classe remplacer par user.classe si dispo
-
-  useEffect(() => {
-    fetchSubjects();
-  }, []);
+  const {
+    user,
+    subjects,
+    isLoading,
+    currentClass,
+    setCurrentClass,
+    handleSubjectPress,
+  } = useLessonScreen();
 
   return (
     <Layout>
@@ -36,7 +28,7 @@ const LessonScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         <LessonCard
-          userName={user?.prenom}
+          userName={user?.first_name}
         />
         <View style={styles.header}>
           <TypographyComponent variant="h4">
@@ -64,12 +56,9 @@ const LessonScreen = () => {
             {subjects.map((matiere) => (
                 <SubjectCard
                 key={matiere.id}
-                title={matiere.name}
-                description={matiere.description}
-                icon={matiere.icon}
-                borderColor={matiere.borderColor}
-                iconBackground={matiere.iconBackground}
-                onPress={() => navigation.navigate('LessonChapter', { matiere: matiere.name })}
+                id={matiere.id}
+                title={matiere.title}
+                onPress={() => handleSubjectPress(matiere.id, matiere.title)}
                 />
             ))}
             </View>

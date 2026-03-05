@@ -1,73 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import QCMScreen from './QCMScreen';
-import QCMResultsScreen from './QCMResultsScreen';
-import { useNavigation } from '@react-navigation/native';
-
-interface Question {
-  id: number;
-  question: string;
-  options: string[];
-  correctAnswer: string;
-}
-
+import React from 'react';
+import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import QCMScreen from '@screens/QCMScreen';
+import QCMResultsScreen from '@screens/QCMResultsScreen';
+import useExerciseScreen from '@hooks/useExerciseScreen';
 
 const ExercicesScreen = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  const [questions] = useState<Question[]>([
-    {
-      id: 1,
-      question: "Quelle est la capitale de la France?",
-      options: ["Londres", "Berlin", "Paris", "Madrid"],
-      correctAnswer: "Paris"
-    },
-    {
-      id: 2,
-      question: "Quel est le plus grand océan du monde?",
-      options: ["Atlantique", "Indien", "Arctique", "Pacifique"],
-      correctAnswer: "Pacifique"
-    },
-    {
-      id: 3,
-      question: "Combien de côtés a un hexagone?",
-      options: ["4", "5", "6", "8"],
-      correctAnswer: "6"
-    }
-  ]);
+  const {
+    questions,
+    loading,
+    error,
+    showResultsScreen,
+    score,
+    totalTime,
+    xpEarned,
+    handleQuizComplete,
+    handleQuit,
+    handleRestartQuiz,
+    handleBackToHome,
+  } = useExerciseScreen();
 
-  const [showResultsScreen, setShowResultsScreen] = useState(false);
-  const [score, setScore] = useState(0);
-  const [totalTime, setTotalTime] = useState(0);
-  const [xpEarned, setXpEarned] = useState(0);
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
-  useEffect(() => {
-    if (showResultsScreen) {
-      const baseXP = 10;
-      const bonusXP = Math.round((score / questions.length) * 10);
-      setXpEarned(baseXP + bonusXP);
-    }
-  }, [showResultsScreen, score, questions.length]);
-
-  const handleQuizComplete = (finalScore: number, timeTaken: number) => {
-    setScore(finalScore);
-    setTotalTime(timeTaken);
-    setShowResultsScreen(true);
-  };
-
-  const handleQuit = () => {
-    navigation.goBack();
-  };
-
-  const handleRestartQuiz = () => {
-    setShowResultsScreen(false);
-    setScore(0);
-    setTotalTime(0);
-    setXpEarned(0);
-  };
-
-  const handleBackToHome = () => {
-    navigation.goBack();
-  };
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   if (showResultsScreen) {
     return (
@@ -90,5 +56,17 @@ const ExercicesScreen = () => {
     />
   );
 };
+
+const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+  },
+});
 
 export default ExercicesScreen;

@@ -24,11 +24,11 @@ const isPublicRoute = (url?: string): boolean => {
 APIAxios.interceptors.request.use(
   async config => {
     const { useAuthStore } = await import('@store/auth/auth.store');
-    const accessToken = useAuthStore.getState().accessToken;
     try {
       if (!isPublicRoute(config.url)) {
         await useAuthStore.getState().ensureTokenValid();
       }
+      const accessToken = useAuthStore.getState().accessToken;
       if (accessToken){
         config.headers.Authorization = `Bearer ${accessToken}`;
       }
@@ -56,9 +56,6 @@ APIAxios.interceptors.response.use(
     }
     if (err.response){
       const { useAuthStore } = await import('@store/auth/auth.store');
-      if (err.response.status === 403) {
-        await useAuthStore.getState().logout();
-      }
     } else if (err.request) {
       console.error('Error request:', err.request);
     } else {
@@ -67,9 +64,11 @@ APIAxios.interceptors.response.use(
     const originalRequest = err.config
 
     if (err.response?.status === 401 ) {
-      if (isPublicRoute(originalRequest?.url)) {
-        return Promise.reject(err);
+      if (!isPublicRoute(originalRequest?.url)) {
+        const { useAuthStore } = await import('@store/auth/auth.store');
+        await useAuthStore.getState().logout();
       }
+      return Promise.reject(err);
     }
 
     return Promise.reject(err);
@@ -90,17 +89,12 @@ export const APIRoutes = {
 
 
   /* COURSES */
-  GET_Course: '/courses',
-  GET_Subjects: '/courses/subjects',
-  GET_RecentCourses: '/courses/recent',
-
-  /* AUTH */
-  //   POSTLogin: (): AxiosRequestConfig => ({method: 'POST', url: '/auth/login'}),
-  //   GETCurrentUser: (): AxiosRequestConfig => ({method: 'GET', url: '/users/me'}),
-  //   GETCurrentUserCode: (): AxiosRequestConfig => ({method: 'POST', url: '/users/identification-code'}),
-  //   PATCHChangePassword: (): AxiosRequestConfig => ({method: 'POST', url: '/auth/change-password'}),
-  //   PATCHCurrentUser: (): AxiosRequestConfig => ({method: 'PATCH', url: '/users/me'}),
-  /* ---- */
+  GET_Subjects: '/get_subjects',
+  GET_Courses: '/get_courses',
+  GET_Chapters: '/get_chapters',
+  GET_Lessons: '/get_lessons',
+  POST_Chat_Lesson: '/chat_lesson',
+  POST_QCM_Lesson: '/qcm_lesson',
 };
 
 export default APIAxios;
