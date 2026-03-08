@@ -100,7 +100,7 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 						style={[styles.resultButton, styles.restartButton]}
 						onPress={onRestart}
 					>
-						<TypographyComponent variant="button" style={styles.restartButtonText}>
+						<TypographyComponent variant="button">
 							Recommencer le quiz
 						</TypographyComponent>
 					</TouchableOpacity>
@@ -108,7 +108,7 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 						style={[styles.resultButton, styles.homeButton]}
 						onPress={onBackToHome}
 					>
-						<TypographyComponent variant="button" style={styles.homeButtonText}>
+						<TypographyComponent variant="button" color="orange">
 							Retour à l'accueil
 						</TypographyComponent>
 					</TouchableOpacity>
@@ -220,14 +220,6 @@ const styles = StyleSheet.create({
 		borderWidth: 2,
 		borderColor: "#F4922A",
 		paddingVertical: 14,
-	},
-	restartButtonText: {
-		color: "#FFF",
-		fontWeight: "bold",
-	},
-	homeButtonText: {
-		color: "#F4922A",
-		fontWeight: "600",
 	},
 });
 
