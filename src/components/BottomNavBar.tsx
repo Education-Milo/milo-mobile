@@ -207,7 +207,7 @@ function BottomNavBar(props: BottomTabBarProps) {
                   activeOpacity={0.7}
                 >
                   {navItem.isCenter ? (
-                    <View style={[styles.centerButton, { elevation: 8 }]}>
+                    <View style={[styles.centerButton]}>
                       <Ionicons name={navItem.icon} size={20} color='#FFF' />
                     </View>
                   ) : (
@@ -246,13 +246,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#E5E5E5',
     paddingTop: 6,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
     elevation: 5,
   },
   navBarContent: {
@@ -279,11 +272,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF8C00',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#FF8C00',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 5,
   },
   overlay: {
     position: 'absolute',
@@ -303,10 +291,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     zIndex: 999,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
     elevation: 10,
   },
   menuHandle: {

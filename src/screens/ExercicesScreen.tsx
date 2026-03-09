@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import QCMScreen from '@screens/QCMScreen';
 import QCMResultsScreen from '@screens/QCMResultsScreen';
 import useExerciseScreen from '@hooks/useExerciseScreen';
+import LoadingScreen from '@screens/LoadingScreen';
 
 const ExercicesScreen = () => {
   const {
@@ -21,9 +22,7 @@ const ExercicesScreen = () => {
 
   if (loading) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" />
-      </View>
+      <LoadingScreen/>
     );
   }
 

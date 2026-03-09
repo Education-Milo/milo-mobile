@@ -5,6 +5,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import MissionRow from '@components/missions/MissionRow.component';
 import { useMissionsScreen } from '@hooks/useMissionsScreen';
 import { colors } from '@theme/colors';
+import TabSwitcher from '@components/TabSwitcher.component';
 
 const MissionsScreen = () => {
   const { tabs, activeTab, setActiveTab, missions } = useMissionsScreen();
@@ -27,24 +28,13 @@ const MissionsScreen = () => {
           />
         </Animated.View>
 
-        {/* Tab Switcher */}
-        <Animated.View entering={FadeInDown.delay(100).duration(500)} style={styles.tabsContainer}>
-          {tabs.map((tab) => (
-            <TouchableOpacity
-              key={tab.id}
-              style={[styles.tab, activeTab === tab.id && styles.tabActive]}
-              onPress={() => setActiveTab(tab.id)}
-              activeOpacity={0.75}
-            >
-              <TypographyComponent
-                variant="labelSmall"
-                style={[styles.tabText, activeTab === tab.id && styles.tabTextActive]}
-              >
-                {tab.label}
-              </TypographyComponent>
-            </TouchableOpacity>
-          ))}
-        </Animated.View>
+          {/* Tabs */}
+        <TabSwitcher
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+
 
         {/* Mission List */}
         <Animated.View entering={FadeInDown.delay(200).duration(500)} style={styles.missionsList}>
