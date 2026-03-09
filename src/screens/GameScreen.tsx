@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView } from 'react-native';
+import { StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import Layout from '@components/Layout';
 import { useGameScreen } from '@hooks/useGameScreen';
 import GameScreenHeader from '@components/game/gameScreenHeader.component';
@@ -21,19 +21,24 @@ const GameScreen = () => {
   return (
     <Layout>
       <SafeAreaView style={styles.container}>
-        <GameScreenHeader
-          onRandomMatch={handleRandomMatch}
-          onChallengeModal={openChallengeModal}
-        />
-        <GameScreenFooter
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          currentData={currentData}
-          modalVisible={modalVisible}
-          onlineFriends={onlineFriends}
-          onCloseModal={closeChallengeModal}
-          onChallengeFriend={handleChallengeFriend}
-        />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <GameScreenHeader
+            onRandomMatch={handleRandomMatch}
+            onChallengeModal={openChallengeModal}
+          />
+          <GameScreenFooter
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            currentData={currentData}
+            modalVisible={modalVisible}
+            onlineFriends={onlineFriends}
+            onCloseModal={closeChallengeModal}
+            onChallengeFriend={handleChallengeFriend}
+          />
+        </ScrollView>
       </SafeAreaView>
     </Layout>
   );
@@ -43,6 +48,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
+  },
+  scrollContent: {
+    paddingBottom: 32,
   },
 });
 

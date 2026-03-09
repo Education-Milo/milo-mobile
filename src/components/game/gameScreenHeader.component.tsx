@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Swords, Zap } from "lucide-react-native";
@@ -14,6 +14,13 @@ const GameScreenHeader = ({
 	onRandomMatch,
 	onChallengeModal,
 }: GameScreenHeaderProps) => {
+	const [isRandomActive, setIsRandomActive] = useState(false);
+
+	const handleRandomMatch = () => {
+		setIsRandomActive(true);
+		onRandomMatch();
+	};
+
 	return (
 		<View>
 			{/* Titre */}
@@ -37,29 +44,52 @@ const GameScreenHeader = ({
 			<View style={styles.actionsContainer}>
 				<TouchableOpacity
 					style={[styles.actionCard, styles.shadow]}
-					onPress={onRandomMatch}
+					onPress={handleRandomMatch}
 					activeOpacity={0.9}
 				>
-					<LinearGradient
-						colors={[colors.primary, "#FF6B00"]}
-						style={styles.actionGradient}
-						start={{ x: 0, y: 0 }}
-						end={{ x: 1, y: 1 }}
-					>
-						<View style={styles.iconCircle}>
-							<Zap size={32} color={colors.primary} fill={colors.primary} />
+					{isRandomActive ? (
+						<LinearGradient
+							colors={[colors.primary, "#FF6B00"]}
+							style={styles.actionGradient}
+							start={{ x: 0, y: 0 }}
+							end={{ x: 1, y: 1 }}
+						>
+							<View style={styles.iconCircle}>
+								<Zap size={32} color={colors.primary} fill={colors.primary} />
+							</View>
+							<View style={styles.actionTextContainer}>
+								<TypographyComponent variant="h5" color={colors.white}>
+									Combat Aléatoire
+								</TypographyComponent>
+								<TypographyComponent
+									variant="labelSmall"
+									color={colors.white_70}
+								>
+									Gagne des points bonus
+								</TypographyComponent>
+							</View>
+						</LinearGradient>
+					) : (
+						<View style={[styles.actionGradient, styles.inactiveCard]}>
+							<View style={[styles.iconCircle, { backgroundColor: "#FFF3E0" }]}>
+								<Zap size={32} color={colors.secondary} />
+							</View>
+							<View style={styles.actionTextContainer}>
+								<TypographyComponent variant="h5" color={colors.text.primary}>
+									Combat Aléatoire
+								</TypographyComponent>
+								<TypographyComponent
+									variant="labelSmall"
+									color={colors.text.secondary}
+								>
+									Gagne des points bonus
+								</TypographyComponent>
+							</View>
 						</View>
-						<View style={styles.actionTextContainer}>
-							<TypographyComponent variant="h5" color={colors.white}>
-								Combat Aléatoire
-							</TypographyComponent>
-							<TypographyComponent variant="labelSmall" color={colors.white_70}>
-								Gagne des points bonus
-							</TypographyComponent>
-						</View>
-					</LinearGradient>
+					)}
 				</TouchableOpacity>
 
+				{/* Bouton Défier un ami */}
 				<TouchableOpacity
 					style={[styles.actionCard, styles.secondaryCard, styles.shadow]}
 					onPress={onChallengeModal}
@@ -105,6 +135,11 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		padding: 20,
 		height: 100,
+	},
+	inactiveCard: {
+		backgroundColor: colors.white,
+		borderWidth: 1,
+		borderColor: colors.border.light,
 	},
 	secondaryCard: {
 		backgroundColor: colors.white,

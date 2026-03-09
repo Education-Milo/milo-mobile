@@ -157,13 +157,11 @@ const GameScreenFooter = ({
 					</View>
 				</View>
 
-				<FlatList
-					data={currentData}
-					renderItem={renderRankingItem}
-					keyExtractor={(item) => item.id}
-					showsVerticalScrollIndicator={false}
-					contentContainerStyle={{ paddingBottom: 20 }}
-				/>
+				{currentData.map((item) => (
+					<React.Fragment key={item.id}>
+						{renderRankingItem({ item })}
+					</React.Fragment>
+				))}
 			</View>
 
 			{/* Modal défier un ami */}
@@ -204,10 +202,8 @@ const GameScreenFooter = ({
 
 const styles = StyleSheet.create({
 	rankingContainer: {
-		flex: 1,
 		backgroundColor: colors.white,
-		borderTopLeftRadius: 24,
-		borderTopRightRadius: 24,
+		borderRadius: 24,
 		padding: 20,
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: -2 },
