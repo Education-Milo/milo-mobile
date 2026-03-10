@@ -11,13 +11,13 @@ const ExercicesScreen = () => {
     loading,
     error,
     showResultsScreen,
-    score,
     totalTime,
     xpEarned,
     handleQuizComplete,
     handleQuit,
     handleRestartQuiz,
     handleBackToHome,
+    scorePercentage,
   } = useExerciseScreen();
 
   if (loading) {
@@ -37,7 +37,7 @@ const ExercicesScreen = () => {
   if (showResultsScreen) {
     return (
       <QCMResultsScreen
-        score={score}
+        score={scorePercentage}
         totalQuestions={questions.length}
         totalTime={totalTime}
         xpEarned={xpEarned}

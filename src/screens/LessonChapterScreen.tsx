@@ -15,20 +15,19 @@ const LessonChapter = () => {
   const {
     user,
     matiere,
-    isLoading,
-    coursesWithChapters,
     selectedLesson,
+    coursesWithChapters,
     bottomSheetRef,
     handleLessonPress,
     handleOptionPress,
     handleGoBack,
+    isLoading,
   } = useLessonChapterScreen();
 
   if (isLoading) {
-    return (
-        <LoadingScreen />
-    );
+    return <LoadingScreen />;
   }
+
 
   return (
     <Layout>

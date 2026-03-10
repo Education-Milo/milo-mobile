@@ -28,8 +28,6 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 		return `${mins}m${secs < 10 ? "0" : ""}${secs}s`;
 	};
 
-	const percentage = Math.round((score / totalQuestions) * 100);
-
 	return (
 		<SafeAreaView style={styles.resultsContainer}>
 			<View style={styles.resultsContent}>
@@ -89,7 +87,7 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 							<Target size={28} color="#4CAF50" />
 						</View>
 						<TypographyComponent variant="h2" style={[styles.cardValue, styles.cardValueScore]}>
-							{percentage}%
+							{score}%
 						</TypographyComponent>
 					</View>
 				</View>

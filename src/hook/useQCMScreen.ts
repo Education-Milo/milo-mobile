@@ -16,7 +16,7 @@ export interface Question {
 
 interface UseQCMScreenParams {
 	questions: Question[];
-	onQuizComplete: (score: number, totalTime: number) => void;
+	onQuizComplete: (score: number, totalTime: number, totalQuestions: number) => void;
 }
 
 interface UseQCMScreenReturn {
@@ -30,14 +30,16 @@ interface UseQCMScreenReturn {
 	isSuccessModalVisible: boolean;
 	currentCorrectAnswer: string;
 	scaleAnims: SharedValue<number>[];
+	phase: QuizPhase;
 	handleAnswerSelect: (answer: string, index: number) => void;
 	handleValidate: () => void;
 	handleCloseErrorModal: () => void;
 	handleCloseSuccessModal: () => void;
 }
 
-// Nombre max d'options — shared values créées une seule fois, jamais dynamiquement
 const MAX_OPTIONS = 6;
+
+type QuizPhase = 'normal' | 'retry' | 'result';
 
 const useQCMScreen = ({
 	questions,
@@ -49,18 +51,21 @@ const useQCMScreen = ({
 	const startTime = useRef(Date.now());
 	const [score, setScore] = useState(0);
 	const [streak, setStreak] = useState(0);
+	const [phase, setPhase] = useState<QuizPhase>('normal');
+	const [retryQueue, setRetryQueue] = useState<Question[]>([]);
 
 	const [isErrorModalVisible, setIsErrorModalVisible] = useState(false);
 	const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
 	const [currentCorrectAnswer, setCurrentCorrectAnswer] = useState("");
 
-	const currentQuestion = questions[currentQuestionIndex] ?? null;
+	const currentQuestion = phase === 'normal'
+	? questions[currentQuestionIndex]
+	: retryQueue[0] ?? null;
 	const optionCount = currentQuestion?.options.length ?? 0;
+	const totalQuestionsRef = useRef(questions.length);
 
 	const isAdvancing = useRef(false);
 
-	// Les useSharedValue doivent être appelés inconditionnellement (règle des hooks)
-	// On en crée MAX_OPTIONS et on slice selon le besoin au return
 	const scale0 = useSharedValue(1);
 	const scale1 = useSharedValue(1);
 	const scale2 = useSharedValue(1);
@@ -71,8 +76,13 @@ const useQCMScreen = ({
 
 	useEffect(() => {
 		if (questions.length === 0) return;
-		setProgress(((currentQuestionIndex + 1) / questions.length) * 100);
-	}, [currentQuestionIndex, questions.length]);
+		if (phase === 'normal') {
+			setProgress(((currentQuestionIndex) / questions.length) * 100);
+		} else {
+			const answered = totalQuestionsRef.current - retryQueue.length;
+    		setProgress((answered / totalQuestionsRef.current) * 100);
+		}
+	}, [currentQuestionIndex, retryQueue.length, phase]);
 
 	const handleAnswerSelect = (answer: string, index: number) => {
 		setSelectedAnswer(answer);
@@ -91,23 +101,42 @@ const useQCMScreen = ({
 		isAdvancing.current = true;
 
 		const newScore = isCorrect ? score + 1 : score;
-
 		if (isCorrect) {
 			setScore(newScore);
-			setStreak((prev) => prev + 1);
+			setStreak(prev => prev + 1);
 		} else {
 			setStreak(0);
 		}
 
-		if (currentQuestionIndex < questions.length - 1) {
-			setCurrentQuestionIndex((prev) => prev + 1);
-			setSelectedAnswer(null);
-			allScaleAnims.forEach((anim) => { anim.value = 1; });
-			setTimeout(() => { isAdvancing.current = false; }, 300);
+		if (phase === 'normal') {
+			if(!isCorrect) setRetryQueue((prev) => [...prev, currentQuestion!]);
+			if(currentQuestionIndex < questions.length - 1) {
+				setCurrentQuestionIndex((prev) => prev + 1);
+				setSelectedAnswer(null);
+			} else {
+				if (retryQueue.length > 0 || !isCorrect) {
+					totalQuestionsRef.current = questions.length + retryQueue.length + (!isCorrect ? 1 : 0);
+					setPhase('retry');
+				} else {
+					const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
+					onQuizComplete(newScore, timeTaken, totalQuestionsRef.current);
+				}
+			}
 		} else {
-			const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
-			onQuizComplete(newScore, timeTaken);
+			if (isCorrect) {
+				const updateQueue = retryQueue.slice(1);
+				setRetryQueue(updateQueue);
+				if (updateQueue.length === 0) {
+					const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
+					onQuizComplete(newScore, timeTaken, totalQuestionsRef.current);
+				}
+			} else {
+				setRetryQueue(prev => [...prev.slice(1), prev[0]]);
+			}
 		}
+		setSelectedAnswer(null);
+		allScaleAnims.forEach(anim => (anim.value = 1));
+		setTimeout(() => { isAdvancing.current = false; }, 300);
 	};
 
 	const handleValidate = () => {
@@ -150,6 +179,7 @@ const useQCMScreen = ({
 		handleValidate,
 		handleCloseErrorModal,
 		handleCloseSuccessModal,
+		phase,
 	};
 };
 
