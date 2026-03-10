@@ -30,20 +30,4 @@ export interface Course {
 	subject_id: number;
 }
 
-export interface CourseState {
-	subjects: Subject[];
-	courses: Course[];
-	chapters: Chapter[];
-	lessons: Lesson[];
-	isLoading: boolean;
-	error: string | null;
-}
 
-export interface CourseActions {
-	get_subjects: () => Promise<Subject[]>;
-	get_courses: (subjectId: number) => Promise<Course[]>;
-	get_chapters: (courseId: number) => Promise<Chapter[]>;
-	get_lessons: (chapterId: number) => Promise<Lesson[]>;
-}
-
-export type CourseStore = CourseState & CourseActions;

@@ -16,15 +16,14 @@ import useQCMScreen, { Question } from "../hook/useQCMScreen";
 
 interface QCMScreenProps {
 	questions: Question[];
-	onQuizComplete: (score: number, totalTime: number) => void;
+	onQuizComplete: (score: number, totalTime: number, totalQuestions: number) => void;
 	onQuit: () => void;
 }
 
-
-const AnimatedOption: React.FC<{ children: React.ReactNode; scaleAnim: any }> = ({
-	children,
-	scaleAnim,
-}) => {
+const AnimatedOption: React.FC<{
+	children: React.ReactNode;
+	scaleAnim: any;
+}> = ({ children, scaleAnim }) => {
 	const animatedStyle = useAnimatedStyle(() => ({
 		transform: [{ scale: scaleAnim.value }],
 	}));
@@ -50,6 +49,7 @@ const QCMScreen: React.FC<QCMScreenProps> = ({
 		handleValidate,
 		handleCloseErrorModal,
 		handleCloseSuccessModal,
+		phase,
 	} = useQCMScreen({ questions, onQuizComplete });
 
 	if (!currentQuestion) return null;
@@ -66,11 +66,19 @@ const QCMScreen: React.FC<QCMScreenProps> = ({
 						<View style={styles.progressBar}>
 							<View style={[styles.progressFill, { width: `${progress}%` }]} />
 						</View>
-						<Text style={styles.progressText}>
-							{currentQuestionIndex + 1}/{questions.length}
-						</Text>
+						{phase === "normal" && (
+							<Text style={styles.progressText}>
+								{currentQuestionIndex + 1}/{questions.length}
+							</Text>
+						)}
 					</View>
 
+					{phase === "retry" && (
+						<View style={styles.retryBadge}>
+							<Ionicons name="refresh-circle" size={16} color="#FF8C00" />
+							<Text style={styles.retryText}>Anciennes erreurs</Text>
+						</View>
+					)}
 					{streak > 1 && (
 						<View style={styles.streakBadge}>
 							<Ionicons name="flame" size={16} color="#FF6B6B" />
@@ -89,10 +97,7 @@ const QCMScreen: React.FC<QCMScreenProps> = ({
 				<Text style={styles.question}>{currentQuestion.question}</Text>
 				<View style={styles.optionsContainer}>
 					{currentQuestion.options.map((option, index) => (
-						<AnimatedOption
-							key={index}
-							scaleAnim={scaleAnims[index]}
-						>
+						<AnimatedOption key={index} scaleAnim={scaleAnims[index]}>
 							<TouchableOpacity
 								style={[
 									styles.option,
@@ -351,6 +356,21 @@ const styles = StyleSheet.create({
 	},
 	buttonIcon: {
 		marginLeft: 8,
+	},
+	retryBadge: {
+		flexDirection: "row",
+		alignItems: "center",
+		backgroundColor: "#FFF3E0",
+		paddingHorizontal: 8,
+		paddingVertical: 4,
+		borderRadius: 12,
+		marginLeft: 8,
+	},
+	retryText: {
+		fontSize: 12,
+		fontWeight: "600",
+		color: "#FF8C00",
+		marginLeft: 4,
 	},
 });
 

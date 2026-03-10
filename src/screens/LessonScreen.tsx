@@ -9,6 +9,7 @@ import SubjectCard from '@components/SubjectCard.component';
 import { colors } from '@theme/colors';
 import LessonCard from '@components/Cards/LessonCard.component';
 import { useLessonScreen } from '@hooks/useLessonScreen';
+import LoadingScreen from '@screens/LoadingScreen';
 
 const LessonScreen = () => {
   const {
@@ -19,6 +20,10 @@ const LessonScreen = () => {
     setCurrentClass,
     handleSubjectPress,
   } = useLessonScreen();
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <Layout>
@@ -32,7 +37,7 @@ const LessonScreen = () => {
         />
         <View style={styles.header}>
           <TypographyComponent variant="h4">
-             Mes Cours 📚
+            Mes Cours 📚
           </TypographyComponent>
 
           <View style={styles.pickerContainer}>

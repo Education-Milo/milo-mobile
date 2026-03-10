@@ -19,13 +19,14 @@ interface UseExerciseScreenReturn {
 	score: number;
 	totalTime: number;
 	xpEarned: number;
-	handleQuizComplete: (finalScore: number, timeTaken: number) => void;
+	totalQuestions: number;
+	scorePercentage: number;
+	handleQuizComplete: (finalScore: number, timeTaken: number, totalQuestions: number) => void;
 	handleQuit: () => void;
 	handleRestartQuiz: () => void;
 	handleBackToHome: () => void;
 }
 
-// Convertit le format API vers le format local utilisé par QCMScreen
 const mapToQuestion = (q: QcmQuestion, index: number): Question => ({
 	id: index + 1,
 	question: q.question,
@@ -43,8 +44,10 @@ const useExerciseScreen = (): UseExerciseScreenReturn => {
 	const [questions, setQuestions] = useState<Question[]>([]);
 	const [showResultsScreen, setShowResultsScreen] = useState(false);
 	const [score, setScore] = useState(0);
+	const [totalQuestions, setTotalQuestions] = useState(0);
 	const [totalTime, setTotalTime] = useState(0);
 	const [xpEarned, setXpEarned] = useState(0);
+	const scorePercentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
 
 	useEffect(() => {
 		const fetchQuestions = async () => {
@@ -57,16 +60,17 @@ const useExerciseScreen = (): UseExerciseScreenReturn => {
 	}, [lessonId]);
 
 	useEffect(() => {
-		if (showResultsScreen && questions.length > 0) {
+		if (showResultsScreen && totalQuestions > 0) {
 			const baseXP = 10;
-			const bonusXP = Math.round((score / questions.length) * 10);
+			const bonusXP = Math.round((score / totalQuestions) * 10);
 			setXpEarned(baseXP + bonusXP);
 		}
-	}, [showResultsScreen, score, questions.length]);
+	}, [showResultsScreen, score, totalQuestions]);
 
-	const handleQuizComplete = (finalScore: number, timeTaken: number) => {
+	const handleQuizComplete = (finalScore: number, timeTaken: number, total: number) => {
 		setScore(finalScore);
 		setTotalTime(timeTaken);
+		setTotalQuestions(total);
 		setShowResultsScreen(true);
 	};
 
@@ -101,6 +105,8 @@ const useExerciseScreen = (): UseExerciseScreenReturn => {
 		handleQuit,
 		handleRestartQuiz,
 		handleBackToHome,
+		totalQuestions,
+		scorePercentage,
 	};
 };
 
