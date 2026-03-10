@@ -82,13 +82,13 @@ export const useRegisterForm = () => {
   }, []);
 
   const handleNomChange = useCallback((text: string) => {
-    setFormData(prev => ({ ...prev, nom: text }));
-    setErrors(prev => ({ ...prev, nom: undefined }));
+    setFormData(prev => ({ ...prev, last_name: text }));
+    setErrors(prev => ({ ...prev, last_name: undefined }));
   }, []);
 
   const handlePrenomChange = useCallback((text: string) => {
-    setFormData(prev => ({ ...prev, prenom: text }));
-    setErrors(prev => ({ ...prev, prenom: undefined }));
+    setFormData(prev => ({ ...prev, first_name: text }));
+    setErrors(prev => ({ ...prev, first_name: undefined }));
   }, []);
 
   const handleRoleChange = useCallback((newRole: RegisterFormData['role']) => {

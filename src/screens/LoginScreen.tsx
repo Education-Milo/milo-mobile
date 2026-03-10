@@ -31,6 +31,7 @@ const LoginScreen = () => {
     handleEmailChange,
     handlePasswordChange,
     handleLogin,
+    generalError,
   } = useLoginForm();
 
   const {
@@ -113,6 +114,7 @@ const LoginScreen = () => {
                 onSubmit={handleLogin}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
+                generalError={generalError}
                 animations={{
                   titleOpacity,
                   titleTranslateY,

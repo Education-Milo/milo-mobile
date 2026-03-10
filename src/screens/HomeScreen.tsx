@@ -1,7 +1,6 @@
 import React, { use } from 'react';
 import { Image, ScrollView, TouchableOpacity, View, Modal } from 'react-native';
 import styles from '@navigation/constants/Colors';
-import Layout from '@components/Layout';
 import Header from '@components/Header.component';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import TypographyComponent from '@components/Typography.component';

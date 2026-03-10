@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import {
   View,
   TextInput,
+  Text,
   TouchableOpacity,
   Animated,
   StyleSheet,
@@ -26,6 +27,7 @@ interface FormErrors {
 interface LoginFormProps {
   formData: LoginFormData;
   errors: FormErrors;
+  generalError: string | null;
   loading: boolean;
   onEmailChange: (text: string) => void;
   onPasswordChange: (text: string) => void;
@@ -58,6 +60,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   onFocus,
   onBlur,
   animations,
+  generalError,
 }) => {
   const { t } = useTranslation();
   const navigation =
@@ -86,12 +89,17 @@ const LoginForm: React.FC<LoginFormProps> = ({
         </Typography>
       </Animated.View>
 
+      {generalError && (
+        <Text style={styles.generalError}>
+          {generalError}
+        </Text>
+      )}
       <Animated.View
         style={{
           opacity: animations.emailOpacity,
           transform: [{ translateY: animations.emailTranslateY }],
         }}
-      >
+        >
         <TextFieldComponent
           placeholder={t('login.email')}
           icon={<Ionicons name='mail-outline' size={20} color='#666' />}
@@ -107,7 +115,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
           value={formData.email}
           onChangeText={onEmailChange}
           error={errors.email}
-        />
+          />
       </Animated.View>
 
       <Animated.View
@@ -115,7 +123,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
           opacity: animations.passwordOpacity,
           transform: [{ translateY: animations.passwordTranslateY }],
         }}
-      >
+        >
         <TextFieldComponent
           ref={passwordRef}
           placeholder={t('login.password')}
@@ -132,7 +140,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
           value={formData.password}
           onChangeText={onPasswordChange}
           error={errors.password}
-        />
+          />
       </Animated.View>
 
       <Animated.View
@@ -140,17 +148,17 @@ const LoginForm: React.FC<LoginFormProps> = ({
           opacity: animations.forgotPasswordOpacity,
           transform: [{ translateY: animations.forgotPasswordTranslateY }],
         }}
-      >
+        >
         <TouchableOpacity
           style={styles.forgotPasswordButton}
           onPress={navigateToForgotPassword}
           disabled={loading}
-        >
+          >
           <Typography
             variant='bodyLarge'
             color={colors.buttonText}
             style={styles.forgotPasswordText}
-          >
+            >
             {t('login.forgotPassword')}
           </Typography>
         </TouchableOpacity>
@@ -164,12 +172,12 @@ const LoginForm: React.FC<LoginFormProps> = ({
             { scale: animations.buttonScale },
           ],
         }}
-      >
+        >
         <MainButtonComponent
           title={t('login.title')}
           onPress={handleButtonPress}
           loading={loading}
-        />
+          />
       </Animated.View>
     </View>
   );
@@ -184,6 +192,13 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     textDecorationLine: 'underline',
+  },
+  generalError: {
+    color: colors.error,
+    fontSize: 14,
+    marginTop: 0,
+    marginBottom: -10,
+    marginLeft: 15,
   },
 });
 
