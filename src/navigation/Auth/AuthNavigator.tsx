@@ -14,6 +14,7 @@ import LessonChapterScreen from '@screens/LessonChapterScreen';
 import MissionsScreen from '@screens/MissionScreen';
 import ChatScreen from '@screens/ChatScreen';
 import EditProfileScreen from '@screens/EditProfileScreen';
+import SettingsScreen from '@screens/SettingsScreen';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
@@ -72,6 +73,13 @@ return (
         <Stack.Screen
             name={AuthScreenNames.EditProfileScreen}
             component={EditProfileScreen}
+        />
+        <Stack.Screen
+            name={AuthScreenNames.Settings}
+            component={SettingsScreen}
+            options={{
+                animation: 'slide_from_right',
+            }}
         />
     </Stack.Navigator>
     );

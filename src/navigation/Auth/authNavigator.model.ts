@@ -11,6 +11,7 @@ export enum AuthScreenNames {
     ChatScreen = 'ChatScreen',
     FriendsScreen = 'FriendsScreen',
     EditProfileScreen = 'EditProfileScreen',
+    Settings = 'Settings',
 
   }
 
@@ -39,4 +40,5 @@ export enum AuthScreenNames {
     ExercicesScreen: { lessonId: string };
     EditProfileScreen: undefined;
     FriendsScreen: undefined;
+    Settings: undefined;
   };

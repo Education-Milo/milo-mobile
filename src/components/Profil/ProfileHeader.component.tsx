@@ -8,18 +8,22 @@ import { AuthStackParamList } from '@navigation/Auth/authNavigator.model';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 interface ProfileHeaderProps {
-  user: any
+  user: any;
 }
 
 type ProfilHeaderNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
-
 const ProfileHeader = ({ user }: ProfileHeaderProps) => {
-    const navigation = useNavigation<ProfilHeaderNavigationProp>();
+  const navigation = useNavigation<ProfilHeaderNavigationProp>();
+
   return (
     <View style={styles.header}>
       <View style={styles.headerTopRow}>
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => navigation.navigate('Settings')}
+          activeOpacity={0.7}
+        >
           <Settings size={24} color={colors.text.secondary} />
         </TouchableOpacity>
       </View>
@@ -41,9 +45,10 @@ const ProfileHeader = ({ user }: ProfileHeaderProps) => {
           Élève motivé • A rejoint en 2024
         </TypographyComponent>
         <TouchableOpacity
-        style={styles.addFriendButton}
-        activeOpacity={0.8}
-        onPress={() => navigation.navigate('EditProfileScreen')}>
+          style={styles.addFriendButton}
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate('EditProfileScreen')}
+        >
           <TypographyComponent variant="button" color="#FFF">
             Modifier le profil
           </TypographyComponent>
