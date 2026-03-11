@@ -33,10 +33,10 @@ const HomeTabsNavigator = () => {
       }}
       tabBar={props => <BottomNavBar {...props} />}
     >
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Home" component={HomeScreen} options={{animation: 'shift'}} />
         <Tab.Screen name="Lessons" component={LessonScreen} />
-        <Tab.Screen name="Scan" component={SelectDocumentScreen} />
-        <Tab.Screen name="Game" component={GameScreen} />
+        <Tab.Screen name="Scan" component={SelectDocumentScreen} options={{animation: 'shift'}} />
+        <Tab.Screen name="Game" component={GameScreen} options={{animation: 'shift'}} />
         <Tab.Screen name="Profile" component={ProfilScreen} />
         <Tab.Screen name="Friends" component={FriendsScreen} />
         <Tab.Screen name="MissionScreen" component={MissionsScreen} />

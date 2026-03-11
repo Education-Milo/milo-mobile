@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useUserStore } from '@store/user/user.store';
 import { ClassType } from '@store/user/user.model';
+import { showMessage } from 'react-native-flash-message';
+import i18n from '@i18n/index';
 
 export const useEditProfile = () => {
   const navigation = useNavigation();
@@ -56,6 +58,11 @@ export const useEditProfile = () => {
       console.error("Erreur update interests:", error);
     } finally {
       await getMe(true);
+      showMessage({
+        message: i18n.t("success.editProfile.title"),
+        description: i18n.t("success.editProfile.description"),
+        type: "success",
+      });
       navigation.goBack();
     }
   };

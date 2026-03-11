@@ -61,6 +61,10 @@
         "default": {
           "title": "Succès",
           "description": "L'opération a été effectuée avec succès."
+        },
+        "editProfile": {
+          "title": "Profil mis à jour",
+          "description": "Votre profil a été mis à jour avec succès."
         }
     }
 }

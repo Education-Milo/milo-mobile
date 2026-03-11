@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { UserStore, User, UserStats } from '@store/user/user.model';
+import { UserStore, User } from '@store/user/user.model';
 import APIAxios, { APIRoutes } from '@api/axios.api';
 
 const CACHE_DURATION = 5 * 60 * 1000;
@@ -94,21 +94,21 @@ export const useUserStore = create<UserStore>((set, get) => ({
     if (!currentUser) {
       throw new Error('No user logged in');
     }
-    const tempInterest = { id: Date.now(), name: interestName };
+    const tempId = Date.now();
+    const tempInterest = { id: tempId, name: interestName };
     set({
-      user: {
-        ...currentUser,
-        Interests: [...(currentUser.Interests || []), tempInterest]
-      }
-    });
+      user: { ...currentUser,
+        Interests: [...(currentUser.Interests || []), tempInterest] }
+      });
     try {
       const response = await APIAxios.post(APIRoutes.POST_Add_User_Interest(currentUser.id), { name: interestName.trim().toLowerCase() });
       const newUser = get().user;
       const newInterest = response.data
+      console.log("Intérêt ajouté avec succès", newInterest);
       if (newUser) {
         set({
           user: { ...newUser,
-          Interests: [...(newUser.Interests || []), newInterest]
+            Interests: newUser.Interests?.map(i => i.id === tempId ? newInterest : i) || []
           },
         });
     }
