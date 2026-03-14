@@ -35,27 +35,28 @@ export const fakeRecentCourses = [
 
 export const fakeDailyMissions = [
   {
-    id: 1,
+    id: "1",
+    icon: "📚",
     title: "Révision quotidienne",
-    description: "Réviser pendant 30 minutes",
-    category: "GÉNÉRAL",
-    points: 50,
-    isCompleted: true
+    progressCurrent: 30,
+    progressTotal: 30,
+    rewardXP: 50,
+    completed: true,
   },
   {
-    id: 2,
+    id: "2",
+    icon: "📖",
     title: "Vocabulaire anglais",
-    description: "Apprendre 10 nouveaux mots",
-    category: "ANGLAIS",
-    points: 30,
-    isCompleted: false
+    progressCurrent: 0,
+    progressTotal: 10,
+    rewardXP: 30,
   },
   {
-    id: 3,
+    id: "3",
+    icon: "✏️",
     title: "Exercices de mathématiques",
-    description: "Résoudre 5 problèmes",
-    category: "MATHÉMATIQUES",
-    points: 40,
-    isCompleted: false
+    progressCurrent: 2,
+    progressTotal: 5,
+    rewardXP: 40,
   },
 ];

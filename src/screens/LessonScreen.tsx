@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Picker } from '@react-native-picker/picker';
 
 import Layout from '@components/Layout';
 import TypographyComponent from '@components/Typography.component';
@@ -10,6 +9,8 @@ import { colors } from '@theme/colors';
 import LessonCard from '@components/Cards/LessonCard.component';
 import { useLessonScreen } from '@hooks/useLessonScreen';
 import LoadingScreen from '@screens/LoadingScreen';
+import Select from '@components/Select.component';
+import { CLASS_OPTIONS } from '@constants/constants';
 
 const LessonScreen = () => {
   const {
@@ -40,17 +41,12 @@ const LessonScreen = () => {
             Mes Cours 📚
           </TypographyComponent>
 
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={currentClass}
-              style={{ height: 50, width: 120 }}
-              onValueChange={(itemValue) => setCurrentClass(itemValue)}
-            >
-              <Picker.Item label="6ème" value="6eme" />
-              <Picker.Item label="5ème" value="5eme" />
-              <Picker.Item label="4ème" value="4eme" />
-              <Picker.Item label="3ème" value="3eme" />
-            </Picker>
+          <View style={{ width: 120, zIndex: 1000 }}>
+            <Select
+              options={CLASS_OPTIONS}
+              value={currentClass ?? '6eme'}
+              onChange={setCurrentClass}
+            />
           </View>
         </View>
 
@@ -85,15 +81,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 20,
     marginTop: 10,
-  },
-  pickerContainer: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    overflow: 'hidden',
-    height: 40,
-    justifyContent: 'center',
   },
   subjectsContainer: {
     paddingHorizontal: 16,

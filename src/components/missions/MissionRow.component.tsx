@@ -11,50 +11,80 @@ type MissionRowProps = {
 };
 
 const MissionRow = ({ mission, index }: MissionRowProps) => {
-	const progress = mission.progressCurrent / mission.progressTotal;
+	const progress = mission.progressTotal
+		? mission.progressCurrent / mission.progressTotal
+		: 0;
+	const isCompleted = mission.completed === true;
 
 	return (
 		<Animated.View
 			entering={FadeInRight.delay(index * 80)
 				.duration(400)
 				.springify()}
-			style={styles.missionRow}
+			style={[styles.missionRow, isCompleted && styles.missionRowCompleted]}
 		>
 			{/* Icon */}
-			<View style={styles.missionIconBox}>
-				<TypographyComponent style={styles.missionIcon}>
-					{mission.icon}
-				</TypographyComponent>
+			<View
+				style={[
+					styles.missionIconBox,
+					isCompleted && styles.missionIconBoxCompleted,
+				]}
+			>
+				{isCompleted ? (
+					<TypographyComponent style={styles.missionIcon}>✓</TypographyComponent>
+				) : (
+					<TypographyComponent style={styles.missionIcon}>
+						{mission.icon}
+					</TypographyComponent>
+				)}
 			</View>
 
 			{/* Content */}
 			<View style={styles.missionContent}>
-				<TypographyComponent variant="h6" style={styles.missionTitle}>
+				<TypographyComponent
+					variant="h6"
+					style={[styles.missionTitle, isCompleted && styles.missionTitleCompleted]}
+				>
 					{mission.title}
 				</TypographyComponent>
-				<View style={styles.progressBarBg}>
-					<View
-						style={[
-							styles.progressBarFill,
-							{ width: `${Math.min(progress * 100, 100)}%` },
-						]}
-					/>
-					<TypographyComponent
-						variant="labelSmall"
-						style={styles.progressLabel}
-					>
-						{mission.progressCurrent}/{mission.progressTotal}
-					</TypographyComponent>
-				</View>
+				{isCompleted ? (
+					<View style={styles.completedBar}>
+						<View style={styles.completedBarFill} />
+						<TypographyComponent
+							variant="labelSmall"
+							style={styles.completedLabel}
+						>
+							Terminée
+						</TypographyComponent>
+					</View>
+				) : (
+					<View style={styles.progressBarBg}>
+						<View
+							style={[
+								styles.progressBarFill,
+								{ width: `${Math.min(progress * 100, 100)}%` },
+							]}
+						/>
+						<TypographyComponent
+							variant="labelSmall"
+							style={styles.progressLabel}
+						>
+							{mission.progressCurrent}/{mission.progressTotal}
+						</TypographyComponent>
+					</View>
+				)}
 			</View>
 
 			{/* XP Badge */}
-			<View style={styles.xpBadge}>
+			<View style={[styles.xpBadge, isCompleted && styles.xpBadgeCompleted]}>
 				<TypographyComponent style={styles.xpFlame}>
-					{mission.completed ? "🥇" : "🔥"}
+					{isCompleted ? "✓" : "🔥"}
 				</TypographyComponent>
-				<TypographyComponent variant="labelSmall" style={styles.xpText}>
-					XP
+				<TypographyComponent
+					variant="labelSmall"
+					style={[styles.xpText, isCompleted && styles.xpTextCompleted]}
+				>
+					+{mission.rewardXP} XP
 				</TypographyComponent>
 			</View>
 		</Animated.View>
@@ -75,6 +105,13 @@ const styles = StyleSheet.create({
 		elevation: 3,
 		gap: 14,
 	},
+	missionRowCompleted: {
+		backgroundColor: colors.missionCompleted.background,
+		borderWidth: 1,
+		borderColor: colors.missionCompleted.border,
+		shadowColor: colors.missionCompleted.accent,
+		shadowOpacity: 0.08,
+	},
 	missionIconBox: {
 		width: 52,
 		height: 52,
@@ -83,6 +120,9 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		flexShrink: 0,
+	},
+	missionIconBoxCompleted: {
+		backgroundColor: colors.missionCompleted.iconBackground,
 	},
 	missionIcon: {
 		fontSize: 28,
@@ -93,6 +133,10 @@ const styles = StyleSheet.create({
 	},
 	missionTitle: {
 		color: colors.text.primary,
+	},
+	missionTitleCompleted: {
+		color: colors.text.secondary,
+		textDecorationLine: "line-through",
 	},
 	progressBarBg: {
 		height: 24,
@@ -117,10 +161,34 @@ const styles = StyleSheet.create({
 		color: colors.text.primary,
 		fontWeight: "700",
 	},
+	completedBar: {
+		height: 24,
+		backgroundColor: colors.missionCompleted.border,
+		borderRadius: 12,
+		overflow: "hidden",
+		justifyContent: "center",
+		position: "relative",
+	},
+	completedBarFill: {
+		...StyleSheet.absoluteFillObject,
+		backgroundColor: colors.missionCompleted.accent,
+		borderRadius: 12,
+		opacity: 0.4,
+	},
+	completedLabel: {
+		position: "absolute",
+		width: "100%",
+		textAlign: "center",
+		color: colors.missionCompleted.text,
+		fontWeight: "700",
+	},
 	xpBadge: {
 		alignItems: "center",
 		flexShrink: 0,
 		gap: 2,
+	},
+	xpBadgeCompleted: {
+		opacity: 0.9,
 	},
 	xpFlame: {
 		fontSize: 24,
@@ -128,6 +196,9 @@ const styles = StyleSheet.create({
 	xpText: {
 		color: colors.text.tertiary,
 		fontWeight: "700",
+	},
+	xpTextCompleted: {
+		color: colors.missionCompleted.text,
 	},
 });
 

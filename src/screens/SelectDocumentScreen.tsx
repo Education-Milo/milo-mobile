@@ -1,63 +1,19 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import styles from '@navigation/constants/Colors';
-import Layout from '@components/Layout';
-import { useNavigation } from '@react-navigation/native';
-import {
-  AuthStackParamList,
-  HomeTabsParamList,
-  AuthScreenNames,
-} from '@navigation/Auth/authNavigator.model';
-
-type SelectDocumentScreenNavigationProps = NativeStackNavigationProp<AuthStackParamList>;
-
-
-const documentTypes = [
-  {
-    id: 'cours',
-    title: 'Cours',
-    icon: '📚',
-    description: 'Scanner un cours ou des notes',
-  },
-  {
-    id: 'exercice',
-    title: 'Exercice',
-    icon: '✏️',
-    description: 'Scanner un exercice ou un devoir',
-  },
-  {
-    id: 'bulletin',
-    title: 'Bulletin',
-    icon: '📊',
-    description: 'Scanner un bulletin de notes',
-  },
-  {
-    id: 'emploi',
-    title: 'Planning',
-    icon: '📅',
-    description: 'Scanner un emploi du temps',
-  },
-];
+import React from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
+import TypographyComponent from "@components/Typography.component";
+import useSelectDocumentScreen from "@hooks/useSelectDocumentScreen";
 
 const SelectDocumentScreen = () => {
-  const navigation = useNavigation<SelectDocumentScreenNavigationProps>();
-  const handleDocumentSelect = (type: string) => {
-    // Ici, vous pouvez ajouter la logique pour ouvrir la caméra
-    // Par exemple : navigation.navigate('Camera', { documentType: type });
-    //Propose si on veut importer une image ou prendre une photo
-    navigation.navigate('CameraOrImport', { documentType: type });
-  };
+  const { documentTypes, handleDocumentSelect } = useSelectDocumentScreen();
 
   return (
-    <Layout>
-      <View style={styles.container}>
-        <Text style={[styles.title, { marginBottom: 30 }]}>
+      <View style={{ flex: 1, padding: 20 }}>
+        <TypographyComponent style={{ marginBottom: 30, textAlign: 'center' }} variant='h4'>
           Scanner un document
-        </Text>
-        <Text style={[styles.subtitle, { marginBottom: 20 }]}>
+        </TypographyComponent>
+        <TypographyComponent style={{ marginBottom: 20, textAlign: 'center' }} variant='body'>
           Sélectionnez le type de document
-        </Text>
+        </TypographyComponent>
         <View style={localStyles.gridContainer}>
           {documentTypes.map(doc => (
             <TouchableOpacity
@@ -65,14 +21,13 @@ const SelectDocumentScreen = () => {
               style={localStyles.card}
               onPress={() => handleDocumentSelect(doc.id)}
             >
-              <Text style={localStyles.icon}>{doc.icon}</Text>
-              <Text style={localStyles.cardTitle}>{doc.title}</Text>
-              <Text style={localStyles.cardDescription}>{doc.description}</Text>
+              <TypographyComponent style={localStyles.icon}>{doc.icon}</TypographyComponent>
+              <TypographyComponent variant='h6'>{doc.title}</TypographyComponent>
+              <TypographyComponent variant="bodySmall" style={{textAlign: 'center'}}>{doc.description}</TypographyComponent>
             </TouchableOpacity>
           ))}
         </View>
       </View>
-    </Layout>
   );
 }
 
@@ -102,17 +57,6 @@ const localStyles = StyleSheet.create({
   icon: {
     fontSize: 40,
     marginBottom: 10,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#11181C',
-    marginBottom: 5,
-  },
-  cardDescription: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'center',
   },
 });
 

@@ -37,6 +37,16 @@ export const colors = {
     background: '#EFEFEF',
     fill: '#FF8C00',
   },
+
+  /** Couleurs pour l’état "mission complétée" (réutilisables partout) */
+  missionCompleted: {
+    background: '#F0FDF4',
+    border: '#BBF7D0',
+    accent: '#22C55E',
+    iconBackground: '#DCFCE7',
+    text: '#166534',
+  },
+
   suggestion: {
     background: '#FFECE0',
   },
