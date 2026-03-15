@@ -17,6 +17,35 @@
 			"title": "Derniers succès"
 		}
 	},
+	"friends": {
+		"title": "Social",
+		"tabs": {
+			"list": "Mes Amis",
+			"requests": "Demandes",
+			"add": "Ajouter"
+		},
+		"list": {
+			"empty": "Tu n'as pas encore d'amis. Ajoutes-en !"
+		},
+		"requests": {
+			"empty": "Aucune demande en attente.",
+			"receivedAt": "Demande reçue"
+		},
+		"add": {
+			"placeholder": "Chercher par pseudo..."
+		},
+		"actions": {
+			"deleteTitle": "Supprimer l'ami",
+			"deleteMessage": "Êtes-vous sûr de vouloir supprimer {{name}} de votre liste d'amis ?",
+			"confirm": "Supprimer",
+			"cancel": "Annuler"
+		},
+		"toast": {
+			"deleted": "Ami supprimé avec succès",
+			"accepted": "Demande d'ami acceptée",
+			"rejected": "Demande d'ami refusée"
+		}
+	},
 	"login": {
 		"title": "Se connecter",
 		"email": "Adresse mail",

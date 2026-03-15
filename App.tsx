@@ -5,6 +5,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import React from 'react';
 import RootNavigator from '@navigation/Root/rootNavigator';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import FlashMessage from 'react-native-flash-message';
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ export default function App() {
           </AppInitializer>
         </BottomSheetModalProvider>
       </QueryClientProvider>
+      <FlashMessage position="top" />
     </GestureHandlerRootView>
   );
 }

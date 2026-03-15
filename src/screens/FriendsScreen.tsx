@@ -4,12 +4,10 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	FlatList,
-	Image,
 	TextInput,
 } from "react-native";
 import {
 	Search,
-	UserPlus,
 	Users,
 	Bell,
 	Trash2,
@@ -19,18 +17,12 @@ import {
 import Layout from "@components/Layout";
 import TypographyComponent from "@components/Typography.component";
 import { colors } from "@theme/colors";
-import {
-	useFriendScreen,
-	type Friend,
-	type FriendRequest,
-} from "@hooks/useFriendScreen";
-import TabSwitcher from "@components/TabSwitcher.component";
+import { useFriendScreen } from "@hooks/useFriendScreen";
+import TabSwitcher, { Tab } from "@components/TabSwitcher.component";
+import { Friend } from "@store/friend/friend.model";
+import { useTranslation } from "react-i18next";
 
-const friendTabs = [
-	{ id: "list", label: "Mes Amis" },
-	{ id: "requests", label: "Demandes" },
-	{ id: "add", label: "Ajouter" },
-];
+type FriendTab = 'list' | 'requests' | 'add';
 
 const FriendsScreen = () => {
 	const {
@@ -45,38 +37,42 @@ const FriendsScreen = () => {
 		handleRejectRequest,
 	} = useFriendScreen();
 
+	const { t } = useTranslation();
+
+	const friendTabs: Tab<FriendTab>[] = [
+		{ id: 'list', label: t("friends.tabs.list") },
+		{ id: 'requests', label: t("friends.tabs.requests") },
+		{ id: 'add', label: t("friends.tabs.add") },
+	];
+
 	const renderFriendItem = ({ item }: { item: Friend }) => (
 		<View style={styles.cardItem}>
 			<View style={styles.avatarContainer}>
-				<Image source={item.avatar} style={styles.avatar} />
-				<View
-					style={[
-						styles.statusDot,
-						{
-							backgroundColor: item.isOnline
-								? colors.success
-								: colors.text.tertiary,
-						},
-					]}
-				/>
+				<View style={styles.avatarPlaceholder}>
+					<TypographyComponent variant="h6" color={colors.white}>
+						{item.friend_first_name.charAt(0).toUpperCase()}
+					</TypographyComponent>
+				</View>
 			</View>
 
 			<View style={styles.infoContainer}>
-				<TypographyComponent variant="h6">{item.name}</TypographyComponent>
-				<View style={styles.subInfoRow}>
-					<TypographyComponent
-						variant="labelSmall"
-						color={colors.text.tertiary}
-					>
-						Lvl {item.level} • {item.isOnline ? "En ligne" : "Hors ligne"}
-					</TypographyComponent>
-				</View>
+				<TypographyComponent variant="h6">
+					{item.friend_first_name} {item.friend_last_name}
+				</TypographyComponent>
+				<TypographyComponent variant="labelSmall" color={colors.text.tertiary}>
+					{item.friend_email}
+				</TypographyComponent>
 			</View>
 
 			<View style={styles.actionsRow}>
 				<TouchableOpacity
 					style={[styles.actionButtonIcon, { backgroundColor: "#FFF0F0" }]}
-					onPress={() => handleDeleteFriend(item.id, item.name)}
+					onPress={() =>
+						handleDeleteFriend(
+							String(item.user_id),
+							`${item.friend_first_name} ${item.friend_last_name}`
+						)
+					}
 				>
 					<Trash2 size={20} color={colors.error} />
 				</TouchableOpacity>
@@ -84,27 +80,33 @@ const FriendsScreen = () => {
 		</View>
 	);
 
-	const renderRequestItem = ({ item }: { item: FriendRequest }) => (
+	const renderRequestItem = ({ item }: { item: Friend }) => (
 		<View style={styles.cardItem}>
-			<Image source={item.avatar} style={styles.avatar} />
+			<View style={styles.avatarPlaceholder}>
+				<TypographyComponent variant="h6" color={colors.white}>
+					{item.friend_first_name.charAt(0).toUpperCase()}
+				</TypographyComponent>
+			</View>
 
 			<View style={styles.infoContainer}>
-				<TypographyComponent variant="h6">{item.name}</TypographyComponent>
+				<TypographyComponent variant="h6">
+					{item.friend_first_name} {item.friend_last_name}
+				</TypographyComponent>
 				<TypographyComponent variant="labelSmall" color={colors.text.tertiary}>
-					Demande reçue {item.date}
+					{t("friends.requests.receivedAt", { date: new Date(item.createdAt).toLocaleDateString() })}
 				</TypographyComponent>
 			</View>
 
 			<View style={styles.actionsRow}>
 				<TouchableOpacity
 					style={[styles.actionButtonCircle, { backgroundColor: "#E8F5E9" }]}
-					onPress={() => handleAcceptRequest(item)}
+					onPress={() => handleAcceptRequest(item.id)}
 				>
 					<Check size={20} color={colors.success} />
 				</TouchableOpacity>
 				<TouchableOpacity
 					style={[styles.actionButtonCircle, { backgroundColor: "#FFEBEE" }]}
-					onPress={() => handleRejectRequest(item.id)}
+					onPress={() => handleRejectRequest(item.user_id)}
 				>
 					<X size={20} color={colors.error} />
 				</TouchableOpacity>
@@ -117,15 +119,14 @@ const FriendsScreen = () => {
 			<View style={styles.container}>
 				{/* Header */}
 				<View style={styles.header}>
-					<TypographyComponent variant="h3">Social</TypographyComponent>
-					<View style={{ width: 24 }} />
+					<TypographyComponent variant="h3">{t("friends.title")}</TypographyComponent>
 				</View>
 
 				{/* Tabs */}
 				<TabSwitcher
 					tabs={friendTabs}
 					activeTab={activeTab}
-          onTabChange={setActiveTab}
+					onTabChange={setActiveTab}
 				/>
 
 				{/* Content */}
@@ -134,7 +135,7 @@ const FriendsScreen = () => {
 					{activeTab === "list" && (
 						<FlatList
 							data={friends}
-							keyExtractor={(item) => item.id}
+							keyExtractor={(item) => item.id.toString()}
 							renderItem={renderFriendItem}
 							ListEmptyComponent={
 								<View style={styles.emptyState}>
@@ -144,7 +145,7 @@ const FriendsScreen = () => {
 										color={colors.text.secondary}
 										style={{ marginTop: 16 }}
 									>
-										Tu n'as pas encore d'amis. Ajoutes-en !
+										{t("friends.list.empty")}
 									</TypographyComponent>
 								</View>
 							}
@@ -156,17 +157,17 @@ const FriendsScreen = () => {
 					{activeTab === "requests" && (
 						<FlatList
 							data={requests}
-							keyExtractor={(item) => item.id}
+							keyExtractor={(item) => item.id.toString()}
 							renderItem={renderRequestItem}
 							ListEmptyComponent={
 								<View style={styles.emptyState}>
-									<Check size={48} color={colors.border.dark} />
+									<Bell size={48} color={colors.border.dark} />
 									<TypographyComponent
 										variant="body"
 										color={colors.text.secondary}
 										style={{ marginTop: 16 }}
 									>
-										Aucune demande en attente.
+										{t("friends.requests.empty")}
 									</TypographyComponent>
 								</View>
 							}
@@ -185,42 +186,11 @@ const FriendsScreen = () => {
 								/>
 								<TextInput
 									style={styles.searchInput}
-									placeholder="Chercher par pseudo, email..."
+									placeholder={t("friends.add.placeholder")}
 									placeholderTextColor={colors.text.tertiary}
 									value={searchQuery}
 									onChangeText={setSearchQuery}
 								/>
-							</View>
-
-							<View style={styles.addContent}>
-								<TypographyComponent variant="h6" style={{ marginBottom: 16 }}>
-									Suggestions
-								</TypographyComponent>
-								<View style={styles.cardItem}>
-									<Image
-										source={require("@assets/images/student_7.png")}
-										style={styles.avatar}
-									/>
-									<View style={styles.infoContainer}>
-										<TypographyComponent variant="h6">
-											Léo Dubois
-										</TypographyComponent>
-										<TypographyComponent
-											variant="labelSmall"
-											color={colors.text.tertiary}
-										>
-											Vous avez 3 amis en commun
-										</TypographyComponent>
-									</View>
-									<TouchableOpacity
-										style={[
-											styles.actionButtonCircle,
-											{ backgroundColor: colors.primary },
-										]}
-									>
-										<UserPlus size={20} color={colors.white} />
-									</TouchableOpacity>
-								</View>
 							</View>
 						</View>
 					)}
@@ -237,10 +207,8 @@ const styles = StyleSheet.create({
 	},
 	header: {
 		alignItems: "center",
-		justifyContent: "space-between",
 		paddingVertical: 20,
 	},
-
 	contentContainer: {
 		flex: 1,
 	},
@@ -249,7 +217,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		marginTop: 60,
 	},
-
 	cardItem: {
 		flexDirection: "row",
 		alignItems: "center",
@@ -263,32 +230,18 @@ const styles = StyleSheet.create({
 	avatarContainer: {
 		position: "relative",
 	},
-	avatar: {
+	avatarPlaceholder: {
 		width: 48,
 		height: 48,
 		borderRadius: 24,
-		backgroundColor: "#F0F0F0",
-	},
-	statusDot: {
-		position: "absolute",
-		bottom: 0,
-		right: 0,
-		width: 14,
-		height: 14,
-		borderRadius: 7,
-		borderWidth: 2,
-		borderColor: colors.white,
+		backgroundColor: colors.primary,
+		justifyContent: "center",
+		alignItems: "center",
 	},
 	infoContainer: {
 		flex: 1,
 		marginLeft: 12,
 	},
-	subInfoRow: {
-		flexDirection: "row",
-		alignItems: "center",
-	},
-
-	// Actions
 	actionsRow: {
 		flexDirection: "row",
 		gap: 8,
@@ -297,7 +250,6 @@ const styles = StyleSheet.create({
 		width: 36,
 		height: 36,
 		borderRadius: 18,
-		backgroundColor: "#F5F5F5",
 		alignItems: "center",
 		justifyContent: "center",
 	},
@@ -308,8 +260,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 	},
-
-	// Search & Add
 	searchContainer: {
 		flexDirection: "row",
 		alignItems: "center",
@@ -325,10 +275,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		fontSize: 16,
 		color: colors.text.primary,
-		fontFamily: "Qualy-neue-regular",
-	},
-	addContent: {
-		flex: 1,
 	},
 });
 

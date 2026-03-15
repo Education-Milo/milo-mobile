@@ -4,8 +4,8 @@ export type FriendDirection = 'sent' | 'received';
 
 export interface Friend {
     id: number;
-    userId: number;
-    friendId: number;
+    user_id: number;
+    friend_id: number;
     status: FriendStatus;
     createdAt: string;
     friend_last_name: string;

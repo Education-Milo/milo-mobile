@@ -46,6 +46,7 @@ export const useFriends = (status?: "pending" | "accepted") => {
 	return useQuery({
 		queryKey: ["friends", status],
 		queryFn: () => fetchFriends(status),
+		refetchInterval: 10000,
 	});
 };
 
