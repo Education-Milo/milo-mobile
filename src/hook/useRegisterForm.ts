@@ -34,7 +34,7 @@ export const useRegisterForm = () => {
     password: '',
     confirmPassword: '',
     role: 'Enfant',
-    classe: '6ème',
+    classe: '6eme',
   });
   const [errors, setErrors] = useState<FormErrors>({});
 

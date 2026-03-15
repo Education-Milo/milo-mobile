@@ -61,7 +61,7 @@ export const registerValidationSchema = yup.object({
     .required(i18n.t('validation.role.required')),
     classe: yup
     .string()
-    .oneOf(['6ème', '5ème', '4ème', '3ème'], i18n.t('validation.classe.invalid'))
+    .oneOf(['6eme', '5eme', '4eme', '3eme'], i18n.t('validation.classe.invalid'))
     .required(i18n.t('validation.classe.required')),
 });
 

@@ -2,13 +2,14 @@ import TypographyComponent from '@components/Typography.component';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 
-// Import de votre image Sprite Sheet (la bande horizontale avec les 8 têtes)
 const spriteImage = require('@assets/images/Loading_screen_animation.png');
 
 const LoadingScreen: React.FC = () => {
   const totalFrames = 8;
   const frameWidth = 237;
   const frameHeight = 144;
+  // const frameWidth = 8;
+  // const frameHeight = 72;
 
   const [currentFrame, setCurrentFrame] = useState(0);
 

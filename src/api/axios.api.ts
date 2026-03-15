@@ -88,6 +88,13 @@ export const APIRoutes = {
   POST_CREATE_QCM: '/qcm',
 
 
+  /* FRIENDS */
+  GET_Friends: '/friends',
+  DELETE_FRIEND: (friendId: number) => `/friends/${friendId}`,
+  POST_SEND_FRIEND_REQUEST: (friendId: number) => `/friends/${friendId}`,
+  PATCH_ACCEPT_FRIEND_REQUEST: (friendId: number) => `/friends/${friendId}/accept`,
+  PATCH_BLOCK_FRIEND: (friendId: number) => `/friends/${friendId}/block`,
+
   /* COURSES */
   GET_Subjects: '/get_subjects',
   GET_Courses: '/get_courses',

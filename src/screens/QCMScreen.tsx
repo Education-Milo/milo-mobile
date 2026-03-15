@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import QCMErrorModal from "@components/QCMErrorModal.component";
 import QCMSuccessModal from "@components/QCMSuccessModal.component";
 import { colors } from "@theme/colors";
-import useQCMScreen, { Question } from "../hook/useQCMScreen";
+import useQCMScreen, { Question } from "@hooks/useQCMScreen";
 
 interface QCMScreenProps {
 	questions: Question[];
