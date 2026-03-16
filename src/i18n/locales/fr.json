@@ -46,6 +46,22 @@
 			"rejected": "Demande d'ami refusée"
 		}
 	},
+	"scanImport": {
+		"preview": {
+			"title": "Aperçu du document",
+			"pdf": "Document PDF",
+			"type": "Type",
+			"size": "Taille",
+			"category": "Catégorie"
+		},
+		"selection": {
+			"instruction": "Choisissez comment vous souhaitez ajouter votre document. Vous pourrez le vérifier avant de l'envoyer.",
+			"takePhoto": "Prendre une photo",
+			"importFile": "Importer un fichier",
+			"tipTitle": "Conseil",
+			"tipDescription": "Pour une meilleure qualité, assurez-vous que le document est bien éclairé et lisible."
+		}
+	},
 	"login": {
 		"title": "Se connecter",
 		"email": "Adresse mail",
