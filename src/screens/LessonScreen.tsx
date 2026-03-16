@@ -10,12 +10,12 @@ import LessonCard from '@components/Cards/LessonCard.component';
 import { useLessonScreen } from '@hooks/useLessonScreen';
 import LoadingScreen from '@screens/LoadingScreen';
 import Select from '@components/Select.component';
-import { CLASS_OPTIONS } from '@constants/constants';
 
 const LessonScreen = () => {
   const {
     user,
     subjects,
+    availableClasses,
     isLoading,
     currentClass,
     setCurrentClass,
@@ -43,8 +43,8 @@ const LessonScreen = () => {
 
           <View style={{ width: 120, zIndex: 1000 }}>
             <Select
-              options={CLASS_OPTIONS}
-              value={currentClass ?? '6eme'}
+              options={availableClasses}
+              value={currentClass ?? user?.classe ?? '6eme'}
               onChange={setCurrentClass}
             />
           </View>

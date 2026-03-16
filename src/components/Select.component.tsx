@@ -28,16 +28,6 @@ const Select = <T extends string>({
 
 	return (
 		<>
-			<Modal
-				visible={isOpen}
-				transparent
-				animationType="none"
-				onRequestClose={() => setIsOpen(false)}
-			>
-				<TouchableWithoutFeedback onPress={() => setIsOpen(false)}>
-					<View style={StyleSheet.absoluteFill} />
-				</TouchableWithoutFeedback>
-			</Modal>
 			<View style={styles.container}>
 				<TouchableOpacity
 					style={styles.trigger}
@@ -78,6 +68,16 @@ const Select = <T extends string>({
 					</View>
 				)}
 			</View>
+			{/* <Modal
+				visible={isOpen}
+				transparent
+				animationType="none"
+				onRequestClose={() => setIsOpen(false)}
+			>
+				<TouchableWithoutFeedback onPress={() => setIsOpen(false)}>
+					<View style={StyleSheet.absoluteFill} />
+				</TouchableWithoutFeedback>
+			</Modal> */}
 		</>
 	);
 };
