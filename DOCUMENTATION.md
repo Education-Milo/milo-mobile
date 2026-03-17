@@ -465,7 +465,7 @@ App.tsx
           ├─ ExercicesScreen    → ExercicesScreen
           ├─ MissionScreen      → MissionsScreen
           ├─ ChatScreen         → ChatScreen
-          ├─ FriendsScreen      → MissionsScreen  ⚠️ placeholder – FriendsScreen component should be used here
+          ├─ FriendsScreen      → FriendsScreen
           ├─ EditProfileScreen  → EditProfileScreen
           └─ Settings           → SettingsScreen  (slide_from_right animation)
 ```

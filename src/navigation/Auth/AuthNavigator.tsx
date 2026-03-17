@@ -15,6 +15,7 @@ import MissionsScreen from '@screens/MissionScreen';
 import ChatScreen from '@screens/ChatScreen';
 import EditProfileScreen from '@screens/EditProfileScreen';
 import SettingsScreen from '@screens/SettingsScreen';
+import FriendsScreen from '@screens/FriendsScreen';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
@@ -68,7 +69,7 @@ return (
         />
         <Stack.Screen
             name={AuthScreenNames.FriendsScreen}
-            component={MissionsScreen}
+            component={FriendsScreen}
         />
         <Stack.Screen
             name={AuthScreenNames.EditProfileScreen}
