@@ -4,19 +4,26 @@ import {
 	useFriends,
 	useDeleteFriend,
 	useAcceptFriendRequest,
+	useSendFriendRequest,
 } from "@queries/friend.queries";
 import { useTranslation } from "react-i18next";
 import { showMessage } from "react-native-flash-message";
-import i18n from "@i18n/index";
+import { useSearchUsers, useUsersByUsernames } from "@queries/user.queries";
+import { User } from "@store/user/user.model";
 
 export const useFriendScreen = () => {
 	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<"list" | "requests" | "add">(
 		"list"
 	);
+
 	const [searchQuery, setSearchQuery] = useState("");
+	const { data: usernames = [], isLoading: isSearching } = useSearchUsers(searchQuery);
+	const userQueries = useUsersByUsernames(usernames);
+	const searchResults = userQueries.map(q => q.data).filter(Boolean) as User[];
 
 	const { data: allFriends = [] } = useFriends();
+	const sendFriendRequestMutation = useSendFriendRequest();
 
 	const acceptedFriends = allFriends.filter((f) => f.status === "accepted");
 	const requests = allFriends.filter(
@@ -110,12 +117,33 @@ export const useFriendScreen = () => {
 		});
 	};
 
+	const handleSendFriendRequest = (userId: number) => {
+	sendFriendRequestMutation.mutate(userId, {
+		onSuccess: () =>
+		showMessage({
+			message: t('friends.toast.requestSent'),
+			type: 'success',
+			floating: true,
+		}),
+		onError: (error: any) => {
+			showMessage({
+			message: t('friends.toast.requestAlreadySent'),
+			type: 'warning',
+			floating: true,
+		});
+		},
+	});
+};
+
 	return {
 		activeTab,
 		setActiveTab,
 		friends: acceptedFriends,
 		requests,
 		searchQuery,
+		handleSendFriendRequest,
+		searchResults,
+		isSearching,
 		setSearchQuery,
 		handleDeleteFriend,
 		handleAcceptRequest,

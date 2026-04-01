@@ -85,8 +85,8 @@ export const APIRoutes = {
   PUT_Update_user: (userId: number) => `/users/${userId}`,
   POST_Add_User_Interest: (userId: number) => `/users/${userId}/interests/`,
   DELETE_User_Interest: (userId: number, interestId: number) => `/users/${userId}/interests/${interestId}`,
-  POST_CREATE_QCM: '/qcm',
-
+  GET_User_Search: '/users/search',
+  GET_User_By_Username: (username: string) => `/users/by-username/${username}`,
 
   /* FRIENDS */
   GET_Friends: '/friends',
@@ -94,8 +94,9 @@ export const APIRoutes = {
   POST_SEND_FRIEND_REQUEST: (friendId: number) => `/friends/${friendId}`,
   PATCH_ACCEPT_FRIEND_REQUEST: (friendId: number) => `/friends/${friendId}/accept`,
   PATCH_BLOCK_FRIEND: (friendId: number) => `/friends/${friendId}/block`,
-
+  
   /* COURSES */
+  POST_CREATE_QCM: '/qcm',
   GET_Subjects: '/get_subjects',
   GET_Courses: '/get_courses',
   GET_Chapters: '/get_chapters',

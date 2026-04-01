@@ -32,7 +32,9 @@
 			"receivedAt": "Demande reçue"
 		},
 		"add": {
-			"placeholder": "Chercher par pseudo..."
+			"placeholder": "Chercher par pseudo...",
+			"noResults": "Aucun utilisateur trouvé.",
+			"searching": "Recherche en cours..."
 		},
 		"actions": {
 			"deleteTitle": "Supprimer l'ami",
@@ -43,7 +45,10 @@
 		"toast": {
 			"deleted": "Ami supprimé avec succès",
 			"accepted": "Demande d'ami acceptée",
-			"rejected": "Demande d'ami refusée"
+			"rejected": "Demande d'ami refusée",
+			"requestSent": "Demande d'ami envoyée",
+			"requestAlreadySent": "Vous avez déjà envoyé une demande d'ami à cet utilisateur.",
+			"requestFailed": "Échec de l'envoi de la demande d'ami. Réessayez plus tard."
 		}
 	},
 	"scanImport": {

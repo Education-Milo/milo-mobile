@@ -13,6 +13,7 @@ import {
 	Trash2,
 	Check,
 	X,
+	UserPlus,
 } from "lucide-react-native";
 import Layout from "@components/Layout";
 import TypographyComponent from "@components/Typography.component";
@@ -21,6 +22,7 @@ import { useFriendScreen } from "@hooks/useFriendScreen";
 import TabSwitcher, { Tab } from "@components/TabSwitcher.component";
 import { Friend } from "@store/friend/friend.model";
 import { useTranslation } from "react-i18next";
+import TextFieldComponent from "@components/TextField.component";
 
 type FriendTab = 'list' | 'requests' | 'add';
 
@@ -31,6 +33,9 @@ const FriendsScreen = () => {
 		friends,
 		requests,
 		searchQuery,
+		isSearching,
+		searchResults,
+		handleSendFriendRequest,
 		setSearchQuery,
 		handleDeleteFriend,
 		handleAcceptRequest,
@@ -69,7 +74,7 @@ const FriendsScreen = () => {
 					style={[styles.actionButtonIcon, { backgroundColor: "#FFF0F0" }]}
 					onPress={() =>
 						handleDeleteFriend(
-							String(item.user_id),
+							String(item.friend_id),
 							`${item.friend_first_name} ${item.friend_last_name}`
 						)
 					}
@@ -178,20 +183,60 @@ const FriendsScreen = () => {
 					{/* 3. AJOUTER UN AMI */}
 					{activeTab === "add" && (
 						<View style={{ flex: 1 }}>
-							<View style={styles.searchContainer}>
-								<Search
-									size={20}
-									color={colors.text.tertiary}
-									style={{ marginRight: 8 }}
+							<TextFieldComponent
+								placeholder={t("friends.add.placeholder")}
+								value={searchQuery}
+								onChangeText={setSearchQuery}
+								icon={<Search size={20} color={colors.text.tertiary} />}
+								type="text"
+							/>
+							{isSearching && (
+								<View style={styles.emptyState}>
+									<TypographyComponent variant="body" color={colors.text.secondary}>
+									{t("friends.add.searching")}
+									</TypographyComponent>
+								</View>
+								)}
+
+								<FlatList
+								data={searchResults}
+								keyExtractor={(item) => item.id.toString()}
+								renderItem={({ item }) => (
+									<View style={styles.cardItem}>
+									<View style={styles.avatarPlaceholder}>
+										<TypographyComponent variant="h6" color={colors.white}>
+										{item.first_name.charAt(0).toUpperCase()}
+										</TypographyComponent>
+									</View>
+
+									<View style={styles.infoContainer}>
+										<TypographyComponent variant="h6">
+										{item.first_name} {item.last_name}
+										</TypographyComponent>
+										<TypographyComponent variant="labelSmall" color={colors.text.tertiary}>
+										{item.username} • {item.classe}
+										</TypographyComponent>
+									</View>
+
+									<TouchableOpacity
+										style={[styles.actionButtonCircle, { backgroundColor: colors.primary }]}
+										onPress={() => handleSendFriendRequest(item.id)}
+									>
+									<UserPlus size={20} color={colors.white} />
+									</TouchableOpacity>
+									</View>
+								)}
+								ListEmptyComponent={
+									searchQuery.length >= 2 && !isSearching ? (
+									<View style={styles.emptyState}>
+										<TypographyComponent variant="body" color={colors.text.secondary}>
+										{t("friends.add.noResults")}
+										</TypographyComponent>
+									</View>
+									) : null
+								}
+								contentContainerStyle={{ paddingTop: 12, paddingBottom: 20 }}
 								/>
-								<TextInput
-									style={styles.searchInput}
-									placeholder={t("friends.add.placeholder")}
-									placeholderTextColor={colors.text.tertiary}
-									value={searchQuery}
-									onChangeText={setSearchQuery}
-								/>
-							</View>
 						</View>
 					)}
 				</View>
@@ -259,22 +304,6 @@ const styles = StyleSheet.create({
 		borderRadius: 18,
 		alignItems: "center",
 		justifyContent: "center",
-	},
-	searchContainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		backgroundColor: colors.white,
-		paddingHorizontal: 16,
-		paddingVertical: 12,
-		borderRadius: 16,
-		borderWidth: 1,
-		borderColor: colors.border.light,
-		marginBottom: 20,
-	},
-	searchInput: {
-		flex: 1,
-		fontSize: 16,
-		color: colors.text.primary,
 	},
 });
 
