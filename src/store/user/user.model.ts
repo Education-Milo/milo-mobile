@@ -11,6 +11,8 @@ export interface User {
     classe: ClassType;
     class_?: ClassType;
 
+    created_at: string;
+
     level: number;
     points: number;
     xp: number;
