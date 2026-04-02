@@ -7,7 +7,7 @@ import { AuthStackParamList } from "@navigation/Auth/authNavigator.model";
 
 type SettingsNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
-const TERMS_URL = "https://ton-site.com/conditions-utilisation"; // à remplacer
+const TERMS_URL = "https://www.milo-education.fr/";
 
 export const useSettingsScreen = () => {
 	const navigation = useNavigation<SettingsNavigationProp>();

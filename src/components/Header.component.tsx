@@ -120,10 +120,9 @@ function Header({
                 <TypographyComponent style={{}}variant='body'>Aide</TypographyComponent>
               </TouchableOpacity>
               <TouchableOpacity style={viewStyles.settingItem}
-               onPress={async () => {
+                onPress={async () => {
                 const { useAuthStore } = await import('@store/auth/auth.store');
                 await useAuthStore.getState().logout();
-                // Suppression de navigation.navigate('Login') car la déconnexion va automatiquement changer de navigateur
               }}>
                 <Ionicons name="log-out-outline" size={20} color="#ff3b30" />
                 <TypographyComponent style={{color: '#ff3b30'}} variant='body'>Déconnexion</TypographyComponent>

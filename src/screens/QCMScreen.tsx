@@ -13,10 +13,16 @@ import QCMErrorModal from "@components/QCMErrorModal.component";
 import QCMSuccessModal from "@components/QCMSuccessModal.component";
 import { colors } from "@theme/colors";
 import useQCMScreen, { Question } from "@hooks/useQCMScreen";
+import { useTranslation } from "react-i18next";
+import TypographyComponent from "@components/Typography.component";
 
 interface QCMScreenProps {
 	questions: Question[];
-	onQuizComplete: (score: number, totalTime: number, totalQuestions: number) => void;
+	onQuizComplete: (
+		score: number,
+		totalTime: number,
+		totalQuestions: number,
+	) => void;
 	onQuit: () => void;
 }
 
@@ -35,6 +41,7 @@ const QCMScreen: React.FC<QCMScreenProps> = ({
 	onQuizComplete,
 	onQuit,
 }) => {
+	const { t } = useTranslation();
 	const {
 		currentQuestionIndex,
 		currentQuestion,
@@ -76,13 +83,17 @@ const QCMScreen: React.FC<QCMScreenProps> = ({
 					{phase === "retry" && (
 						<View style={styles.retryBadge}>
 							<Ionicons name="refresh-circle" size={16} color="#FF8C00" />
-							<Text style={styles.retryText}>Anciennes erreurs</Text>
+							<TypographyComponent style={styles.retryText}>
+								{t("qcm.retryBadge")}
+							</TypographyComponent>
 						</View>
 					)}
 					{streak > 1 && (
 						<View style={styles.streakBadge}>
 							<Ionicons name="flame" size={16} color="#FF6B6B" />
-							<Text style={styles.streakText}>{streak}</Text>
+							<TypographyComponent style={styles.streakText}>
+								{streak}
+							</TypographyComponent>
 						</View>
 					)}
 				</View>
@@ -147,7 +158,7 @@ const QCMScreen: React.FC<QCMScreenProps> = ({
 					activeOpacity={0.8}
 				>
 					<Text style={styles.validateButtonText}>
-						{selectedAnswer ? "Valider ma réponse" : "Sélectionne une réponse"}
+						{selectedAnswer ? t("qcm.validate") : t("qcm.selectAnswer")}
 					</Text>
 					{selectedAnswer && (
 						<Ionicons

@@ -11,6 +11,7 @@ import TypographyComponent from "@components/Typography.component";
 import MainButtonComponent from "@components/MainButton.component";
 import { colors } from "@theme/colors";
 import { useSettingsScreen } from "@hooks/useSettingsScreen";
+import { useTranslation } from "react-i18next";
 
 interface SettingItem {
 	label: string;
@@ -25,15 +26,22 @@ interface SettingSection {
 }
 
 const SettingsScreen = () => {
+	const { t } = useTranslation();
 	const { handleDone, handleLogout, handleTermsPress } = useSettingsScreen();
 
 	const sections: SettingSection[] = [
 		{
-			title: "Légal",
+			title: t("settings.legal"),
 			items: [
 				{
-					label: "Conditions d'utilisation",
-					icon: <Ionicons name="document-text" size={20} color={colors.text.secondary} />,
+					label: t("settings.terms"),
+					icon: (
+						<Ionicons
+							name="document-text"
+							size={20}
+							color={colors.text.secondary}
+						/>
+					),
 					onPress: handleTermsPress,
 				},
 			],
@@ -45,11 +53,11 @@ const SettingsScreen = () => {
 			{/* Header */}
 			<View style={styles.header}>
 				<TypographyComponent variant="h5" style={styles.headerTitle}>
-					Paramètres
+					{t("settings.header")}
 				</TypographyComponent>
 				<TouchableOpacity onPress={handleDone} activeOpacity={0.7}>
 					<TypographyComponent variant="button" color={colors.primary}>
-						Terminé
+						{t("settings.done")}
 					</TypographyComponent>
 				</TouchableOpacity>
 			</View>
@@ -94,7 +102,11 @@ const SettingsScreen = () => {
 										>
 											{item.label}
 										</TypographyComponent>
-										<Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
+										<Ionicons
+											name="chevron-forward"
+											size={18}
+											color={colors.text.tertiary}
+										/>
 									</TouchableOpacity>
 									{index < section.items.length - 1 && (
 										<View style={styles.divider} />
@@ -108,7 +120,7 @@ const SettingsScreen = () => {
 				{/* Bouton déconnexion */}
 				<View style={styles.logoutContainer}>
 					<MainButtonComponent
-						title="Se déconnecter"
+						title={t("settings.logout")}
 						onPress={handleLogout}
 						icon="log-out-outline"
 					/>

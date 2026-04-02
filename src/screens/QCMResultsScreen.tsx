@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet, SafeAreaView } from "react-native";
 import TypographyComponent from "@components/Typography.component";
 import { colors } from "@theme/colors";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 interface QCMResultsScreenProps {
 	score: number;
@@ -21,6 +22,7 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 	onRestart,
 	onBackToHome,
 }) => {
+	const { t } = useTranslation();
 	const formatTime = (seconds: number) => {
 		const mins = Math.floor(seconds / 60);
 		const secs = seconds % 60;
@@ -34,14 +36,14 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 				{/* Titre */}
 				<View style={styles.headerSection}>
 					<TypographyComponent variant="h3" style={styles.resultsTitle}>
-						Excellent travail !
+						{t("qcm.results.title")}
 					</TypographyComponent>
 					<TypographyComponent
 						variant="body"
 						color={colors.text.secondary}
 						style={styles.resultsSubtitle}
 					>
-						Tu as gagné {xpEarned} XP dans cette leçon
+						{t("qcm.results.subtitle", { xp: xpEarned })}
 					</TypographyComponent>
 				</View>
 
@@ -49,21 +51,30 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 				<View style={styles.cardsContainer}>
 					{/* Carte XP */}
 					<View style={[styles.card, styles.cardXP]}>
-						<TypographyComponent variant="labelSmall" style={[styles.cardTitle, styles.cardTitleXP]}>
-							TOTAL XP
+						<TypographyComponent
+							variant="labelSmall"
+							style={[styles.cardTitle, styles.cardTitleXP]}
+						>
+							{t("qcm.results.totalXp")}
 						</TypographyComponent>
 						<View style={styles.cardIconContainer}>
 							<Ionicons name="flame" size={28} color="#F4922A" />
 						</View>
-						<TypographyComponent variant="h2" style={[styles.cardValue, styles.cardValueXP]}>
+						<TypographyComponent
+							variant="h2"
+							style={[styles.cardValue, styles.cardValueXP]}
+						>
 							{xpEarned}
 						</TypographyComponent>
 					</View>
 
 					{/* Carte Temps */}
 					<View style={[styles.card, styles.cardTime]}>
-						<TypographyComponent variant="labelSmall" style={[styles.cardTitle, styles.cardTitleTime]}>
-							TEMPS
+						<TypographyComponent
+							variant="labelSmall"
+							style={[styles.cardTitle, styles.cardTitleTime]}
+						>
+							{t("qcm.results.time")}
 						</TypographyComponent>
 						<View style={styles.cardIconContainer}>
 							<Ionicons name="time-outline" size={28} color="#3B9DFF" />
@@ -80,13 +91,19 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 
 					{/* Carte Score */}
 					<View style={[styles.card, styles.cardScore]}>
-						<TypographyComponent variant="labelSmall" style={[styles.cardTitle, styles.cardTitleScore]}>
-							SCORE
+						<TypographyComponent
+							variant="labelSmall"
+							style={[styles.cardTitle, styles.cardTitleScore]}
+						>
+							{t("qcm.results.score")}
 						</TypographyComponent>
 						<View style={styles.cardIconContainer}>
 							<Ionicons name="pulse-outline" size={28} color="#4CAF50" />
 						</View>
-						<TypographyComponent variant="h2" style={[styles.cardValue, styles.cardValueScore]}>
+						<TypographyComponent
+							variant="h2"
+							style={[styles.cardValue, styles.cardValueScore]}
+						>
 							{score}%
 						</TypographyComponent>
 					</View>
@@ -99,7 +116,7 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 						onPress={onRestart}
 					>
 						<TypographyComponent variant="button">
-							Recommencer le quiz
+							{t("qcm.results.restart")}
 						</TypographyComponent>
 					</TouchableOpacity>
 					<TouchableOpacity
@@ -107,7 +124,7 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 						onPress={onBackToHome}
 					>
 						<TypographyComponent variant="button" color="orange">
-							Retour à l'accueil
+							{t("qcm.results.backHome")}
 						</TypographyComponent>
 					</TouchableOpacity>
 				</View>

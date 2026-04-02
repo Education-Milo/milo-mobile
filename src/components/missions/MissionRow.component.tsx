@@ -4,6 +4,8 @@ import Animated, { FadeInRight } from "react-native-reanimated";
 import TypographyComponent from "@components/Typography.component";
 import { Mission } from "@hooks/useMissionsScreen";
 import { colors } from "@theme/colors";
+import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 type MissionRowProps = {
 	mission: Mission;
@@ -11,6 +13,7 @@ type MissionRowProps = {
 };
 
 const MissionRow = ({ mission, index }: MissionRowProps) => {
+	const { t } = useTranslation();
 	const progress = mission.progressTotal
 		? mission.progressCurrent / mission.progressTotal
 		: 0;
@@ -54,7 +57,7 @@ const MissionRow = ({ mission, index }: MissionRowProps) => {
 							variant="labelSmall"
 							style={styles.completedLabel}
 						>
-							Terminée
+							{t("missions.completed")}
 						</TypographyComponent>
 					</View>
 				) : (
@@ -78,13 +81,13 @@ const MissionRow = ({ mission, index }: MissionRowProps) => {
 			{/* XP Badge */}
 			<View style={[styles.xpBadge, isCompleted && styles.xpBadgeCompleted]}>
 				<TypographyComponent style={styles.xpFlame}>
-					{isCompleted ? "✓" : "🔥"}
+					{isCompleted ? "✓" : <Ionicons name="flame" size={24} color={colors.primary} />}
 				</TypographyComponent>
 				<TypographyComponent
 					variant="labelSmall"
 					style={[styles.xpText, isCompleted && styles.xpTextCompleted]}
 				>
-					+{mission.rewardXP} XP
+					{t("missions.xp", { xp: mission.rewardXP })}
 				</TypographyComponent>
 			</View>
 		</Animated.View>
@@ -113,8 +116,8 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.08,
 	},
 	missionIconBox: {
-		width: 52,
-		height: 52,
+		width: 60,
+		height: 60,
 		borderRadius: 14,
 		backgroundColor: colors.primaryLight,
 		justifyContent: "center",
@@ -125,7 +128,7 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.missionCompleted.iconBackground,
 	},
 	missionIcon: {
-		fontSize: 28,
+		fontSize: 20,
 	},
 	missionContent: {
 		flex: 1,

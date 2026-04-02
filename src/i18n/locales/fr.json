@@ -10,12 +10,130 @@
 		},
 		"recommended": {
 			"title": "Cours recommandés",
+			"comingSoon": "Cours recommandés à venir...",
 			"cta": "Scanner mon bulletin",
 			"ctaDescription": "Importe ton bulletin pour que Milo te recommande les meilleurs cours adaptés à tes besoins et objectifs !"
 		},
 		"achievements": {
 			"title": "Derniers succès"
 		}
+	},
+	"settings": {
+		"header": "Paramètres",
+		"done": "Terminé",
+		"logout": "Se déconnecter",
+		"legal": "Légal",
+		"terms": "Conditions d'utilisation"
+	},
+	"lesson": {
+		"title": "Mes Cours 📚",
+		"greetingTitle": "Bonjour {{name}} !",
+		"greetingSubtitle": "Choisis une matière pour découvrir tes cours et commencer à apprendre.",
+		"welcomeSubtitle": "Prêt à explorer de nouvelles matières ? Choisis un cours pour commencer."
+	},
+	"lessonChapter": {
+		"back": "Retour",
+		"empty": "Aucun chapitre trouvé pour cette matière.",
+		"modalTitle": "Que veux-tu faire ?",
+		"learn": "Apprendre",
+		"learnDescription": "Cours interactif avec Milo",
+		"practice": "S'entraîner",
+		"practiceDescription": "Quiz et exercices"
+	},
+	"qcm": {
+		"retryBadge": "Anciennes erreurs",
+		"validate": "Valider ma réponse",
+		"selectAnswer": "Sélectionne une réponse",
+		"error": {
+			"title": "Oups !",
+			"subtitle": "Ce n'est pas la bonne réponse",
+			"correctAnswer": "La bonne réponse :",
+			"continue": "Continuer"
+		},
+		"success": {
+			"subtitle": "C'est la bonne réponse !",
+			"continue": "Continuer",
+			"streak": "{{count}} bonnes réponses d'affilée !",
+			"encouragements": [
+				"Super !",
+				"Excellent !",
+				"Bien joué !",
+				"Parfait !",
+				"Bravo !",
+				"Génial !"
+			]
+		},
+		"results": {
+			"title": "Excellent travail !",
+			"subtitle": "Tu as gagné {{xp}} XP dans cette leçon",
+			"totalXp": "TOTAL XP",
+			"time": "TEMPS",
+			"score": "SCORE",
+			"restart": "Recommencer le quiz",
+			"backHome": "Retour à l'accueil"
+		}
+	},
+	"scanImport": {
+		"preview": {
+			"title": "Aperçu du document",
+			"pdf": "Document PDF",
+			"type": "Type",
+			"size": "Taille",
+			"category": "Catégorie"
+		},
+		"selection": {
+			"instruction": "Choisissez comment vous souhaitez ajouter votre document. Vous pourrez le vérifier avant de l'envoyer.",
+			"takePhoto": "Prendre une photo",
+			"importFile": "Importer un fichier",
+			"tipTitle": "Conseil",
+			"tipDescription": "Pour une meilleure qualité, assurez-vous que le document est bien éclairé et lisible."
+		},
+		"footer": {
+			"uploading": "Envoi en cours...",
+			"sendDocument": "Envoyer le document",
+			"delete": "Supprimer",
+			"deleteTitle": "Supprimer le document",
+			"deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce document ?",
+			"cancel": "Annuler",
+			"sendTitle": "Envoyer le document",
+			"sendConfirm": "Êtes-vous sûr de vouloir envoyer ce document ?",
+			"send": "Envoyer"
+		},
+		"alerts": {
+			"permissionTitle": "Permission requise",
+			"permissionCamera": "Vous devez autoriser l'accès à la caméra pour prendre des photos.",
+			"errorTitle": "Erreur",
+			"cameraOpen": "Impossible d'ouvrir la caméra",
+			"importFailed": "Impossible d'importer le document",
+			"noDocument": "Aucun document sélectionné",
+			"sendFailed": "Impossible d'envoyer le document",
+			"successTitle": "Succès ! 🎉",
+			"sendSuccess": "Votre document a été envoyé avec succès.",
+			"ok": "OK",
+			"unknownSize": "Taille inconnue"
+		}
+	},
+	"profileStats": {
+		"title": "Récapitulatif",
+		"streakDays": "Jours streak",
+		"totalXp": "Total XP",
+		"division": "Division",
+		"resume": "Reprendre",
+		"resumeCourse": "Reprendre cours",
+		"badgesTitle": "Badges du mois",
+		"seeAll": "TOUT VOIR",
+		"comingSoon": "À venir",
+		"achievementsTitle": "Succès"
+	},
+	"missions": {
+		"title": "Missions",
+		"completed": "Terminée",
+		"xp": "+{{xp}} XP"
+	},
+	"profile": {
+		"title": "Mon Profil",
+		"editButton": "Modifier mon profil",
+		"joined": "Élève motivé • A rejoint en {{date}}"
 	},
 	"friends": {
 		"title": "Social",
@@ -49,22 +167,6 @@
 			"requestSent": "Demande d'ami envoyée",
 			"requestAlreadySent": "Vous avez déjà envoyé une demande d'ami à cet utilisateur.",
 			"requestFailed": "Échec de l'envoi de la demande d'ami. Réessayez plus tard."
-		}
-	},
-	"scanImport": {
-		"preview": {
-			"title": "Aperçu du document",
-			"pdf": "Document PDF",
-			"type": "Type",
-			"size": "Taille",
-			"category": "Catégorie"
-		},
-		"selection": {
-			"instruction": "Choisissez comment vous souhaitez ajouter votre document. Vous pourrez le vérifier avant de l'envoyer.",
-			"takePhoto": "Prendre une photo",
-			"importFile": "Importer un fichier",
-			"tipTitle": "Conseil",
-			"tipDescription": "Pour une meilleure qualité, assurez-vous que le document est bien éclairé et lisible."
 		}
 	},
 	"login": {

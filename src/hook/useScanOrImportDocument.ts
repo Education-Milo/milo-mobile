@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { AuthStackParamList } from "@navigation/Auth/authNavigator.model";
+import { useTranslation } from "react-i18next";
 
 type CameraOrImportNavigationProp =
 	NativeStackNavigationProp<AuthStackParamList>;
@@ -40,6 +41,7 @@ const getDocumentTypeInfo = (type: string) => {
 export const useScanOrImportDocument = ({
 	documentType,
 }: UseScanOrImportDocumentParams) => {
+	const { t } = useTranslation();
 	const navigation = useNavigation<CameraOrImportNavigationProp>();
 
 	const [selectedDocument, setSelectedDocument] =
@@ -60,8 +62,8 @@ export const useScanOrImportDocument = ({
 				await ImagePicker.requestCameraPermissionsAsync();
 			if (permissionResult.granted === false) {
 				Alert.alert(
-					"Permission requise",
-					"Vous devez autoriser l'accès à la caméra pour prendre des photos."
+					t("scanImport.alerts.permissionTitle"),
+					t("scanImport.alerts.permissionCamera"),
 				);
 				return;
 			}
@@ -89,7 +91,10 @@ export const useScanOrImportDocument = ({
 			}
 		} catch (error) {
 			console.error("Erreur lors de l'ouverture de la caméra:", error);
-			Alert.alert("Erreur", "Impossible d'ouvrir la caméra");
+			Alert.alert(
+				t("scanImport.alerts.errorTitle"),
+				t("scanImport.alerts.cameraOpen"),
+			);
 		}
 	};
 
@@ -115,7 +120,10 @@ export const useScanOrImportDocument = ({
 			}
 		} catch (error) {
 			console.error("Erreur lors de l'import:", error);
-			Alert.alert("Erreur", "Impossible d'importer le document");
+			Alert.alert(
+				t("scanImport.alerts.errorTitle"),
+				t("scanImport.alerts.importFailed"),
+			);
 		}
 	};
 
@@ -134,7 +142,10 @@ export const useScanOrImportDocument = ({
 
 	const handleSendDocument = () => {
 		if (!selectedDocument) {
-			Alert.alert("Erreur", "Aucun document sélectionné");
+			Alert.alert(
+				t("scanImport.alerts.errorTitle"),
+				t("scanImport.alerts.noDocument"),
+			);
 			return;
 		}
 		setShowSendModal(true);
@@ -158,12 +169,22 @@ export const useScanOrImportDocument = ({
 			await new Promise((resolve) => setTimeout(resolve, 1500));
 
 			setShowSendModal(false);
-			Alert.alert("Succès ! 🎉", "Votre document a été envoyé avec succès.", [
-				{ text: "OK", onPress: () => navigation.navigate("HomeTabs") },
-			]);
+			Alert.alert(
+				t("scanImport.alerts.successTitle"),
+				t("scanImport.alerts.sendSuccess"),
+				[
+					{
+						text: t("scanImport.alerts.ok"),
+						onPress: () => navigation.navigate("HomeTabs"),
+					},
+				],
+			);
 		} catch (error) {
 			console.error("Erreur lors de l'envoi:", error);
-			Alert.alert("Erreur", "Impossible d'envoyer le document");
+			Alert.alert(
+				t("scanImport.alerts.errorTitle"),
+				t("scanImport.alerts.sendFailed"),
+			);
 		} finally {
 			setIsUploading(false);
 		}
@@ -174,7 +195,7 @@ export const useScanOrImportDocument = ({
 	};
 
 	const formatFileSize = (bytes?: number) => {
-		if (!bytes) return "Taille inconnue";
+		if (!bytes) return t("scanImport.alerts.unknownSize");
 		if (bytes < 1024) return `${bytes} B`;
 		const kb = bytes / 1024;
 		if (kb < 1024) return `${kb.toFixed(1)} KB`;

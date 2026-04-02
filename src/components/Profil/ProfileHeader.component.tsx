@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { AuthStackParamList } from '@navigation/Auth/authNavigator.model';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { User } from '@store/user/user.model';
+import { useTranslation } from 'react-i18next';
 
 interface ProfileHeaderProps {
   user: User | null;
@@ -15,6 +16,7 @@ interface ProfileHeaderProps {
 type ProfilHeaderNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
 const ProfileHeader = ({ user }: ProfileHeaderProps) => {
+  const { t } = useTranslation();
   const navigation = useNavigation<ProfilHeaderNavigationProp>();
 
   return (
@@ -44,11 +46,11 @@ const ProfileHeader = ({ user }: ProfileHeaderProps) => {
             {user.first_name} {user.last_name}
           </TypographyComponent>
         ) : <TypographyComponent variant="h3" style={{ marginTop: 12 }}>
-          Profil sans nom
+          {t("profile.title")}
         </TypographyComponent>
         }
         <TypographyComponent variant="body" color={colors.text.tertiary}>
-          Élève motivé • A rejoint en 2024
+          {t("profile.joined", { date: new Date(user?.created_at || '').toLocaleDateString('fr-FR', { year: 'numeric' }) })}
         </TypographyComponent>
         <TouchableOpacity
           style={styles.addFriendButton}
@@ -56,7 +58,7 @@ const ProfileHeader = ({ user }: ProfileHeaderProps) => {
           onPress={() => navigation.navigate('EditProfileScreen')}
         >
           <TypographyComponent variant="button" color="#FFF">
-            Modifier le profil
+            {t("profile.editButton")}
           </TypographyComponent>
         </TouchableOpacity>
       </View>

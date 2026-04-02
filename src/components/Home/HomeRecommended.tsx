@@ -23,7 +23,7 @@ const HomeRecommended = ({
 
 			{hasBulletin ? (
 				<TypographyComponent variant="body" color={colors.text.secondary}>
-					Cours recommandés à venir...
+					{t("home.recommended.comingSoon")}
 				</TypographyComponent>
 			) : (
 				<TouchableOpacity
@@ -44,16 +44,16 @@ const HomeRecommended = ({
 };
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 16,
-        marginBottom: 15,
-        gap: 12,
-    },
-    ctaCard: {
-        backgroundColor: colors.primaryLight,
-        padding: 16,
-        borderRadius: 8,
-        gap: 8,
-    },
+	container: {
+		padding: 16,
+		marginBottom: 15,
+		gap: 12,
+	},
+	ctaCard: {
+		backgroundColor: colors.primaryLight,
+		padding: 16,
+		borderRadius: 8,
+		gap: 8,
+	},
 });
 export default HomeRecommended;
