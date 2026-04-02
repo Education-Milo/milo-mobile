@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import {  ArrowLeft, BookOpen, PenTool } from 'lucide-react-native';
-
+import { Ionicons } from '@expo/vector-icons';
 import Layout from '@components/Layout';
 import TypographyComponent from '@components/Typography.component';
 import ChapterCard from '@components/Cards/ChapterCard.component';
@@ -34,7 +33,7 @@ const LessonChapter = () => {
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-            <ArrowLeft size={24} color={colors.text.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             <TypographyComponent variant="h6" style={{ marginLeft: 8 }}>Retour</TypographyComponent>
           </TouchableOpacity>
 
@@ -79,15 +78,23 @@ const LessonChapter = () => {
 
             <View style={styles.optionsContainer}>
               <TouchableOpacity style={[styles.optionCard, styles.coursOption]} onPress={() => handleOptionPress('cours')}>
-                <View style={styles.optionIconContainer}><BookOpen size={24} color="#FF6B35" /></View>
+                <View style={styles.optionIconContainer}>
+                  <Ionicons name="book-outline" size={24} color="#FF6B35" />
+                </View>
                 <TypographyComponent variant="h6" style={styles.optionTitle}>Apprendre</TypographyComponent>
-                <TypographyComponent variant="labelSmall" color={colors.text.secondary}>Cours interactif avec Milo</TypographyComponent>
+                <TypographyComponent variant="labelSmall" color={colors.text.secondary} style={{ textAlign: 'center' }}>
+                  Cours interactif avec Milo
+                </TypographyComponent>
               </TouchableOpacity>
 
               <TouchableOpacity style={[styles.optionCard, styles.exercicesOption]} onPress={() => handleOptionPress('exercices')}>
-                <View style={styles.optionIconContainer}><PenTool size={24} color="#4CAF50" /></View>
+                <View style={styles.optionIconContainer}>
+                  <Ionicons name="pencil" size={24} color="#4CAF50" />
+                </View>
                 <TypographyComponent variant="h6" style={styles.optionTitle}>S'entraîner</TypographyComponent>
-                <TypographyComponent variant="labelSmall" color={colors.text.secondary}>Quiz et exercices</TypographyComponent>
+                <TypographyComponent variant="labelSmall" color={colors.text.secondary} style={{ textAlign: 'center' }}>
+                  Quiz et exercices
+                </TypographyComponent>
               </TouchableOpacity>
             </View>
           </View>
@@ -128,7 +135,8 @@ const styles = StyleSheet.create({
   optionsContainer: {
     flexDirection: 'row',
     gap: 12,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    maxHeight: 125
   },
   optionCard: {
     flex: 1,

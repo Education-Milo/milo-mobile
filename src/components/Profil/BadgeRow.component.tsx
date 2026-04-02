@@ -18,10 +18,10 @@ const BadgesSection = ({ badges }: BadgesSectionProps) => {
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-         <TypographyComponent variant="h5">Badges du mois</TypographyComponent>
-         <TouchableOpacity>
-           <TypographyComponent variant="label" color={colors.primary}>TOUT VOIR</TypographyComponent>
-         </TouchableOpacity>
+          <TypographyComponent variant="h5">Badges du mois</TypographyComponent>
+          <TouchableOpacity>
+            <TypographyComponent variant="label" color={colors.primary}>TOUT VOIR</TypographyComponent>
+          </TouchableOpacity>
       </View>
 
       <View style={styles.badgesRow}>
@@ -34,8 +34,8 @@ const BadgesSection = ({ badges }: BadgesSectionProps) => {
           </View>
         ))}
         <View style={[styles.badgeCard, { opacity: 0.5 }]}>
-           <View style={[styles.badgeImage, { backgroundColor: '#EEE', borderRadius: 35 }]} />
-           <TypographyComponent variant="labelSmall" style={{marginTop: 8}}>À venir</TypographyComponent>
+            <View style={[styles.badgeImage, { backgroundColor: '#EEE', borderRadius: 35 }]} />
+            <TypographyComponent variant="labelSmall" style={{marginTop: 8}}>À venir</TypographyComponent>
         </View>
       </View>
     </View>

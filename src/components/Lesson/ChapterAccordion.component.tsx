@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { ChevronDown, CheckCircle, Lock, PlayCircle } from 'lucide-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import TypographyComponent from '@components/Typography.component';
 import { colors } from '@theme/colors';
-import { Chapter, Lesson } from '@store/course/course.model';
 import { ChapterWithLessons, LessonWithStatus } from '@hooks/useLessonChapterScreen';
 
 interface ChapterAccordionProps {
@@ -23,9 +22,9 @@ const ChapterAccordion = ({
 
   const getLessonIcon = (status: string) => {
     switch (status) {
-      case 'completed': return <CheckCircle size={18} color="#4CAF50" />;
-      case 'in-progress': return <PlayCircle size={18} color="#FF9800" />;
-      default: return <Lock size={18} color="#9E9E9E" />;
+      case 'completed': return <Ionicons name="checkmark-circle-outline" size={18} color="#4CAF50" />;
+      case 'in-progress': return <Ionicons name="play-circle-outline" size={18} color="#FF9800" />;
+      default: return <Ionicons name="lock-closed-outline" size={18} color="#9E9E9E" />;
     }
   };
 
@@ -42,7 +41,7 @@ const ChapterAccordion = ({
             </TypographyComponent>
           </View>
         </View>
-        <ChevronDown size={24} color={colors.text.secondary} style={{ transform: [{ rotate: isOpen ? '180deg' : '0deg' }] }} />
+        <Ionicons name="chevron-down" size={24} color={colors.text.secondary} style={{ transform: [{ rotate: isOpen ? '180deg' : '0deg' }] }} />
       </TouchableOpacity>
 
       {isOpen && (

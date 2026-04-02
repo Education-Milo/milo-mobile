@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Trophy } from 'lucide-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import TypographyComponent from '@components/Typography.component';
 import { colors } from '@theme/colors';
 
@@ -23,7 +23,7 @@ const AchievementRow = ({ title, desc, progress, total }: Omit<Achievement, 'id'
   return (
     <View style={styles.achievementRow}>
       <View style={[styles.achievementIcon, isCompleted ? styles.achievementCompleted : null]}>
-        <Trophy size={24} color={isCompleted ? '#FFD700' : '#CCC'} />
+        <Ionicons name={isCompleted ? 'trophy' : 'trophy-outline'} size={24} color={isCompleted ? '#FFD700' : '#CCC'} />
       </View>
       <View style={styles.achievementContent}>
         <TypographyComponent variant="h6">{title}</TypographyComponent>

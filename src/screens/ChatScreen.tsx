@@ -10,7 +10,7 @@ import {
 	Image,
 	ActivityIndicator,
 } from "react-native";
-import { ArrowLeft, Send } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import TypographyComponent from "@components/Typography.component";
 import Layout from "@components/Layout";
@@ -79,7 +79,7 @@ const ChatScreen = () => {
 						onPress={() => navigation.goBack()}
 						style={styles.backButton}
 					>
-						<ArrowLeft size={24} color={colors.text.primary} />
+						<Ionicons name="arrow-back" size={24} color={colors.text.primary} />
 					</TouchableOpacity>
 					<View style={styles.headerTitleContainer}>
 						<TypographyComponent variant="h6">
@@ -138,7 +138,8 @@ const ChatScreen = () => {
 							onPress={sendMessage}
 							disabled={inputText.length === 0}
 						>
-							<Send
+							<Ionicons
+								name="send"
 								size={20}
 								color={inputText.length > 0 ? "#FFFFFF" : "#9CA3AF"}
 							/>

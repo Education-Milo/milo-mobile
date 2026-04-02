@@ -208,7 +208,6 @@ MissionScreen
 | `react-native-reanimated` | ~3.17.4 | Smooth animations |
 | `react-native-screens` | ~4.11.1 | Native screen containers |
 | `react-native-safe-area-context` | 5.4.0 | Safe area insets |
-| `lucide-react-native` | ^0.553.0 | Icon library |
 | `expo-blur` | ^14.1.5 | Blur view component |
 | `expo-linear-gradient` | ^14.1.5 | Gradient backgrounds |
 | `expo-navigation-bar` | ~4.2.8 | Android navigation bar styling |

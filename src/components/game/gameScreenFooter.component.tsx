@@ -7,10 +7,10 @@ import {
 	Modal,
 	StyleSheet,
 } from "react-native";
-import { Globe, Trophy, Users, X } from "lucide-react-native";
 import TypographyComponent from "@components/Typography.component";
 import { colors } from "@theme/colors";
 import { type Player } from "@hooks/useGameScreen";
+import { Ionicons } from "@expo/vector-icons";
 
 interface GameScreenFooterProps {
 	activeTab: "global" | "friends";
@@ -37,16 +37,16 @@ const GameScreenFooter = ({
 			<View style={[styles.rankItem, isMe && styles.rankItemActive]}>
 				<View style={styles.rankNumberContainer}>
 					{item.rank <= 3 ? (
-						<Trophy
+						<Ionicons
+							name={
+								item.rank === 1
+									? "trophy"
+									: item.rank === 2
+										? "trophy-outline"
+										: "trophy-outline"
+							}
 							size={20}
 							color={
-								item.rank === 1
-									? "#FFD700"
-									: item.rank === 2
-										? "#C0C0C0"
-										: "#CD7F32"
-							}
-							fill={
 								item.rank === 1
 									? "#FFD700"
 									: item.rank === 2
@@ -115,7 +115,8 @@ const GameScreenFooter = ({
 							]}
 							onPress={() => onTabChange("global")}
 						>
-							<Globe
+							<Ionicons
+								name="globe-outline"
 								size={14}
 								color={
 									activeTab === "global" ? colors.white : colors.text.secondary
@@ -138,7 +139,8 @@ const GameScreenFooter = ({
 							]}
 							onPress={() => onTabChange("friends")}
 						>
-							<Users
+							<Ionicons
+								name="people-outline"
 								size={14}
 								color={
 									activeTab === "friends" ? colors.white : colors.text.secondary
@@ -178,7 +180,7 @@ const GameScreenFooter = ({
 								Défier un ami
 							</TypographyComponent>
 							<TouchableOpacity onPress={onCloseModal}>
-								<X size={24} color={colors.text.secondary} />
+								<Ionicons name="close" size={24} color={colors.text.secondary} />
 							</TouchableOpacity>
 						</View>
 						<TypographyComponent

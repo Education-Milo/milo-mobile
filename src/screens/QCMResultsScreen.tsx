@@ -2,7 +2,7 @@ import React from "react";
 import { View, TouchableOpacity, StyleSheet, SafeAreaView } from "react-native";
 import TypographyComponent from "@components/Typography.component";
 import { colors } from "@theme/colors";
-import { Flame, Clock, Target } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 interface QCMResultsScreenProps {
 	score: number;
@@ -53,7 +53,7 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 							TOTAL XP
 						</TypographyComponent>
 						<View style={styles.cardIconContainer}>
-							<Flame size={28} color="#F4922A" />
+							<Ionicons name="flame" size={28} color="#F4922A" />
 						</View>
 						<TypographyComponent variant="h2" style={[styles.cardValue, styles.cardValueXP]}>
 							{xpEarned}
@@ -66,7 +66,7 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 							TEMPS
 						</TypographyComponent>
 						<View style={styles.cardIconContainer}>
-							<Clock size={28} color="#3B9DFF" />
+							<Ionicons name="time-outline" size={28} color="#3B9DFF" />
 						</View>
 						<TypographyComponent
 							variant="h2"
@@ -84,7 +84,7 @@ const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 							SCORE
 						</TypographyComponent>
 						<View style={styles.cardIconContainer}>
-							<Target size={28} color="#4CAF50" />
+							<Ionicons name="pulse-outline" size={28} color="#4CAF50" />
 						</View>
 						<TypographyComponent variant="h2" style={[styles.cardValue, styles.cardValueScore]}>
 							{score}%

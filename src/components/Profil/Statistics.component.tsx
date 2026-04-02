@@ -1,21 +1,21 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Flame, Zap, Trophy, BookOpen } from 'lucide-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import TypographyComponent from '@components/Typography.component';
 import { colors } from '@theme/colors';
 
 interface StatCardProps {
-  icon: any;
+  icon: React.ReactNode;
   color: string;
   value: string | number;
   label: string;
   onPress?: () => void;
 }
 
-const StatCard = ({ icon: Icon, color, value, label, onPress }: StatCardProps) => (
+const StatCard = ({ icon, color, value, label, onPress }: StatCardProps) => (
   <TouchableOpacity style={styles.statCard} onPress={onPress} activeOpacity={0.8} disabled={!onPress}>
     <View style={[styles.statIconContainer, { borderColor: color }]}>
-      <Icon size={20} color={color} fill={color} />
+      {icon}
     </View>
     <View>
       <TypographyComponent variant="h6" style={{ fontSize: 15 }}>{value}</TypographyComponent>
@@ -39,25 +39,25 @@ const StatsSection = ({ stats }: StatsSectionProps) => {
       <TypographyComponent variant="h5" style={styles.sectionTitle}>Récapitulatif</TypographyComponent>
       <View style={styles.statsGrid}>
         <StatCard
-          icon={Flame}
+          icon={<Ionicons name="flame" size={20} color="#FF9600" />}
           color="#FF9600"
           value={stats.streak}
           label="Jours streak"
         />
         <StatCard
-          icon={Zap}
+          icon={<Ionicons name="flash" size={20} color="#FFD700" />}
           color="#FFD700"
           value={stats.totalXp}
           label="Total XP"
         />
         <StatCard
-          icon={Trophy}
+          icon={<Ionicons name="trophy" size={20} color="#1CB0F6" />}
           color="#1CB0F6"
           value={stats.league}
           label="Division"
         />
         <StatCard
-          icon={BookOpen}
+          icon={<Ionicons name="book" size={20} color="#2B70C9" />}
           color="#2B70C9"
           value="Reprendre"
           label={stats.lastCourse}

@@ -6,7 +6,7 @@ import {
 	ScrollView,
 	SafeAreaView,
 } from "react-native";
-import { ChevronRight, FileText, LogOut } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 import TypographyComponent from "@components/Typography.component";
 import MainButtonComponent from "@components/MainButton.component";
 import { colors } from "@theme/colors";
@@ -33,7 +33,7 @@ const SettingsScreen = () => {
 			items: [
 				{
 					label: "Conditions d'utilisation",
-					icon: <FileText size={20} color={colors.text.secondary} />,
+					icon: <Ionicons name="document-text" size={20} color={colors.text.secondary} />,
 					onPress: handleTermsPress,
 				},
 			],
@@ -94,7 +94,7 @@ const SettingsScreen = () => {
 										>
 											{item.label}
 										</TypographyComponent>
-										<ChevronRight size={18} color={colors.text.tertiary} />
+										<Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
 									</TouchableOpacity>
 									{index < section.items.length - 1 && (
 										<View style={styles.divider} />

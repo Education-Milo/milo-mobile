@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Swords, Zap } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 import TypographyComponent from "@components/Typography.component";
 import { colors } from "@theme/colors";
 
@@ -55,7 +55,7 @@ const GameScreenHeader = ({
 							end={{ x: 1, y: 1 }}
 						>
 							<View style={styles.iconCircle}>
-								<Zap size={32} color={colors.primary} fill={colors.primary} />
+								<Ionicons name="flash" size={28} color={colors.primary} />
 							</View>
 							<View style={styles.actionTextContainer}>
 								<TypographyComponent variant="h5" color={colors.white}>
@@ -72,7 +72,7 @@ const GameScreenHeader = ({
 					) : (
 						<View style={[styles.actionGradient, styles.inactiveCard]}>
 							<View style={[styles.iconCircle, { backgroundColor: "#FFF3E0" }]}>
-								<Zap size={32} color={colors.secondary} />
+								<Ionicons name="flash-outline" size={28} color={colors.secondary} />
 							</View>
 							<View style={styles.actionTextContainer}>
 								<TypographyComponent variant="h5" color={colors.text.primary}>
@@ -97,7 +97,7 @@ const GameScreenHeader = ({
 				>
 					<View style={styles.actionContentRow}>
 						<View style={[styles.iconCircle, { backgroundColor: "#FFF3E0" }]}>
-							<Swords size={28} color={colors.secondary} />
+							<Ionicons name="people-circle-outline" size={28} color={colors.secondary} />
 						</View>
 						<View style={styles.actionTextContainer}>
 							<TypographyComponent variant="h6" color={colors.text.primary}>
