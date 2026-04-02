@@ -1,14 +1,15 @@
 import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Settings } from 'lucide-react-native';
+import { Ionicons } from "@expo/vector-icons";
 import TypographyComponent from '@components/Typography.component';
 import { colors } from '@theme/colors';
 import { useNavigation } from '@react-navigation/native';
 import { AuthStackParamList } from '@navigation/Auth/authNavigator.model';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { User } from '@store/user/user.model';
 
 interface ProfileHeaderProps {
-  user: any;
+  user: User | null;
 }
 
 type ProfilHeaderNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
@@ -24,7 +25,7 @@ const ProfileHeader = ({ user }: ProfileHeaderProps) => {
           onPress={() => navigation.navigate('Settings')}
           activeOpacity={0.7}
         >
-          <Settings size={24} color={colors.text.secondary} />
+          <Ionicons name="settings-outline" size={24} color={colors.text.secondary} />
         </TouchableOpacity>
       </View>
 
@@ -38,9 +39,14 @@ const ProfileHeader = ({ user }: ProfileHeaderProps) => {
             <TypographyComponent variant="h6" style={{ fontSize: 12 }}>🇫🇷</TypographyComponent>
           </View>
         </View>
-        <TypographyComponent variant="h3" style={{ marginTop: 12 }}>
-          {user?.first_name} {user?.last_name}
+        {user?.first_name && user?.last_name ? (
+          <TypographyComponent variant="h3" style={{ marginTop: 12 }}>
+            {user.first_name} {user.last_name}
+          </TypographyComponent>
+        ) : <TypographyComponent variant="h3" style={{ marginTop: 12 }}>
+          Profil sans nom
         </TypographyComponent>
+        }
         <TypographyComponent variant="body" color={colors.text.tertiary}>
           Élève motivé • A rejoint en 2024
         </TypographyComponent>

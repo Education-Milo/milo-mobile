@@ -7,7 +7,7 @@ import {
 	Text,
 	ViewStyle,
 } from "react-native";
-import { X, Plus } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 import TypographyComponent from "@components/Typography.component";
 import { colors } from "@theme/colors";
 
@@ -82,7 +82,7 @@ const InterestSelector: React.FC<InterestSelectorProps> = ({
 								onPress={() => handleRemove(index)}
 								style={styles.chipRemove}
 							>
-								<X size={14} color="#FFF" />
+								<Ionicons name="close" size={14} color="#FFF" />
 							</TouchableOpacity>
 						</View>
 					))}
@@ -101,7 +101,7 @@ const InterestSelector: React.FC<InterestSelectorProps> = ({
 
 				{currentInput.length > 0 && (
 					<TouchableOpacity onPress={handleAddInput} style={styles.addButton}>
-						<Plus size={20} color={colors.primary} />
+						<Ionicons name="add" size={20} color={colors.primary} />
 					</TouchableOpacity>
 				)}
 			</View>
@@ -124,7 +124,8 @@ const InterestSelector: React.FC<InterestSelectorProps> = ({
 								style={styles.suggestionChip}
 								onPress={() => handleAddSuggestion(item)}
 							>
-								<Plus
+								<Ionicons
+									name="add"
 									size={12}
 									color={colors.primary}
 									style={{ marginRight: 4 }}

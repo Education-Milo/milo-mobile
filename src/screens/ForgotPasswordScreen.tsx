@@ -3,9 +3,6 @@ import {
   StyleSheet,
   View,
   Image,
-  ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
   TouchableWithoutFeedback,
   Animated,
   TouchableOpacity,
@@ -16,7 +13,6 @@ import { useKeyboardState } from '@hooks/useKeyboardState';
 import { useForgotPasswordAnimation } from '@hooks/useForgotPasswordAnimation';
 import ForgotPasswordForm from '@components/forgot-password/ForgotPasswordForm.component';
 import ForgotPasswordFooter from '@components/forgot-password/ForgotPasswordFooter.component';
-import BackArrowIcon from '@assets/icons/login-icons/back-arrow.svg';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -189,7 +185,7 @@ const styles = StyleSheet.create({
     flex: 5,
   },
   logoWrapper: {
-    width: 120,                 // ajuste selon ton logo
+    width: 120,
     height: 50,
   },
 });

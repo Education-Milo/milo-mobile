@@ -4,17 +4,8 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	FlatList,
-	TextInput,
 } from "react-native";
-import {
-	Search,
-	Users,
-	Bell,
-	Trash2,
-	Check,
-	X,
-	UserPlus,
-} from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 import Layout from "@components/Layout";
 import TypographyComponent from "@components/Typography.component";
 import { colors } from "@theme/colors";
@@ -79,7 +70,7 @@ const FriendsScreen = () => {
 						)
 					}
 				>
-					<Trash2 size={20} color={colors.error} />
+					<Ionicons name="trash-outline" size={20} color={colors.error} />
 				</TouchableOpacity>
 			</View>
 		</View>
@@ -107,13 +98,13 @@ const FriendsScreen = () => {
 					style={[styles.actionButtonCircle, { backgroundColor: "#E8F5E9" }]}
 					onPress={() => handleAcceptRequest(item.id)}
 				>
-					<Check size={20} color={colors.success} />
+					<Ionicons name="checkmark-outline" size={20} color={colors.success} />
 				</TouchableOpacity>
 				<TouchableOpacity
 					style={[styles.actionButtonCircle, { backgroundColor: "#FFEBEE" }]}
 					onPress={() => handleRejectRequest(item.user_id)}
 				>
-					<X size={20} color={colors.error} />
+					<Ionicons name="close-outline" size={20} color={colors.error} />
 				</TouchableOpacity>
 			</View>
 		</View>
@@ -144,7 +135,7 @@ const FriendsScreen = () => {
 							renderItem={renderFriendItem}
 							ListEmptyComponent={
 								<View style={styles.emptyState}>
-									<Users size={48} color={colors.border.dark} />
+									<Ionicons name="people-outline" size={48} color={colors.border.dark} />
 									<TypographyComponent
 										variant="body"
 										color={colors.text.secondary}
@@ -166,7 +157,7 @@ const FriendsScreen = () => {
 							renderItem={renderRequestItem}
 							ListEmptyComponent={
 								<View style={styles.emptyState}>
-									<Bell size={48} color={colors.border.dark} />
+									<Ionicons name="notifications-outline" size={48} color={colors.border.dark} />
 									<TypographyComponent
 										variant="body"
 										color={colors.text.secondary}
@@ -187,7 +178,7 @@ const FriendsScreen = () => {
 								placeholder={t("friends.add.placeholder")}
 								value={searchQuery}
 								onChangeText={setSearchQuery}
-								icon={<Search size={20} color={colors.text.tertiary} />}
+								icon={<Ionicons name="search" size={20} color={colors.text.tertiary} />}
 								type="text"
 							/>
 							{isSearching && (
@@ -222,7 +213,7 @@ const FriendsScreen = () => {
 										style={[styles.actionButtonCircle, { backgroundColor: colors.primary }]}
 										onPress={() => handleSendFriendRequest(item.id)}
 									>
-									<UserPlus size={20} color={colors.white} />
+									<Ionicons name="person-add-outline" size={20} color={colors.white} />
 									</TouchableOpacity>
 									</View>
 								)}

@@ -1,37 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   StyleSheet,
   ScrollView,
   Image,
   TouchableOpacity,
-  TextInput,
   KeyboardAvoidingView,
   Platform,
-  Text
 } from 'react-native';
-import { Camera, ChevronLeft, User, Mail, X, Plus } from 'lucide-react-native';
 import TypographyComponent from '@components/Typography.component';
 import TextFieldComponent from '@components/TextField.component';
 import InterestSelector from '@components/InterestSelector.component';
 import { colors } from '@theme/colors';
 import { useEditProfile } from '@hooks/useEditProfileScreen';
 import { ClassType } from '@store/user/user.model';
-
-const FormField = ({ label, value, fieldKey, icon: Icon, keyboardType, onChange }: any) => (
-  <View style={styles.inputContainer}>
-    <TypographyComponent variant="labelSmall" color={colors.text.secondary} style={{ marginBottom: 8 }}>
-      {label}
-    </TypographyComponent>
-    <TextFieldComponent
-      value={value}
-      onChangeText={(text) => onChange(fieldKey, text)}
-      placeholder={label}
-      keyboardType={keyboardType}
-      icon={Icon ? <Icon size={20} color={colors.text.tertiary} /> : undefined}
-    />
-  </View>
-);
+import { Ionicons } from "@expo/vector-icons";
 
 const EditProfileScreen = () => {
     const {
@@ -58,7 +41,7 @@ const EditProfileScreen = () => {
       >
         <View style={styles.header}>
           <TouchableOpacity onPress={goBack} style={styles.backButton}>
-            <ChevronLeft size={28} color={colors.text.primary} />
+            <Ionicons name="chevron-back-outline" size={28} color={colors.text.primary} />
           </TouchableOpacity>
           <TypographyComponent variant="h4">Mon Profil</TypographyComponent>
           <View style={{ width: 28 }} />
@@ -70,7 +53,7 @@ const EditProfileScreen = () => {
               style={styles.avatar}
             />
             <View style={styles.cameraBadge}>
-              <Camera size={20} color="#FFF" />
+              <Ionicons name="camera-outline" size={16} color="#FFF" />
             </View>
           </TouchableOpacity>
           <View style={{ marginTop: 12 }}>
@@ -83,30 +66,31 @@ const EditProfileScreen = () => {
         <View style={styles.formSection}>
           <View style={styles.row}>
             <View style={{ flex: 1, marginRight: 8 }}>
-              <FormField
-                label="Prénom"
+              <TextFieldComponent
+                placeholder='Votre prénom'
                 value={formData.first_name}
-                fieldKey="first_name"
-                onChange={handleChange}
-                icon={User}
+                type="text"
+                onChangeText={(text) => handleChange('first_name', text)}
+                icon={<Ionicons name="person-outline" size={20} color={colors.text.tertiary} />}
               />
             </View>
             <View style={{ flex: 1, marginLeft: 8 }}>
-              <FormField
-                label="Nom"
+              <TextFieldComponent
+                placeholder='Votre nom'
                 value={formData.last_name}
-                fieldKey="last_name"
-                onChange={handleChange}
+                type="text"
+                onChangeText={(text) => handleChange('last_name', text)}
+                icon={<Ionicons name="person-outline" size={20} color={colors.text.tertiary} />}
               />
             </View>
           </View>
 
-          <FormField
-            label="Email"
+          <TextFieldComponent
+            placeholder='Votre email'
             value={formData.email}
-            fieldKey="email"
-            onChange={handleChange}
-            icon={Mail}
+            type="email"
+            onChangeText={(text) => handleChange('email', text)}
+            icon={<Ionicons name="mail-outline" size={20} color={colors.text.tertiary} />}
             keyboardType="email-address"
           />
 

@@ -12,7 +12,6 @@ export const searchUsers = async (query: string): Promise<string[]> => {
     const response = await APIAxios.get(APIRoutes.GET_User_Search, {
         params: {q: query },
     });
-    console.log("Search results for query:", query, response.data);
     return response.data;
 };
 

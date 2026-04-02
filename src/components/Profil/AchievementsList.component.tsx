@@ -36,9 +36,9 @@ const AchievementRow = ({ title, desc, progress, total }: Omit<Achievement, 'id'
           <View style={[styles.progressBarFill, { width: `${percent}%` }]} />
         </View>
         <View style={{flexDirection:'row', justifyContent: 'flex-end', marginTop: 2}}>
-           <TypographyComponent variant="labelSmall" color={colors.text.tertiary}>
-             {progress} / {total}
-           </TypographyComponent>
+            <TypographyComponent variant="labelSmall" color={colors.text.tertiary}>
+              {progress} / {total}
+            </TypographyComponent>
         </View>
       </View>
     </View>
@@ -49,10 +49,10 @@ const AchievementsSection = ({ achievements }: AchievementsSectionProps) => {
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-         <TypographyComponent variant="h5">Succès</TypographyComponent>
-         <TouchableOpacity>
-           <TypographyComponent variant="label" color={colors.primary}>TOUT VOIR</TypographyComponent>
-         </TouchableOpacity>
+          <TypographyComponent variant="h5">Succès</TypographyComponent>
+          <TouchableOpacity>
+            <TypographyComponent variant="label" color={colors.primary}>TOUT VOIR</TypographyComponent>
+          </TouchableOpacity>
       </View>
 
       <View style={styles.achievementsList}>

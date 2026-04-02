@@ -104,7 +104,6 @@ export const useUserStore = create<UserStore>((set, get) => ({
       const response = await APIAxios.post(APIRoutes.POST_Add_User_Interest(currentUser.id), { name: interestName.trim().toLowerCase() });
       const newUser = get().user;
       const newInterest = response.data
-      console.log("Intérêt ajouté avec succès", newInterest);
       if (newUser) {
         set({
           user: { ...newUser,

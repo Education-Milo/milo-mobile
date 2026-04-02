@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet, Modal } from "react-native";
-import { ChevronDown } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 import TypographyComponent from "@components/Typography.component";
 import { TouchableWithoutFeedback } from "react-native";
 import { colors } from "@theme/colors";
@@ -37,8 +37,8 @@ const Select = <T extends string>({
 					<TypographyComponent variant="body">
 						{selectedOption?.label ?? placeholder ?? "Sélectionner"}
 					</TypographyComponent>
-					<ChevronDown size={18} color={colors.text.secondary} />
-				</TouchableOpacity>
+						<Ionicons name="chevron-down" size={18} color={colors.text.secondary} />
+					</TouchableOpacity>
 				{isOpen && (
 					<View style={styles.dropdown}>
 						{options.map((option) => (
