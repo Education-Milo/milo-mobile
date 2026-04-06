@@ -10,6 +10,10 @@ export const registerValidationSchema = yup.object({
     .string()
     .trim()
     .required(i18n.t('validation.nom.required')),
+  username: yup
+    .string()
+    .trim()
+    .required(i18n.t('validation.username.required')),
   email: yup
     .string()
     .trim()

@@ -189,6 +189,7 @@
 		"title": "Inscription",
 		"email": "Adresse mail",
 		"password": "Mot de passe",
+		"username": "Nom d'utilisateur",
 		"FirstName": "Prénom",
 		"LastName": "Nom",
 		"selectRole": "Sélectionnez votre rôle",

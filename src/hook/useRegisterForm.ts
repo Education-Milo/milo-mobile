@@ -21,6 +21,7 @@ interface FormErrors {
   nom?: string;
   prenom?: string;
   role?: string;
+  username?: string;
 }
 
 export const useRegisterForm = () => {
@@ -30,6 +31,7 @@ export const useRegisterForm = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
     first_name: '',
     last_name: '',
+    username: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -54,7 +56,8 @@ export const useRegisterForm = () => {
               err.path === 'confirmPassword' ||
               err.path === 'prenom' ||
               err.path === 'nom' ||
-              err.path === 'role')
+              err.path === 'role' ||
+              err.path === 'username')
           ) {
             newErrors[err.path as keyof FormErrors] = err.message;
           }
@@ -101,11 +104,16 @@ export const useRegisterForm = () => {
     setErrors(prev => ({ ...prev, classe: undefined }));
   }, []);
 
+  const handleUsernameChange = useCallback((text: string) => {
+    setFormData(prev => ({ ...prev, username: text }));
+    setErrors(prev => ({ ...prev, username: undefined }));
+  }, []);
+
 
   const handleRegister = useCallback(async () => {
     const isValid = await validateForm();
     if (isValid) {
-      await register(formData.email, formData.password, formData.last_name, formData.first_name, formData.role, formData.classe);
+      await register(formData.email, formData.password, formData.last_name, formData.first_name, formData.role, formData.classe, formData.username);
       Keyboard.dismiss();
     }
   }, [validateForm, register, formData, navigation]);
@@ -121,6 +129,7 @@ export const useRegisterForm = () => {
     handleRoleChange,
     handlePrenomChange,
     handleClasseChange,
+    handleUsernameChange,
     handleRegister,
   };
 };
