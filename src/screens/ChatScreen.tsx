@@ -5,17 +5,21 @@ import {
 	TextInput,
 	TouchableOpacity,
 	FlatList,
-	KeyboardAvoidingView,
+	Keyboard,
 	Platform,
 	Image,
 	ActivityIndicator,
+	TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-
+import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import TypographyComponent from "@components/Typography.component";
-import Layout from "@components/Layout";
 import { colors } from "@theme/colors";
 import useChatScreen, { Message } from "@hooks/useChatScreen";
+import { useKeyboardState } from "@hooks/useKeyboardState";
+import TextFieldComponent from "@components/TextField.component";
+import { LinearGradient } from "expo-linear-gradient";
+import ChatInput from "@components/chat/ChatInput.component";
 
 const ChatScreen = () => {
 	const {
@@ -27,14 +31,29 @@ const ChatScreen = () => {
 		setInputText,
 		sendMessage,
 		flatListRef,
+		parts,
+		currentPartIndex,
+		phase,
+		goToNextPart,
 	} = useChatScreen();
+	const { isFieldFocused, handleFocus, handleBlur, dismissKeyboard } =
+		useKeyboardState();
 
-	// --- RENDER ITEMS ---
+	const currentPart = parts[currentPartIndex];
+	const isLastPart = currentPartIndex === parts.length - 1;
+	const isInputEnabled = phase === "waiting_question" || phase === "answering";
 
-	const renderMessageItem = ({ item }: { item: Message }) => {
+	const renderMessageItem = ({
+		item,
+		index,
+	}: {
+		item: Message;
+		index: number;
+	}) => {
 		const isMilo = item.sender === "milo";
 		return (
-			<View
+			<Animated.View
+				entering={FadeInDown.delay(50).duration(300).springify()}
 				style={[
 					styles.messageContainer,
 					isMilo ? styles.miloMessageContainer : styles.userMessageContainer,
@@ -55,6 +74,15 @@ const ChatScreen = () => {
 						isMilo ? styles.miloBubble : styles.userBubble,
 					]}
 				>
+					{isMilo && (
+						<TypographyComponent
+							variant="labelSmall"
+							color={colors.primary}
+							style={styles.miloLabel}
+						>
+							Milo explique :
+						</TypographyComponent>
+					)}
 					<TypographyComponent
 						variant="body"
 						color={isMilo ? colors.text.primary : "#FFFFFF"}
@@ -62,18 +90,14 @@ const ChatScreen = () => {
 						{item.text}
 					</TypographyComponent>
 				</View>
-			</View>
+			</Animated.View>
 		);
 	};
 
 	return (
-		<Layout>
-			<KeyboardAvoidingView
-				style={styles.container}
-				behavior={Platform.OS === "ios" ? "padding" : undefined}
-				keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
-			>
-				{/* HEADER */}
+		<View style={styles.root}>
+			{/* HEADER */}
+			{!isFieldFocused && (
 				<View style={styles.header}>
 					<TouchableOpacity
 						onPress={() => navigation.goBack()}
@@ -81,104 +105,197 @@ const ChatScreen = () => {
 					>
 						<Ionicons name="arrow-back" size={24} color={colors.text.primary} />
 					</TouchableOpacity>
-					<View style={styles.headerTitleContainer}>
-						<TypographyComponent variant="h6">
-							{lessonTitle ? `Cours : ${lessonTitle}` : "Discussion avec Milo"}
-						</TypographyComponent>
-						<TypographyComponent variant="labelSmall" color="green">
-							En ligne
-						</TypographyComponent>
-					</View>
+					<TypographyComponent
+						variant="h6"
+						style={styles.headerTitle}
+						numberOfLines={1}
+					>
+						{lessonTitle || "Discussion avec Milo"}
+					</TypographyComponent>
 				</View>
+			)}
 
-				{/* LISTE DES MESSAGES */}
-				<FlatList
-					ref={flatListRef}
-					data={messages}
-					keyExtractor={(item) => item.id}
-					renderItem={renderMessageItem}
-					contentContainerStyle={styles.messagesList}
-					onContentSizeChange={() =>
-						flatListRef.current?.scrollToEnd({ animated: true })
-					}
-					onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
-					ListFooterComponent={
-						isTyping ? (
-							<View style={{ padding: 10, marginLeft: 40 }}>
-								<TypographyComponent
-									variant="labelSmall"
-									color={colors.text.secondary}
-								>
-									Milo est en train d'écrire...
-								</TypographyComponent>
-							</View>
-						) : null
-					}
-				/>
-
-				{/* INPUT BAR */}
-				<View style={styles.inputContainer}>
-					<View style={styles.inputWrapper}>
-						<TextInput
-							style={styles.textInput}
-							placeholder="Pose ta question ou réponds..."
-							placeholderTextColor="#9CA3AF"
-							value={inputText}
-							onChangeText={setInputText}
-							multiline
-						/>
-						<TouchableOpacity
-							style={[
-								styles.sendButton,
-								{
-									backgroundColor:
-										inputText.length > 0 ? colors.primary : "#E5E7EB",
-								},
-							]}
-							onPress={sendMessage}
-							disabled={inputText.length === 0}
-						>
-							<Ionicons
-								name="send"
-								size={20}
-								color={inputText.length > 0 ? "#FFFFFF" : "#9CA3AF"}
+			{/* BANDEAU PARTIE */}
+			{!isFieldFocused && parts.length > 0 && currentPart && (
+				<Animated.View
+					entering={FadeInDown.duration(400)}
+					style={styles.partBanner}
+				>
+					<View style={styles.partBannerContent}>
+						<View style={styles.partInfo}>
+							<TypographyComponent
+								variant="labelSmall"
+								color={colors.text.tertiary}
+							>
+								Partie {currentPartIndex + 1} sur {parts.length}
+							</TypographyComponent>
+							<TypographyComponent
+								variant="h6"
+								color={colors.text.primary}
+								numberOfLines={1}
+							>
+								{currentPart.title}
+							</TypographyComponent>
+						</View>
+						{/* Barre de progression */}
+						<View style={styles.progressBar}>
+							<View
+								style={[
+									styles.progressFill,
+									{
+										width: `${((currentPartIndex + 1) / parts.length) * 100}%`,
+									},
+								]}
 							/>
-						</TouchableOpacity>
+						</View>
 					</View>
+				</Animated.View>
+			)}
+
+			{/* MESSAGES */}
+			<TouchableWithoutFeedback onPress={dismissKeyboard}>
+				<View style={{ flex: 1 }}>
+					<FlatList
+						ref={flatListRef}
+						data={messages}
+						keyExtractor={(item) => item.id}
+						renderItem={renderMessageItem}
+						contentContainerStyle={styles.messagesList}
+						onContentSizeChange={() =>
+							flatListRef.current?.scrollToEnd({ animated: true })
+						}
+						onLayout={() =>
+							flatListRef.current?.scrollToEnd({ animated: true })
+						}
+						ListFooterComponent={
+							<>
+								{/* Typing indicator */}
+								{isTyping && (
+									<View style={styles.typingContainer}>
+										<Image
+											source={require("../../assets/images/mascot.png")}
+											style={styles.avatarSmall}
+											resizeMode="contain"
+										/>
+										<View style={styles.typingBubble}>
+											<ActivityIndicator size="small" color={colors.primary} />
+											<TypographyComponent
+												variant="labelSmall"
+												color={colors.text.secondary}
+												style={{ marginLeft: 8 }}
+											>
+												Milo est en train d'écrire...
+											</TypographyComponent>
+										</View>
+									</View>
+								)}
+
+								{/* Bouton passer à la suite */}
+								{phase === "waiting_question" &&
+									!isTyping &&
+									parts.length > 0 && (
+										<Animated.View
+											entering={FadeInUp.duration(400)}
+											style={styles.nextPartContainer}
+										>
+											<TouchableOpacity
+												style={styles.nextPartButton}
+												onPress={goToNextPart}
+												activeOpacity={0.8}
+											>
+												<TypographyComponent
+													variant="button"
+													color={colors.white}
+												>
+													{isLastPart
+														? "Terminer la leçon 🎉"
+														: "Partie suivante →"}
+												</TypographyComponent>
+											</TouchableOpacity>
+										</Animated.View>
+									)}
+							</>
+						}
+					/>
 				</View>
-			</KeyboardAvoidingView>
-		</Layout>
+			</TouchableWithoutFeedback>
+
+			{/* INPUT BAR */}
+			<ChatInput
+				value={inputText}
+				onChangeText={setInputText}
+				onSend={sendMessage}
+				onFocus={handleFocus}
+				onBlur={handleBlur}
+				editable={isInputEnabled}
+				placeholder={
+					isInputEnabled
+						? "Pose ta question à Milo..."
+						: "Milo prépare la suite..."
+				}
+			/>
+		</View>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: {
+	root: {
 		flex: 1,
-		backgroundColor: "#FFF8F1", // Background clair comme les autres écrans
+		backgroundColor: "#F0F4FF",
 	},
 	header: {
 		flexDirection: "row",
 		alignItems: "center",
-		padding: 16,
-		backgroundColor: "#FFFFFF",
+		paddingHorizontal: 16,
+		paddingVertical: 10,
+		backgroundColor: colors.background,
 		borderBottomWidth: 1,
 		borderBottomColor: "#F3F4F6",
 	},
 	backButton: {
-		marginRight: 16,
+		marginRight: 12,
+		padding: 4,
 	},
-	headerTitleContainer: {
+	headerTitle: {
 		flex: 1,
 	},
+
+	// Bandeau partie
+	partBanner: {
+		backgroundColor: colors.background,
+		paddingHorizontal: 16,
+		paddingVertical: 12,
+		borderBottomWidth: 1,
+		borderBottomColor: "#F3F4F6",
+	},
+	partBannerContent: {
+		gap: 8,
+	},
+	partInfo: {
+		alignItems: "center",
+	},
+	progressBar: {
+		height: 4,
+		backgroundColor: colors.primaryLight,
+		borderRadius: 2,
+		overflow: "hidden",
+	},
+	progressFill: {
+		height: "100%",
+		backgroundColor: colors.primary,
+		borderRadius: 2,
+	},
+
+	// Messages
 	messagesList: {
 		padding: 16,
-		paddingBottom: 20,
+		paddingBottom: 24,
 	},
 	messageContainer: {
 		marginBottom: 16,
 		flexDirection: "row",
 		alignItems: "flex-end",
-		maxWidth: "85%",
+		maxWidth: "88%",
 	},
 	userMessageContainer: {
 		alignSelf: "flex-end",
@@ -196,23 +313,73 @@ const styles = StyleSheet.create({
 		height: 32,
 	},
 	messageBubble: {
-		padding: 12,
+		padding: 14,
 		borderRadius: 20,
+		maxWidth: "100%",
 	},
 	userBubble: {
-		backgroundColor: colors.primary, // Orange Milo
+		backgroundColor: colors.primary,
 		borderBottomRightRadius: 4,
 	},
 	miloBubble: {
 		backgroundColor: "#FFFFFF",
-		borderWidth: 1,
-		borderColor: "#E5E7EB",
 		borderBottomLeftRadius: 4,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 1 },
+		shadowOpacity: 0.06,
+		shadowRadius: 4,
+		elevation: 2,
 	},
+	miloLabel: {
+		fontWeight: "700",
+		marginBottom: 4,
+	},
+
+	// Typing
+	typingContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginBottom: 16,
+	},
+	typingBubble: {
+		flexDirection: "row",
+		alignItems: "center",
+		backgroundColor: "#FFFFFF",
+		paddingHorizontal: 14,
+		paddingVertical: 10,
+		borderRadius: 20,
+		borderBottomLeftRadius: 4,
+		marginLeft: 8,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 1 },
+		shadowOpacity: 0.06,
+		shadowRadius: 4,
+		elevation: 2,
+	},
+
+	// Bouton partie suivante
+	nextPartContainer: {
+		alignItems: "center",
+		marginTop: 8,
+		marginBottom: 8,
+	},
+	nextPartButton: {
+		backgroundColor: colors.primary,
+		paddingVertical: 14,
+		paddingHorizontal: 32,
+		borderRadius: 30,
+		shadowColor: colors.primary,
+		shadowOffset: { width: 0, height: 4 },
+		shadowOpacity: 0.3,
+		shadowRadius: 8,
+		elevation: 4,
+	},
+
+	// Input
 	inputContainer: {
 		paddingHorizontal: 16,
 		paddingVertical: 12,
-		backgroundColor: "#FFFFFF",
+		backgroundColor: colors.background,
 		borderTopWidth: 1,
 		borderTopColor: "#F3F4F6",
 	},
@@ -226,9 +393,14 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: "#E5E7EB",
 	},
+	inputDisabled: {
+		backgroundColor: "#F3F4F6",
+		borderColor: "#E5E7EB",
+		opacity: 0.7,
+	},
 	textInput: {
 		flex: 1,
-		fontSize: 16,
+		fontSize: 14,
 		maxHeight: 100,
 		color: "#1F2937",
 		marginRight: 8,
@@ -239,6 +411,24 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 		alignItems: "center",
 		justifyContent: "center",
+	},
+
+	gradient: {
+		flexDirection: "row",
+		alignItems: "center",
+		borderRadius: 9999,
+		paddingHorizontal: 16,
+		paddingVertical: 8,
+		backgroundColor: "transparent",
+		minHeight: 48,
+		shadowColor: colors.background,
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.08,
+		shadowRadius: 8,
+		elevation: 2,
+	},
+	iconButton: {
+		marginRight: 6,
 	},
 });
 

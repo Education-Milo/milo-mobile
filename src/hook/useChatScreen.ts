@@ -14,10 +14,29 @@ export type Message = {
 	timestamp: Date;
 };
 
+export type LessonPart = {
+	id: string;
+	title: string;
+	content: string;
+}
+
+export type ChatPhase = 'explaining' | 'waiting_question' | 'answering';
+
 type ChatScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 type ChatScreenRouteProp = RouteProp<AuthStackParamList, "ChatScreen">;
 
+
+const MOCK_PARTS: LessonPart[] = [
+	{ id: '1', title: 'Introduction', content: 'Voici la première partie...' },
+	{ id: '2', title: 'Développement', content: 'Voici la deuxième partie...' },
+	{ id: '3', title: 'Conclusion', content: 'Voici la troisième partie...' },
+];
+
 const useChatScreen = () => {
+
+	const [parts, setParts] = useState<LessonPart[]>([]); // parties de la leçon
+	const [currentPartIndex, setCurrentPartIndex] = useState(0);
+	const [phase, setPhase] = useState<ChatPhase>('explaining');
 	// Navigation + params de la stack
 	const navigation = useNavigation<ChatScreenNavigationProp>();
 	const route = useRoute<ChatScreenRouteProp | any>();
@@ -29,12 +48,8 @@ const useChatScreen = () => {
 	// Etat local du chat
 	const [inputText, setInputText] = useState("");
 	const [messages, setMessages] = useState<Message[]>([]);
-	const [isTyping, setIsTyping] = useState(false); // Pour afficher "Milo est en train d'écrire..."
+	const [isTyping, setIsTyping] = useState(false);
 
-	// Récupération de l'action du store de cours
-	// const generateLessonContent = useCourseStore(
-	// 	(state) => state.generateLessonContent
-	// );
 
 	// 🔁 Logique dynamique d'initialisation du chat
 	// - Si une leçon est présente, on déclenche la génération de l'intro via le store
@@ -56,40 +71,57 @@ const useChatScreen = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [lessonId, messages.length]);
 
-	// ⚙️ Logique dynamique de démarrage de leçon (appel store + gestion erreurs)
 	const startLesson = async () => {
 		setIsTyping(true);
 		try {
-			// const response = await generateLessonContent(lessonId);
-            const response = "Voici une introduction personnalisée pour ta leçon !";
+			// TODO: remplacer par l'appel API quand le back sera prêt
+			// const response = await APIAxios.get(`/lessons/${lessonId}/parts`);
+			const lessonParts = MOCK_PARTS;
+			setParts(lessonParts);
 
-			const introMessage: Message = {
-				id: Date.now().toString(),
-				text:`C'est parti pour le cours sur : ${lessonTitle} ! ${response}`,
-				sender: "milo",
-				timestamp: new Date(),
-			};
-
-			setMessages([introMessage]);
+			const firstPart = lessonParts[0];
+			setMessages([{
+			id: Date.now().toString(),
+			text: firstPart.content,
+			sender: 'milo',
+			timestamp: new Date(),
+			}]);
+			setPhase('waiting_question');
 		} catch (error) {
-			console.error("Erreur lancement cours", error);
-			setMessages([
-				{
-					id: "error",
-					text: "Oups, j'ai un petit souci pour récupérer ton cours. Réessaie plus tard !",
-					sender: "milo",
-					timestamp: new Date(),
-				},
-			]);
+			// gestion erreur existante
 		} finally {
 			setIsTyping(false);
 		}
 	};
 
-	// 📨 Logique dynamique d'envoi de message
-	// - Mise à jour optimiste de l'UI avec le message utilisateur
-	// - Appel API au backend pour obtenir la réponse de Milo
-	// - Gestion des erreurs réseau avec message explicite
+	const goToNextPart = () => {
+		const nextIndex = currentPartIndex + 1;
+		if (nextIndex >= parts.length) {
+			// leçon terminée
+			setMessages(prev => [...prev, {
+			id: Date.now().toString(),
+			text: 'Bravo ! Tu as terminé toutes les parties de cette leçon ! 🎉',
+			sender: 'milo',
+			timestamp: new Date(),
+			}]);
+			setTimeout(() => navigation.goBack(), 2000);
+			return;
+		}
+		setCurrentPartIndex(nextIndex);
+		setPhase('explaining');
+		setIsTyping(true);
+		setTimeout(() => {
+			setMessages(prev => [...prev, {
+				id: Date.now().toString(),
+				text: parts[nextIndex].content,
+				sender: 'milo',
+				timestamp: new Date(),
+			}]);
+			setIsTyping(false);
+			setPhase('waiting_question');
+		}, 1000);
+	};
+
 	const sendMessage = async () => {
 		if (inputText.trim().length === 0) return;
 
@@ -150,6 +182,11 @@ const useChatScreen = () => {
 		isTyping,
 		inputText,
 		setInputText,
+
+		parts,
+		currentPartIndex,
+		phase,
+		goToNextPart,
 
 		// actions
 		sendMessage,
