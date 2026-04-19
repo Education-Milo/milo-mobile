@@ -4,19 +4,20 @@ import {
 	TouchableOpacity,
 	FlatList,
 	Image,
-	Modal,
 	StyleSheet,
 } from "react-native";
 import TypographyComponent from "@components/Typography.component";
+import BottomSheetComponent from "@components/BottomSheetModal.component";
 import { colors } from "@theme/colors";
 import { type Player } from "@hooks/useGameScreen";
 import { Ionicons } from "@expo/vector-icons";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 interface GameScreenFooterProps {
 	activeTab: "global" | "friends";
 	onTabChange: (tab: "global" | "friends") => void;
 	currentData: Player[];
-	modalVisible: boolean;
+	bottomSheetRef: React.RefObject<BottomSheetModal | null>;
 	onlineFriends: Player[];
 	onCloseModal: () => void;
 	onChallengeFriend: (player: Player) => void;
@@ -26,11 +27,35 @@ const GameScreenFooter = ({
 	activeTab,
 	onTabChange,
 	currentData,
-	modalVisible,
+	bottomSheetRef,
 	onlineFriends,
 	onCloseModal,
 	onChallengeFriend,
 }: GameScreenFooterProps) => {
+	const getInitials = (name: string) =>
+		name
+			.split(" ")
+			.filter(Boolean)
+			.slice(0, 2)
+			.map((part) => part[0]?.toUpperCase())
+			.join("");
+
+	const renderAvatar = (item: Player, sizeStyle: object) => {
+		if (item.avatar) {
+			return (
+				<Image source={item.avatar} style={sizeStyle} resizeMode="cover" />
+			);
+		}
+
+		return (
+			<View style={[sizeStyle, styles.avatarFallback]}>
+				<TypographyComponent variant="label" style={styles.avatarFallbackText}>
+					{getInitials(item.name)}
+				</TypographyComponent>
+			</View>
+		);
+	};
+
 	const renderRankingItem = ({ item }: { item: Player }) => {
 		const isMe = item.name === "Vous";
 		return (
@@ -60,7 +85,7 @@ const GameScreenFooter = ({
 						</TypographyComponent>
 					)}
 				</View>
-				<Image source={item.avatar} style={styles.avatar} resizeMode="cover" />
+				{renderAvatar(item, styles.avatar)}
 				<View style={styles.rankInfo}>
 					<TypographyComponent
 						variant="h6"
@@ -83,7 +108,7 @@ const GameScreenFooter = ({
 		<View style={styles.friendItem}>
 			<View style={styles.friendInfo}>
 				<View>
-					<Image source={item.avatar} style={styles.avatarSmall} />
+					{renderAvatar(item, styles.avatarSmall)}
 					<View style={styles.onlineDot} />
 				</View>
 				<TypographyComponent variant="body" style={{ marginLeft: 12 }}>
@@ -167,37 +192,26 @@ const GameScreenFooter = ({
 			</View>
 
 			{/* Modal défier un ami */}
-			<Modal
-				animationType="slide"
-				transparent
-				visible={modalVisible}
-				onRequestClose={onCloseModal}
-			>
-				<View style={styles.modalOverlay}>
-					<View style={styles.modalContent}>
-						<View style={styles.modalHeader}>
-							<TypographyComponent variant="h5">
-								Défier un ami
-							</TypographyComponent>
-							<TouchableOpacity onPress={onCloseModal}>
-								<Ionicons name="close" size={24} color={colors.text.secondary} />
-							</TouchableOpacity>
-						</View>
-						<TypographyComponent
-							variant="bodySmall"
-							color={colors.text.secondary}
-							style={{ marginBottom: 16 }}
-						>
-							Amis en ligne actuellement
-						</TypographyComponent>
-						<FlatList
-							data={onlineFriends}
-							keyExtractor={(item) => item.id}
-							renderItem={renderFriendItem}
-						/>
-					</View>
+			<BottomSheetComponent ref={bottomSheetRef} snapPoints={["55%"]}>
+				<View style={styles.modalHeader}>
+					<TypographyComponent variant="h5">Défier un ami</TypographyComponent>
+					<TouchableOpacity onPress={onCloseModal}>
+						<Ionicons name="close" size={24} color={colors.text.secondary} />
+					</TouchableOpacity>
 				</View>
-			</Modal>
+				<TypographyComponent
+					variant="bodySmall"
+					color={colors.text.secondary}
+					style={{ marginBottom: 16 }}
+				>
+					Amis disponibles actuellement
+				</TypographyComponent>
+				<FlatList
+					data={onlineFriends}
+					keyExtractor={(item) => item.id.toString()}
+					renderItem={renderFriendItem}
+				/>
+			</BottomSheetComponent>
 		</>
 	);
 };
@@ -263,6 +277,14 @@ const styles = StyleSheet.create({
 		marginRight: 12,
 		backgroundColor: "#EEE",
 	},
+	avatarFallback: {
+		backgroundColor: colors.primary,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	avatarFallbackText: {
+		color: colors.white,
+	},
 	rankInfo: {
 		flex: 1,
 	},
@@ -282,6 +304,7 @@ const styles = StyleSheet.create({
 		width: 40,
 		height: 40,
 		borderRadius: 20,
+		backgroundColor: "#EEE",
 	},
 	onlineDot: {
 		position: "absolute",
