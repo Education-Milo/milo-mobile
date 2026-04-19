@@ -12,7 +12,7 @@ import TypographyComponent from '@components/Typography.component';
 import TextFieldComponent from '@components/TextField.component';
 import InterestSelector from '@components/InterestSelector.component';
 import { colors } from '@theme/colors';
-import { useEditProfile } from '@hooks/useEditProfileScreen';
+import { useEditProfile } from '@hooks/profile/useEditProfileScreen';
 import { ClassType } from '@store/user/user.model';
 import { Ionicons } from "@expo/vector-icons";
 

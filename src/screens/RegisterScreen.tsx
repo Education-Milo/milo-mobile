@@ -12,9 +12,9 @@ import {
 	ScrollView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useRegisterForm } from "@hooks/useRegisterForm";
+import { useRegisterForm } from "@hooks/register/useRegisterForm";
 import { useKeyboardState } from "@hooks/useKeyboardState";
-import { useRegisterAnimations } from "@hooks/useRegisterAnimation";
+import { useRegisterAnimations } from "@hooks/register/useRegisterAnimation";
 import RegisterForm from "@components/register/RegisterForm.component";
 import RegisterFooter from "@components/register/RegisterFooter.component";
 import { useNavigation } from "@react-navigation/native";

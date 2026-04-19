@@ -2,11 +2,8 @@ import React from "react";
 import {
 	View,
 	StyleSheet,
-	TextInput,
 	TouchableOpacity,
 	FlatList,
-	Keyboard,
-	Platform,
 	Image,
 	ActivityIndicator,
 	TouchableWithoutFeedback,
@@ -15,10 +12,8 @@ import { Ionicons } from "@expo/vector-icons";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import TypographyComponent from "@components/Typography.component";
 import { colors } from "@theme/colors";
-import useChatScreen, { Message } from "@hooks/useChatScreen";
+import useChatScreen, { Message } from "@hooks/chat/useChatScreen";
 import { useKeyboardState } from "@hooks/useKeyboardState";
-import TextFieldComponent from "@components/TextField.component";
-import { LinearGradient } from "expo-linear-gradient";
 import ChatInput from "@components/chat/ChatInput.component";
 
 const ChatScreen = () => {

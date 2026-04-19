@@ -6,9 +6,9 @@ import {
   Animated,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLoginForm } from '@hooks/useLoginForm';
+import { useLoginForm } from '@hooks/login/useLoginForm';
 import { useKeyboardState } from '@hooks/useKeyboardState';
-import { useLoginAnimations } from '@hooks/useLoginAnimations';
+import { useLoginAnimations } from '@hooks/login/useLoginAnimations';
 import LoginForm from '@components/Login/LoginForm.component';
 import LoginFooter from '@components/Login/LoginFooter.component';
 

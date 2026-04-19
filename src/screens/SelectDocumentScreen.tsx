@@ -7,7 +7,7 @@ import {
 	TextInputFocusEventData,
 } from "react-native";
 import TypographyComponent from "@components/Typography.component";
-import useSelectDocumentScreen from "@hooks/useSelectDocumentScreen";
+import useSelectDocumentScreen from "@hooks/ocr/useSelectDocumentScreen";
 
 const SelectDocumentScreen = () => {
 	const { documentTypes, handleDocumentSelect } = useSelectDocumentScreen();

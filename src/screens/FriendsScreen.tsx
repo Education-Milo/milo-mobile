@@ -9,7 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Layout from "@components/Layout";
 import TypographyComponent from "@components/Typography.component";
 import { colors } from "@theme/colors";
-import { useFriendScreen } from "@hooks/useFriendScreen";
+import { useFriendScreen } from "@hooks/friend/useFriendScreen";
 import TabSwitcher, { Tab } from "@components/TabSwitcher.component";
 import { Friend } from "@store/friend/friend.model";
 import { useTranslation } from "react-i18next";

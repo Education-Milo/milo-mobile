@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useForgotPasswordForm } from '@hooks/useForgotPasswordForm';
+import { useForgotPasswordForm } from '@hooks/forgot-password/useForgotPasswordForm';
 import { useKeyboardState } from '@hooks/useKeyboardState';
-import { useForgotPasswordAnimation } from '@hooks/useForgotPasswordAnimation';
+import { useForgotPasswordAnimation } from '@hooks/forgot-password/useForgotPasswordAnimation';
 import ForgotPasswordForm from '@components/forgot-password/ForgotPasswordForm.component';
 import ForgotPasswordFooter from '@components/forgot-password/ForgotPasswordFooter.component';
 import { useNavigation } from '@react-navigation/native';

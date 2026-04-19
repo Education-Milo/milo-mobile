@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, { FadeInRight } from "react-native-reanimated";
 import TypographyComponent from "@components/Typography.component";
-import { Mission } from "@hooks/useMissionsScreen";
+import { Mission } from "@hooks/mission/useMissionsScreen";
 import { colors } from "@theme/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
@@ -34,7 +34,9 @@ const MissionRow = ({ mission, index }: MissionRowProps) => {
 				]}
 			>
 				{isCompleted ? (
-					<TypographyComponent style={styles.missionIcon}>✓</TypographyComponent>
+					<TypographyComponent style={styles.missionIcon}>
+						✓
+					</TypographyComponent>
 				) : (
 					<TypographyComponent style={styles.missionIcon}>
 						{mission.icon}
@@ -46,7 +48,10 @@ const MissionRow = ({ mission, index }: MissionRowProps) => {
 			<View style={styles.missionContent}>
 				<TypographyComponent
 					variant="h6"
-					style={[styles.missionTitle, isCompleted && styles.missionTitleCompleted]}
+					style={[
+						styles.missionTitle,
+						isCompleted && styles.missionTitleCompleted,
+					]}
 				>
 					{mission.title}
 				</TypographyComponent>
@@ -81,7 +86,11 @@ const MissionRow = ({ mission, index }: MissionRowProps) => {
 			{/* XP Badge */}
 			<View style={[styles.xpBadge, isCompleted && styles.xpBadgeCompleted]}>
 				<TypographyComponent style={styles.xpFlame}>
-					{isCompleted ? "✓" : <Ionicons name="flame" size={24} color={colors.primary} />}
+					{isCompleted ? (
+						"✓"
+					) : (
+						<Ionicons name="flame" size={24} color={colors.primary} />
+					)}
 				</TypographyComponent>
 				<TypographyComponent
 					variant="labelSmall"

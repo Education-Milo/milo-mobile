@@ -1,6 +1,6 @@
 import MissionRow from "@components/missions/MissionRow.component";
 import TypographyComponent from "@components/Typography.component";
-import { Mission } from "@hooks/useMissionsScreen";
+import { Mission } from "@hooks/mission/useMissionsScreen";
 import { colors } from "@theme/colors";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -26,7 +26,10 @@ const HomeMissions = ({
 					{t("home.missions.title")}
 				</TypographyComponent>
 				<View style={styles.badge}>
-					<TypographyComponent variant="labelSmall" color={colors.progress.fill}>
+					<TypographyComponent
+						variant="labelSmall"
+						color={colors.progress.fill}
+					>
 						{completedMissions}/{totalMissions}
 					</TypographyComponent>
 				</View>
@@ -54,12 +57,12 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		marginBottom: 12,
 	},
-    badge: {
-        backgroundColor: colors.primaryLight,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 15,
-    },
+	badge: {
+		backgroundColor: colors.primaryLight,
+		paddingHorizontal: 12,
+		paddingVertical: 6,
+		borderRadius: 15,
+	},
 });
 
 export default HomeMissions;

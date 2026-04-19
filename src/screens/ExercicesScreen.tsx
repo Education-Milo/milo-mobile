@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import QCMScreen from '@screens/QCMScreen';
 import QCMResultsScreen from '@screens/QCMResultsScreen';
-import useExerciseScreen from '@hooks/useExerciseScreen';
+import useExerciseScreen from '@hooks/exercise/useExerciseScreen';
 import LoadingScreen from '@screens/LoadingScreen';
 
 const ExercicesScreen = () => {

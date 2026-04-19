@@ -8,7 +8,7 @@ import {
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { AuthStackParamList } from "@navigation/Auth/authNavigator.model";
 import { colors } from "@theme/colors";
-import { useScanOrImportDocument } from "@hooks/useScanOrImportDocument";
+import { useScanOrImportDocument } from "@hooks/ocr/useScanOrImportDocument";
 import ScanOrImportHeader from "@components/ScanImport/ScanOrImportHeader.component";
 import ScanOrImportFooter from "@components/ScanImport/ScanOrImportFooter.component";
 import ScanOrImportSelection from "@components/ScanImport/ScanOrImportSelection.component";

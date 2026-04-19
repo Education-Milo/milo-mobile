@@ -7,7 +7,7 @@ import TypographyComponent from "@components/Typography.component";
 import SubjectCard from "@components/SubjectCard.component";
 import { colors } from "@theme/colors";
 import LessonCard from "@components/Cards/LessonCard.component";
-import { useLessonScreen } from "@hooks/useLessonScreen";
+import { useLessonScreen } from "@hooks/course/useLessonScreen";
 import LoadingScreen from "@screens/LoadingScreen";
 import Select from "@components/Select.component";
 import { useTranslation } from "react-i18next";

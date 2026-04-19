@@ -8,7 +8,7 @@ import BottomSheetComponent from "@components/BottomSheetModal.component";
 import { colors } from "@theme/colors";
 import ChapterAccordion from "@components/Lesson/ChapterAccordion.component";
 import LoadingScreen from "./LoadingScreen";
-import { useLessonChapterScreen } from "@hooks/useLessonChapterScreen";
+import { useLessonChapterScreen } from "@hooks/course/useLessonChapterScreen";
 import { useTranslation } from "react-i18next";
 
 const LessonChapter = () => {
