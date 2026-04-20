@@ -26,7 +26,7 @@ const ProfileScreen = () => {
   const user = useUserStore((state) => state.user);
   const stats = {
     streak: 12,
-    totalXp: 2450,
+    totalXp: user?.xp || 0,
     league: 'Or',
     lastCourse: 'Maths - Chap 2',
   };

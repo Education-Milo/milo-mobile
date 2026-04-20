@@ -4,31 +4,33 @@ import TypographyComponent from "@components/Typography.component";
 import { colors } from "@theme/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import useQCMResultScreen from "@hooks/exercise/useQCMResultScreen";
 
 interface QCMResultsScreenProps {
 	score: number;
+	finalScore: number;
 	totalQuestions: number;
 	totalTime: number;
-	xpEarned: number;
 	onRestart: () => void;
 	onBackToHome: () => void;
 }
 
 const QCMResultsScreen: React.FC<QCMResultsScreenProps> = ({
 	score,
+	finalScore,
 	totalQuestions,
 	totalTime,
-	xpEarned,
 	onRestart,
 	onBackToHome,
 }) => {
 	const { t } = useTranslation();
+	const { xpEarned } = useQCMResultScreen(finalScore, totalQuestions);
+
 	const formatTime = (seconds: number) => {
 		const mins = Math.floor(seconds / 60);
 		const secs = seconds % 60;
-		if (mins === 0) return `${secs}s`;
-		return `${mins}m${secs < 10 ? "0" : ""}${secs}s`;
-	};
+		return `${mins}m ${secs}s`;
+	}
 
 	return (
 		<SafeAreaView style={styles.resultsContainer}>

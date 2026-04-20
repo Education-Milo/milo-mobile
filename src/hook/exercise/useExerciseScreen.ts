@@ -18,10 +18,13 @@ interface UseExerciseScreenReturn {
 	showResultsScreen: boolean;
 	score: number;
 	totalTime: number;
-	xpEarned: number;
 	totalQuestions: number;
 	scorePercentage: number;
-	handleQuizComplete: (finalScore: number, timeTaken: number, totalQuestions: number) => void;
+	handleQuizComplete: (
+		finalScore: number,
+		timeTaken: number,
+		totalQuestions: number,
+	) => void;
 	handleQuit: () => void;
 	handleRestartQuiz: () => void;
 	handleBackToHome: () => void;
@@ -36,7 +39,8 @@ const mapToQuestion = (q: QcmQuestion, index: number): Question => ({
 
 const useExerciseScreen = (): UseExerciseScreenReturn => {
 	const navigation = useNavigation<NativeStackNavigationProp<any>>();
-	const route = useRoute<RouteProp<{ params: { lessonId: string } }, "params">>();
+	const route =
+		useRoute<RouteProp<{ params: { lessonId: string } }, "params">>();
 	const lessonId = Number(route.params?.lessonId);
 
 	const { generate_qcm_lesson, loading, error } = useExerciseStore();
@@ -46,8 +50,8 @@ const useExerciseScreen = (): UseExerciseScreenReturn => {
 	const [score, setScore] = useState(0);
 	const [totalQuestions, setTotalQuestions] = useState(0);
 	const [totalTime, setTotalTime] = useState(0);
-	const [xpEarned, setXpEarned] = useState(0);
-	const scorePercentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
+	const scorePercentage =
+		totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
 
 	useEffect(() => {
 		const fetchQuestions = async () => {
@@ -59,15 +63,11 @@ const useExerciseScreen = (): UseExerciseScreenReturn => {
 		fetchQuestions();
 	}, [lessonId]);
 
-	useEffect(() => {
-		if (showResultsScreen && totalQuestions > 0) {
-			const baseXP = 10;
-			const bonusXP = Math.round((score / totalQuestions) * 10);
-			setXpEarned(baseXP + bonusXP);
-		}
-	}, [showResultsScreen, score, totalQuestions]);
-
-	const handleQuizComplete = (finalScore: number, timeTaken: number, total: number) => {
+	const handleQuizComplete = (
+		finalScore: number,
+		timeTaken: number,
+		total: number,
+	) => {
 		setScore(finalScore);
 		setTotalTime(timeTaken);
 		setTotalQuestions(total);
@@ -82,7 +82,6 @@ const useExerciseScreen = (): UseExerciseScreenReturn => {
 		setShowResultsScreen(false);
 		setScore(0);
 		setTotalTime(0);
-		setXpEarned(0);
 		if (lessonId) {
 			const qcmQuestions = await generate_qcm_lesson(lessonId);
 			setQuestions(qcmQuestions.map(mapToQuestion));
@@ -100,7 +99,6 @@ const useExerciseScreen = (): UseExerciseScreenReturn => {
 		showResultsScreen,
 		score,
 		totalTime,
-		xpEarned,
 		handleQuizComplete,
 		handleQuit,
 		handleRestartQuiz,
