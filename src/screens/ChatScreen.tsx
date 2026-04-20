@@ -369,62 +369,6 @@ const styles = StyleSheet.create({
 		shadowRadius: 8,
 		elevation: 4,
 	},
-
-	// Input
-	inputContainer: {
-		paddingHorizontal: 16,
-		paddingVertical: 12,
-		backgroundColor: colors.background,
-		borderTopWidth: 1,
-		borderTopColor: "#F3F4F6",
-	},
-	inputWrapper: {
-		flexDirection: "row",
-		alignItems: "center",
-		backgroundColor: "#F9FAFB",
-		borderRadius: 24,
-		paddingHorizontal: 16,
-		paddingVertical: 8,
-		borderWidth: 1,
-		borderColor: "#E5E7EB",
-	},
-	inputDisabled: {
-		backgroundColor: "#F3F4F6",
-		borderColor: "#E5E7EB",
-		opacity: 0.7,
-	},
-	textInput: {
-		flex: 1,
-		fontSize: 14,
-		maxHeight: 100,
-		color: "#1F2937",
-		marginRight: 8,
-	},
-	sendButton: {
-		width: 40,
-		height: 40,
-		borderRadius: 20,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-
-	gradient: {
-		flexDirection: "row",
-		alignItems: "center",
-		borderRadius: 9999,
-		paddingHorizontal: 16,
-		paddingVertical: 8,
-		backgroundColor: "transparent",
-		minHeight: 48,
-		shadowColor: colors.background,
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.08,
-		shadowRadius: 8,
-		elevation: 2,
-	},
-	iconButton: {
-		marginRight: 6,
-	},
 });
 
 export default ChatScreen;

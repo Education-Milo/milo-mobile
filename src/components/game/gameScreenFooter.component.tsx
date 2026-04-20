@@ -9,18 +9,22 @@ import {
 import TypographyComponent from "@components/Typography.component";
 import BottomSheetComponent from "@components/BottomSheetModal.component";
 import { colors } from "@theme/colors";
-import { type Player } from "@hooks/useGameScreen";
+import { type RankingPlayer, type FriendPlayer } from "@hooks/useGameScreen";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useNavigation } from "@react-navigation/native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { HomeTabsParamList } from "@navigation/Auth/authNavigator.model";
+import EmptyFriendComponent from "@components/EmptyFriend.component";
 
 interface GameScreenFooterProps {
 	activeTab: "global" | "friends";
 	onTabChange: (tab: "global" | "friends") => void;
-	currentData: Player[];
+	currentData: RankingPlayer[];
 	bottomSheetRef: React.RefObject<BottomSheetModal | null>;
-	onlineFriends: Player[];
+	onlineFriends: FriendPlayer[];
 	onCloseModal: () => void;
-	onChallengeFriend: (player: Player) => void;
+	onChallengeFriend: (player: FriendPlayer) => void;
 }
 
 const GameScreenFooter = ({
@@ -32,6 +36,13 @@ const GameScreenFooter = ({
 	onCloseModal,
 	onChallengeFriend,
 }: GameScreenFooterProps) => {
+	const navigation =
+		useNavigation<BottomTabNavigationProp<HomeTabsParamList>>();
+
+	const handleGoToFriends = () => {
+		onCloseModal();
+		navigation.navigate("Friends");
+	};
 	const getInitials = (name: string) =>
 		name
 			.split(" ")
@@ -40,7 +51,7 @@ const GameScreenFooter = ({
 			.map((part) => part[0]?.toUpperCase())
 			.join("");
 
-	const renderAvatar = (item: Player, sizeStyle: object) => {
+	const renderAvatar = (item: RankingPlayer, sizeStyle: object) => {
 		if (item.avatar) {
 			return (
 				<Image source={item.avatar} style={sizeStyle} resizeMode="cover" />
@@ -56,7 +67,7 @@ const GameScreenFooter = ({
 		);
 	};
 
-	const renderRankingItem = ({ item }: { item: Player }) => {
+	const renderRankingItem = ({ item }: { item: RankingPlayer }) => {
 		const isMe = item.name === "Vous";
 		return (
 			<View style={[styles.rankItem, isMe && styles.rankItemActive]}>
@@ -97,34 +108,36 @@ const GameScreenFooter = ({
 						variant="labelSmall"
 						color={colors.text.tertiary}
 					>
-						{item.score} XP
+						{item.score !== undefined ? `${item.score} XP` : "Ami"}
 					</TypographyComponent>
 				</View>
 			</View>
 		);
 	};
 
-	const renderFriendItem = ({ item }: { item: Player }) => (
-		<View style={styles.friendItem}>
-			<View style={styles.friendInfo}>
-				<View>
-					{renderAvatar(item, styles.avatarSmall)}
-					<View style={styles.onlineDot} />
+	const renderFriendItem = ({ item }: { item: FriendPlayer }) => {
+		return (
+			<View style={styles.friendItem}>
+				<View style={styles.friendInfo}>
+					<View>
+						{renderAvatar(item, styles.avatarSmall)}
+						<View style={styles.onlineDot} />
+					</View>
+					<TypographyComponent variant="body" style={{ marginLeft: 12 }}>
+						{item.name}
+					</TypographyComponent>
 				</View>
-				<TypographyComponent variant="body" style={{ marginLeft: 12 }}>
-					{item.name}
-				</TypographyComponent>
+				<TouchableOpacity
+					style={styles.challengeButton}
+					onPress={() => onChallengeFriend(item)}
+				>
+					<TypographyComponent variant="label" style={{ color: colors.white }}>
+						Défier
+					</TypographyComponent>
+				</TouchableOpacity>
 			</View>
-			<TouchableOpacity
-				style={styles.challengeButton}
-				onPress={() => onChallengeFriend(item)}
-			>
-				<TypographyComponent variant="label" style={{ color: colors.white }}>
-					Défier
-				</TypographyComponent>
-			</TouchableOpacity>
-		</View>
-	);
+		);
+	};
 
 	return (
 		<>
@@ -184,12 +197,18 @@ const GameScreenFooter = ({
 					</View>
 				</View>
 
-				{currentData.map((item) => (
+				{currentData.length === 0 ? (
+					<EmptyFriendComponent
+						onAddFriends={handleGoToFriends}
+					/>
+				) : (
+					currentData.map((item) => (
 					<React.Fragment key={item.id}>
 						{renderRankingItem({ item })}
 					</React.Fragment>
-				))}
-			</View>
+					))
+				)}
+				</View>
 
 			{/* Modal défier un ami */}
 			<BottomSheetComponent ref={bottomSheetRef} snapPoints={["55%"]}>
@@ -210,6 +229,11 @@ const GameScreenFooter = ({
 					data={onlineFriends}
 					keyExtractor={(item) => item.id.toString()}
 					renderItem={renderFriendItem}
+					ListEmptyComponent={
+						<EmptyFriendComponent
+							onAddFriends={handleGoToFriends}
+						/>
+					}
 				/>
 			</BottomSheetComponent>
 		</>
@@ -322,18 +346,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 8,
 		borderRadius: 20,
-	},
-	modalOverlay: {
-		flex: 1,
-		backgroundColor: "rgba(0,0,0,0.5)",
-		justifyContent: "flex-end",
-	},
-	modalContent: {
-		backgroundColor: colors.background,
-		borderTopLeftRadius: 24,
-		borderTopRightRadius: 24,
-		padding: 24,
-		minHeight: "50%",
 	},
 	modalHeader: {
 		flexDirection: "row",
