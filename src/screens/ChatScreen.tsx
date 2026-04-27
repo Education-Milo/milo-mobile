@@ -15,6 +15,7 @@ import { colors } from "@theme/colors";
 import useChatScreen, { Message } from "@hooks/chat/useChatScreen";
 import { useKeyboardState } from "@hooks/useKeyboardState";
 import ChatInput from "@components/chat/ChatInput.component";
+import { ScrollView } from "react-native-gesture-handler";
 
 const ChatScreen = () => {
 	const {
@@ -148,11 +149,10 @@ const ChatScreen = () => {
 			)}
 
 			{/* MESSAGES */}
-			<TouchableWithoutFeedback onPress={dismissKeyboard}>
-				<View style={{ flex: 1 }}>
 					<FlatList
 						ref={flatListRef}
 						data={messages}
+						style={{ flex: 1 }}
 						keyExtractor={(item) => item.id}
 						renderItem={renderMessageItem}
 						contentContainerStyle={styles.messagesList}
@@ -212,8 +212,6 @@ const ChatScreen = () => {
 							</>
 						}
 					/>
-				</View>
-			</TouchableWithoutFeedback>
 
 			{/* INPUT BAR */}
 			<ChatInput

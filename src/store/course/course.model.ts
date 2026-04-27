@@ -30,4 +30,8 @@ export interface Course {
 	subject_id: number;
 }
 
-
+export interface LessonPart {
+	id: number;
+	title: string;
+	content: string;
+}

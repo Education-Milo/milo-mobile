@@ -1,5 +1,5 @@
 import APIAxios, { APIRoutes } from "@api/axios.api";
-import { Subject, Course, Chapter, Lesson } from "@store/course/course.model";
+import { Subject, Course, Chapter, Lesson, LessonPart } from "@store/course/course.model";
 import { useQuery } from "@tanstack/react-query";
 
 export const fetchSubjects = async (): Promise<Subject[]> => {
@@ -50,6 +50,31 @@ export const useCourses = (subjectId: number | undefined) => {
 //         queryFn: () => fetchCourses(subjectId),
 //         enabled: !!subjectId,
 //     });
+
+export const fetchLessonParts = async (lessonId: number, context: string = ""): Promise<LessonPart[]> => {
+    console.log("Fetching lesson parts for lessonId:", lessonId, "with context:", context);
+    const response = await APIAxios.post(
+        APIRoutes.POST_Chat_Lesson,
+        {
+            chat_request: "",
+            context: context
+        },
+        { params: { lesson_id: lessonId } }
+    );
+    return response.data.parts;
+};
+
+
+export const sendChatMessage = async (
+    partContent: string,
+    question: string
+): Promise<string> => {
+    const response = await APIAxios.post("/chat_lesson_question", {
+        part_content: partContent,
+        question: question
+    });
+    return response.data.reply || response.data.content;
+};
 
 export const useChapters = (courseId: number) => {
     return useQuery({
