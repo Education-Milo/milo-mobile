@@ -87,6 +87,7 @@ export const APIRoutes = {
   DELETE_User_Interest: (userId: number, interestId: number) => `/users/${userId}/interests/${interestId}`,
   GET_User_Search: '/users/search',
   GET_User_By_Username: (username: string) => `/users/by-username/${username}`,
+  GET_User_By_Id: (userId: number) => `/users/${userId}`,
 
   /* FRIENDS */
   GET_Friends: '/friends',
@@ -96,13 +97,15 @@ export const APIRoutes = {
   PATCH_BLOCK_FRIEND: (friendId: number) => `/friends/${friendId}/block`,
   
   /* COURSES */
-  POST_CREATE_QCM: '/qcm',
   GET_Subjects: '/get_subjects',
   GET_Courses: '/get_courses',
   GET_Chapters: '/get_chapters',
   GET_Lessons: '/get_lessons',
-  POST_Chat_Lesson: '/chat_lesson',
   POST_QCM_Lesson: '/qcm_lesson',
+
+  /* Courses with Milo */
+  POST_Chat_Lesson: '/chat_lesson',
+  POST_Chat_Question: '/chat_lesson_question',
 };
 
 export default APIAxios;

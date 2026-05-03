@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { FlatList } from "react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
-import APIAxios from "@api/axios.api";
+import { LessonPart } from "@store/course/course.model";
 import { AuthStackParamList } from "@navigation/Auth/authNavigator.model";
+import { fetchLessonParts, sendChatMessage } from "@queries/course.queries";
 
 // TYPES PARTAGÉS AVEC L'ÉCRAN
 export type Message = {
@@ -14,23 +14,11 @@ export type Message = {
 	timestamp: Date;
 };
 
-export type LessonPart = {
-	id: string;
-	title: string;
-	content: string;
-}
-
 export type ChatPhase = 'explaining' | 'waiting_question' | 'answering';
 
 type ChatScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 type ChatScreenRouteProp = RouteProp<AuthStackParamList, "ChatScreen">;
 
-
-const MOCK_PARTS: LessonPart[] = [
-	{ id: '1', title: 'Introduction', content: 'Voici la première partie...' },
-	{ id: '2', title: 'Développement', content: 'Voici la deuxième partie...' },
-	{ id: '3', title: 'Conclusion', content: 'Voici la troisième partie...' },
-];
 
 const useChatScreen = () => {
 
@@ -67,28 +55,30 @@ const useChatScreen = () => {
 				},
 			]);
 		}
-		// On dépend de lessonId et de la longueur de la liste pour ne lancer qu'une fois l'init
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+
 	}, [lessonId, messages.length]);
 
 	const startLesson = async () => {
 		setIsTyping(true);
 		try {
-			// TODO: remplacer par l'appel API quand le back sera prêt
-			// const response = await APIAxios.get(`/lessons/${lessonId}/parts`);
-			const lessonParts = MOCK_PARTS;
+			const response = await fetchLessonParts(lessonId, context);
+			const lessonParts: LessonPart[] = response;
 			setParts(lessonParts);
-
-			const firstPart = lessonParts[0];
 			setMessages([{
 			id: Date.now().toString(),
-			text: firstPart.content,
+			text: lessonParts[0].content,
 			sender: 'milo',
 			timestamp: new Date(),
 			}]);
 			setPhase('waiting_question');
 		} catch (error) {
-			// gestion erreur existante
+			console.error("Erreur lors du chargement de la leçon", error);
+			setMessages([{
+				id: Date.now().toString(),
+				text: "Désolé, je n'arrive pas à charger la leçon pour le moment.",
+				sender: 'milo',
+				timestamp: new Date(),
+			}]);
 		} finally {
 			setIsTyping(false);
 		}
@@ -122,55 +112,51 @@ const useChatScreen = () => {
 		}, 1000);
 	};
 
-	const sendMessage = async () => {
-		if (inputText.trim().length === 0) return;
+const sendMessage = async () => {
+    if (inputText.trim().length === 0) return;
 
-		const userMsgText = inputText;
-		setInputText("");
+    const userMsgText = inputText;
+    const currentPartContent = parts[currentPartIndex]?.content || "";
+    setInputText("");
 
-		const userMsg: Message = {
-			id: Date.now().toString(),
-			text: userMsgText,
-			sender: "user",
-			timestamp: new Date(),
-		};
+    const userMsg: Message = {
+        id: Date.now().toString(),
+        text: userMsgText,
+        sender: "user",
+        timestamp: new Date(),
+    };
 
-		setMessages((prev) => [...prev, userMsg]);
-		setIsTyping(true);
+    setMessages((prev) => [...prev, userMsg]);
+    setIsTyping(true);
+    setPhase('answering');
 
-		try {
-			const response = await APIAxios.post("/chat/message", {
-				text: userMsgText,
-				lessonId: lessonId,
-				context: context,
-			});
+    try {
+        const replyText = await sendChatMessage(currentPartContent, userMsgText);
 
-			const miloMsg: Message = {
-				id: (Date.now() + 1).toString(),
-				text:
-					response.data?.reply ||
-					response.data?.content ||
-					"Je n'ai pas compris, peux-tu répéter ?",
-				sender: "milo",
-				timestamp: new Date(),
-			};
+        const miloMsg: Message = {
+            id: (Date.now() + 1).toString(),
+            text: replyText,
+            sender: "milo",
+            timestamp: new Date(),
+        };
 
-			setMessages((prev) => [...prev, miloMsg]);
-		} catch (error) {
-			console.error("Erreur chat", error);
-			setMessages((prev) => [
-				...prev,
-				{
-					id: Date.now().toString(),
-					text: "Désolé, je n'arrive pas à me connecter au serveur pour le moment.",
-					sender: "milo",
-					timestamp: new Date(),
-				},
-			]);
-		} finally {
-			setIsTyping(false);
-		}
-	};
+        setMessages((prev) => [...prev, miloMsg]);
+        setPhase('waiting_question');
+    } catch (error) {
+        console.error("Erreur chat", error);
+        setMessages((prev) => [
+            ...prev,
+            {
+                id: Date.now().toString(),
+                text: "Désolé, je n'arrive pas à me connecter au serveur pour le moment.",
+                sender: "milo",
+                timestamp: new Date(),
+            },
+        ]);
+    } finally {
+        setIsTyping(false);
+    }
+};
 
 	return {
 		// navigation / infos d'écran
