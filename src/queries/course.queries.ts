@@ -69,7 +69,7 @@ export const sendChatMessage = async (
     partContent: string,
     question: string
 ): Promise<string> => {
-    const response = await APIAxios.post("/chat_lesson_question", {
+    const response = await APIAxios.post(APIRoutes.POST_Chat_Lesson, {
         part_content: partContent,
         question: question
     });

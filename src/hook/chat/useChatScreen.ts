@@ -3,8 +3,6 @@ import { FlatList } from "react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { LessonPart } from "@store/course/course.model";
-
-import APIAxios, { APIRoutes } from "@api/axios.api";
 import { AuthStackParamList } from "@navigation/Auth/authNavigator.model";
 import { fetchLessonParts, sendChatMessage } from "@queries/course.queries";
 
@@ -118,7 +116,6 @@ const sendMessage = async () => {
     if (inputText.trim().length === 0) return;
 
     const userMsgText = inputText;
-    // On récupère le contenu de la partie actuelle pour le passer au back
     const currentPartContent = parts[currentPartIndex]?.content || "";
     setInputText("");
 
