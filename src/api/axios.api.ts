@@ -95,7 +95,11 @@ export const APIRoutes = {
   POST_SEND_FRIEND_REQUEST: (friendId: number) => `/friends/${friendId}`,
   PATCH_ACCEPT_FRIEND_REQUEST: (friendId: number) => `/friends/${friendId}/accept`,
   PATCH_BLOCK_FRIEND: (friendId: number) => `/friends/${friendId}/block`,
-  
+
+
+  /* OCR */
+  POST_OCR_Report_Card: '/ocr/report_card',
+
   /* COURSES */
   GET_Subjects: '/get_subjects',
   GET_Courses: '/get_courses',

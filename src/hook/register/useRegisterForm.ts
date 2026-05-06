@@ -31,7 +31,6 @@ export const useRegisterForm = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
     first_name: '',
     last_name: '',
-    username: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -56,8 +55,7 @@ export const useRegisterForm = () => {
               err.path === 'confirmPassword' ||
               err.path === 'prenom' ||
               err.path === 'nom' ||
-              err.path === 'role' ||
-              err.path === 'username')
+              err.path === 'role')
           ) {
             newErrors[err.path as keyof FormErrors] = err.message;
           }
@@ -104,16 +102,23 @@ export const useRegisterForm = () => {
     setErrors(prev => ({ ...prev, classe: undefined }));
   }, []);
 
-  const handleUsernameChange = useCallback((text: string) => {
-    setFormData(prev => ({ ...prev, username: text }));
-    setErrors(prev => ({ ...prev, username: undefined }));
-  }, []);
+  // const handleUsernameChange = useCallback((text: string) => {
+  //   setFormData(prev => ({ ...prev, username: text }));
+  //   setErrors(prev => ({ ...prev, username: undefined }));
+  // }, []);
 
+  const createUsername = (firstName: string, lastName: string) => {
+    const cleanFirstName = firstName.trim().toLowerCase().replace(/\s+/g, '');
+    const cleanLastName = lastName.trim().toLowerCase().replace(/\s+/g, '');
+    const randomSuffix = Math.floor(Math.random() * 1000);
+    return `${cleanFirstName}.${cleanLastName}${randomSuffix}`;
+  }
 
   const handleRegister = useCallback(async () => {
     const isValid = await validateForm();
     if (isValid) {
-      await register(formData.email, formData.password, formData.last_name, formData.first_name, formData.role, formData.classe, formData.username);
+      const username = createUsername(formData.first_name, formData.last_name);
+      await register(formData.email, formData.password, formData.last_name, formData.first_name, formData.role, formData.classe, username);
       Keyboard.dismiss();
     }
   }, [validateForm, register, formData, navigation]);
@@ -129,7 +134,6 @@ export const useRegisterForm = () => {
     handleRoleChange,
     handlePrenomChange,
     handleClasseChange,
-    handleUsernameChange,
     handleRegister,
   };
 };

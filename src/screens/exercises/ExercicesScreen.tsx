@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import QCMScreen from "@screens/QCMScreen";
-import QCMResultsScreen from "@screens/QCMResultsScreen";
+import QCMScreen from "@screens/exercises/QCMScreen";
+import QCMResultsScreen from "@screens/exercises/QCMResultsScreen";
 import useExerciseScreen from "@hooks/exercise/useExerciseScreen";
 import LoadingScreen from "@screens/LoadingScreen";
 

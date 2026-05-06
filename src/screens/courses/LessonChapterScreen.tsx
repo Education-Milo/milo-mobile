@@ -7,7 +7,7 @@ import ChapterCard from "@components/Cards/ChapterCard.component";
 import BottomSheetComponent from "@components/BottomSheetModal.component";
 import { colors } from "@theme/colors";
 import ChapterAccordion from "@components/Lesson/ChapterAccordion.component";
-import LoadingScreen from "./LoadingScreen";
+import LoadingScreen from "@screens/LoadingScreen";
 import { useLessonChapterScreen } from "@hooks/course/useLessonChapterScreen";
 import { useTranslation } from "react-i18next";
 

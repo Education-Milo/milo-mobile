@@ -52,12 +52,12 @@ export const useCourses = (subjectId: number | undefined) => {
 //     });
 
 export const fetchLessonParts = async (lessonId: number, context: string = ""): Promise<LessonPart[]> => {
-    console.log("Fetching lesson parts for lessonId:", lessonId, "with context:", context);
     const response = await APIAxios.post(
         APIRoutes.POST_Chat_Lesson,
         {
             chat_request: "",
-            context: context
+            context: context,
+            conversation_id: "",
         },
         { params: { lesson_id: lessonId } }
     );
@@ -67,11 +67,13 @@ export const fetchLessonParts = async (lessonId: number, context: string = ""): 
 
 export const sendChatMessage = async (
     partContent: string,
-    question: string
+    question: string,
+    conversationId?: string
 ): Promise<string> => {
     const response = await APIAxios.post(APIRoutes.POST_Chat_Lesson, {
         part_content: partContent,
-        question: question
+        question: question,
+        conversation_id: conversationId,
     });
     return response.data.reply || response.data.content;
 };

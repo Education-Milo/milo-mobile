@@ -44,7 +44,6 @@ const RegisterScreen = () => {
 		handleConfirmPasswordChange,
 		handleRegister,
 		handleClasseChange,
-		handleUsernameChange,
 	} = useRegisterForm();
 
 	const {
@@ -134,7 +133,6 @@ const RegisterScreen = () => {
 								isFieldFocused={isFieldFocused}
 								onEmailChange={handleEmailChange}
 								onNomChange={handleNomChange}
-								onUsernameChange={handleUsernameChange}
 								onPrenomChange={handlePrenomChange}
 								onRoleChange={handleRoleChange}
 								onClasseChange={handleClasseChange}

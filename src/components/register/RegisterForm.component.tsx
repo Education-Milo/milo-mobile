@@ -45,7 +45,6 @@ interface RegisterFormProps {
 	onNomChange: (text: string) => void;
 	onPrenomChange: (text: string) => void;
 	onConfirmPasswordChange: (text: string) => void;
-	onUsernameChange: (text: string) => void;
 	onRoleChange: (role: RegisterFormData["role"]) => void;
 	onClasseChange: (classe: RegisterFormData["classe"]) => void;
 	onSubmit: () => void;
@@ -76,7 +75,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
 	onPasswordChange,
 	onNomChange,
 	onPrenomChange,
-	onUsernameChange,
 	onRoleChange,
 	onClasseChange,
 	onConfirmPasswordChange,
@@ -168,7 +166,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
 			</Animated.View>
 
 
-						<Animated.View
+						{/* <Animated.View
 				style={{
 					opacity: animations.emailOpacity,
 					transform: [{ translateY: animations.emailTranslateY }],
@@ -196,7 +194,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
 					onChangeText={onUsernameChange}
 					error={errors.username}
 				/>
-			</Animated.View>
+			</Animated.View> */}
 
 			<Animated.View
 				style={{

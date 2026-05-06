@@ -6,7 +6,6 @@ import {
 	FlatList,
 	Image,
 	ActivityIndicator,
-	TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
@@ -15,7 +14,6 @@ import { colors } from "@theme/colors";
 import useChatScreen, { Message } from "@hooks/chat/useChatScreen";
 import { useKeyboardState } from "@hooks/useKeyboardState";
 import ChatInput from "@components/chat/ChatInput.component";
-import { ScrollView } from "react-native-gesture-handler";
 
 const ChatScreen = () => {
 	const {
