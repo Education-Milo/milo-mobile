@@ -1,26 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import TypographyComponent from "@components/Typography.component";
 import { colors } from "@theme/colors";
 
-interface GameScreenHeaderProps {
+interface DuelScreenHeaderProps {
 	onRandomMatch: () => void;
 	onChallengeModal: () => void;
 }
 
-const GameScreenHeader = ({
+const DuelScreenHeader = ({
 	onRandomMatch,
 	onChallengeModal,
-}: GameScreenHeaderProps) => {
-	const [isRandomActive, setIsRandomActive] = useState(false);
-
-	const handleRandomMatch = () => {
-		setIsRandomActive(true);
-		onRandomMatch();
-	};
-
+}: DuelScreenHeaderProps) => {
 	return (
 		<View>
 			{/* Titre */}
@@ -44,49 +36,25 @@ const GameScreenHeader = ({
 			<View style={styles.actionsContainer}>
 				<TouchableOpacity
 					style={[styles.actionCard, styles.shadow]}
-					onPress={handleRandomMatch}
+					onPress={onRandomMatch}
 					activeOpacity={0.9}
 				>
-					{isRandomActive ? (
-						<LinearGradient
-							colors={[colors.primary, "#FF6B00"]}
-							style={styles.actionGradient}
-							start={{ x: 0, y: 0 }}
-							end={{ x: 1, y: 1 }}
-						>
-							<View style={styles.iconCircle}>
-								<Ionicons name="flash" size={28} color={colors.primary} />
-							</View>
-							<View style={styles.actionTextContainer}>
-								<TypographyComponent variant="h5" color={colors.white}>
-									Combat Aléatoire
-								</TypographyComponent>
-								<TypographyComponent
-									variant="labelSmall"
-									color={colors.white_70}
-								>
-									Gagne des points bonus
-								</TypographyComponent>
-							</View>
-						</LinearGradient>
-					) : (
-						<View style={[styles.actionGradient, styles.inactiveCard]}>
-							<View style={[styles.iconCircle, { backgroundColor: "#FFF3E0" }]}>
-								<Ionicons name="flash-outline" size={28} color={colors.secondary} />
-							</View>
-							<View style={styles.actionTextContainer}>
-								<TypographyComponent variant="h5" color={colors.text.primary}>
-									Combat Aléatoire
-								</TypographyComponent>
-								<TypographyComponent
-									variant="labelSmall"
-									color={colors.text.secondary}
-								>
-									Gagne des points bonus
-								</TypographyComponent>
-							</View>
+					<View style={[styles.actionGradient, styles.inactiveCard]}>
+						<View style={[styles.iconCircle, { backgroundColor: "#FFF3E0" }]}>
+							<Ionicons name="flash-outline" size={28} color={colors.secondary} />
 						</View>
-					)}
+						<View style={styles.actionTextContainer}>
+							<TypographyComponent variant="h5" color={colors.text.primary}>
+								Combat Aléatoire
+							</TypographyComponent>
+							<TypographyComponent
+								variant="labelSmall"
+								color={colors.text.secondary}
+							>
+								Gagne des points bonus
+							</TypographyComponent>
+						</View>
+					</View>
 				</TouchableOpacity>
 
 				{/* Bouton Défier un ami */}
@@ -134,7 +102,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		padding: 20,
-		height: 100,
+		height: 80,
 	},
 	inactiveCard: {
 		backgroundColor: colors.white,
@@ -174,4 +142,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default GameScreenHeader;
+export default DuelScreenHeader;

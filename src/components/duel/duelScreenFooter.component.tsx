@@ -9,7 +9,11 @@ import {
 import TypographyComponent from "@components/Typography.component";
 import BottomSheetComponent from "@components/BottomSheetModal.component";
 import { colors } from "@theme/colors";
-import { type RankingPlayer, type FriendPlayer } from "@hooks/useGameScreen";
+import {
+	type RankingPlayer,
+	type FriendPlayer,
+} from "@hooks/duel/useDuelScreen";
+import { DuelChallenge, DuelUserSummary } from "@store/duel/duel.model";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
@@ -17,25 +21,35 @@ import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { HomeTabsParamList } from "@navigation/Auth/authNavigator.model";
 import EmptyFriendComponent from "@components/EmptyFriend.component";
 
-interface GameScreenFooterProps {
+interface DuelScreenFooterProps {
 	activeTab: "global" | "friends";
 	onTabChange: (tab: "global" | "friends") => void;
 	currentData: RankingPlayer[];
 	bottomSheetRef: React.RefObject<BottomSheetModal | null>;
 	onlineFriends: FriendPlayer[];
+	pendingDuels: DuelChallenge[];
 	onCloseModal: () => void;
 	onChallengeFriend: (player: FriendPlayer) => void;
+	onAcceptPendingDuel: (duel: DuelChallenge) => void;
+	onDeclinePendingDuel: (duel: DuelChallenge) => void;
+	decliningDuelId?: number;
+	isDecliningDuel: boolean;
 }
 
-const GameScreenFooter = ({
+const DuelScreenFooter = ({
 	activeTab,
 	onTabChange,
 	currentData,
 	bottomSheetRef,
 	onlineFriends,
+	pendingDuels,
 	onCloseModal,
 	onChallengeFriend,
-}: GameScreenFooterProps) => {
+	onAcceptPendingDuel,
+	onDeclinePendingDuel,
+	decliningDuelId,
+	isDecliningDuel,
+}: DuelScreenFooterProps) => {
 	const navigation =
 		useNavigation<BottomTabNavigationProp<HomeTabsParamList>>();
 
@@ -50,6 +64,15 @@ const GameScreenFooter = ({
 			.slice(0, 2)
 			.map((part) => part[0]?.toUpperCase())
 			.join("");
+
+	const getDuelUserName = (user?: DuelUserSummary) => {
+		if (!user) return "Un adversaire";
+		return (
+			`${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() ||
+			user.username ||
+			"Un adversaire"
+		);
+	};
 
 	const renderAvatar = (item: RankingPlayer, sizeStyle: object) => {
 		if (item.avatar) {
@@ -139,8 +162,58 @@ const GameScreenFooter = ({
 		);
 	};
 
+	const renderPendingDuel = (duel: DuelChallenge) => {
+		const challengerName = getDuelUserName(duel.challenger);
+		const isDecliningThisDuel = isDecliningDuel && decliningDuelId === duel.id;
+
+		return (
+			<View style={styles.pendingDuelItem} key={duel.id}>
+				<View style={styles.pendingDuelIcon}>
+					<Ionicons name="flash" size={20} color={colors.secondary} />
+				</View>
+				<View style={styles.pendingDuelInfo}>
+					<TypographyComponent variant="h6" color={colors.text.primary}>
+						{challengerName}
+					</TypographyComponent>
+					<TypographyComponent variant="labelSmall" color={colors.text.secondary}>
+						te défie en duel
+					</TypographyComponent>
+				</View>
+				<View style={styles.pendingDuelActions}>
+					<TouchableOpacity
+						style={[styles.pendingActionButton, styles.declineButton]}
+						onPress={() => onDeclinePendingDuel(duel)}
+						disabled={isDecliningThisDuel}
+					>
+						<Ionicons name="close" size={18} color={colors.error} />
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={[styles.pendingActionButton, styles.acceptButton]}
+						onPress={() => onAcceptPendingDuel(duel)}
+					>
+						<Ionicons name="checkmark" size={18} color={colors.success} />
+					</TouchableOpacity>
+				</View>
+			</View>
+		);
+	};
+
 	return (
 		<>
+			{pendingDuels.length > 0 && (
+				<View style={styles.pendingContainer}>
+					<View style={styles.pendingHeader}>
+						<TypographyComponent variant="h5">Demandes de duel</TypographyComponent>
+						<View style={styles.pendingBadge}>
+							<TypographyComponent variant="labelSmall" color={colors.white}>
+								{pendingDuels.length}
+							</TypographyComponent>
+						</View>
+					</View>
+					{pendingDuels.map(renderPendingDuel)}
+				</View>
+			)}
+
 			{/* Classement */}
 			<View style={styles.rankingContainer}>
 				<View style={styles.rankingHeader}>
@@ -197,18 +270,34 @@ const GameScreenFooter = ({
 					</View>
 				</View>
 
-				{currentData.length === 0 ? (
-					<EmptyFriendComponent
-						onAddFriends={handleGoToFriends}
-					/>
+				{activeTab === "global" ? (
+					<View style={styles.comingSoonContainer}>
+						<Ionicons
+							name="podium-outline"
+							size={36}
+							color={colors.text.tertiary}
+						/>
+						<TypographyComponent variant="h6" style={styles.comingSoonTitle}>
+							Classement bientôt disponible
+						</TypographyComponent>
+						<TypographyComponent
+							variant="bodySmall"
+							color={colors.text.secondary}
+							style={styles.comingSoonText}
+						>
+							Le classement global des duels sera affiché ici plus tard.
+						</TypographyComponent>
+					</View>
+				) : currentData.length === 0 ? (
+					<EmptyFriendComponent onAddFriends={handleGoToFriends} />
 				) : (
 					currentData.map((item) => (
-					<React.Fragment key={item.id}>
-						{renderRankingItem({ item })}
-					</React.Fragment>
+						<React.Fragment key={item.id}>
+							{renderRankingItem({ item })}
+						</React.Fragment>
 					))
 				)}
-				</View>
+			</View>
 
 			{/* Modal défier un ami */}
 			<BottomSheetComponent ref={bottomSheetRef} snapPoints={["55%"]}>
@@ -230,9 +319,7 @@ const GameScreenFooter = ({
 					keyExtractor={(item) => item.id.toString()}
 					renderItem={renderFriendItem}
 					ListEmptyComponent={
-						<EmptyFriendComponent
-							onAddFriends={handleGoToFriends}
-						/>
+						<EmptyFriendComponent onAddFriends={handleGoToFriends} />
 					}
 				/>
 			</BottomSheetComponent>
@@ -250,6 +337,71 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.05,
 		shadowRadius: 4,
 		elevation: 2,
+	},
+	pendingContainer: {
+		backgroundColor: colors.white,
+		borderRadius: 24,
+		padding: 20,
+		marginBottom: 18,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: -2 },
+		shadowOpacity: 0.05,
+		shadowRadius: 4,
+		elevation: 2,
+	},
+	pendingHeader: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		marginBottom: 12,
+	},
+	pendingBadge: {
+		minWidth: 24,
+		height: 24,
+		borderRadius: 12,
+		backgroundColor: colors.secondary,
+		alignItems: "center",
+		justifyContent: "center",
+		paddingHorizontal: 8,
+	},
+	pendingDuelItem: {
+		flexDirection: "row",
+		alignItems: "center",
+		paddingVertical: 12,
+		borderTopWidth: 1,
+		borderTopColor: colors.border.light,
+	},
+	pendingDuelIcon: {
+		width: 40,
+		height: 40,
+		borderRadius: 20,
+		backgroundColor: "#FFF3E0",
+		alignItems: "center",
+		justifyContent: "center",
+		marginRight: 12,
+	},
+	pendingDuelInfo: {
+		flex: 1,
+	},
+	pendingDuelActions: {
+		flexDirection: "row",
+		gap: 8,
+	},
+	pendingActionButton: {
+		width: 36,
+		height: 36,
+		borderRadius: 18,
+		alignItems: "center",
+		justifyContent: "center",
+		borderWidth: 1,
+	},
+	declineButton: {
+		borderColor: colors.error,
+		backgroundColor: colors.white,
+	},
+	acceptButton: {
+		borderColor: colors.success,
+		backgroundColor: colors.white,
 	},
 	rankingHeader: {
 		flexDirection: "row",
@@ -312,6 +464,21 @@ const styles = StyleSheet.create({
 	rankInfo: {
 		flex: 1,
 	},
+	comingSoonContainer: {
+		alignItems: "center",
+		justifyContent: "center",
+		paddingVertical: 28,
+		paddingHorizontal: 12,
+	},
+	comingSoonTitle: {
+		marginTop: 12,
+		marginBottom: 6,
+		textAlign: "center",
+	},
+	comingSoonText: {
+		textAlign: "center",
+		lineHeight: 20,
+	},
 	friendItem: {
 		flexDirection: "row",
 		alignItems: "center",
@@ -355,4 +522,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default GameScreenFooter;
+export default DuelScreenFooter;

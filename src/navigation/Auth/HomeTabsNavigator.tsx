@@ -7,7 +7,7 @@ import {
 import { useUserStore } from "@store/user/user.store";
 import HomeScreen from "@screens/HomeScreen";
 import LessonScreen from "@screens/courses/LessonScreen";
-import GameScreen from "@screens/GameScreen";
+import DuelScreen from "@screens/duels/DuelScreen";
 import BottomNavBar from "@components/BottomNavBar";
 import SelectDocumentScreen from "@screens/ocr/SelectDocumentScreen";
 import { View } from "react-native";
@@ -40,7 +40,7 @@ const HomeTabsNavigator = () => {
 			/>
 			<Tab.Screen name="Lessons" component={LessonScreen} />
 			<Tab.Screen name="Scan" component={SelectDocumentScreen} />
-			<Tab.Screen name="Game" component={GameScreen} />
+			<Tab.Screen name="Duel" component={DuelScreen} />
 			<Tab.Screen name="Profile" component={ProfilScreen} />
 			<Tab.Screen name="Friends" component={FriendsScreen} />
 			<Tab.Screen name="MissionScreen" component={MissionsScreen} />
