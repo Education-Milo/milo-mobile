@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useMemo, useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import TypographyComponent from "@components/Typography.component";
 import { colors } from "@theme/colors";
@@ -8,6 +8,9 @@ import { DuelHistoryItem } from "@store/duel/duel.model";
 interface DuelHistoryCardProps {
   history: DuelHistoryItem[];
 }
+
+const INITIAL_VISIBLE_ITEMS = 5;
+const VISIBLE_ITEMS_STEP = 5;
 
 const outcomeConfig = {
   win: {
@@ -58,27 +61,73 @@ const formatPlayedAt = (value: string) => {
   return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
 };
 
-const DuelHistoryCard = ({ history }: DuelHistoryCardProps) => (
-  <View style={styles.container}>
-    <View style={styles.header}>
-      <Ionicons name="document-text-outline" size={24} color={colors.primary} />
-      <TypographyComponent variant="h5" color={colors.text.primary}>
-        Historique des parties
-      </TypographyComponent>
-    </View>
+const DuelHistoryCard = ({ history }: DuelHistoryCardProps) => {
+  const [visibleItems, setVisibleItems] = useState(INITIAL_VISIBLE_ITEMS);
+  const sortedHistory = useMemo(
+    () =>
+      [...history].sort(
+        (a, b) =>
+          new Date(b.played_at).getTime() - new Date(a.played_at).getTime(),
+      ),
+    [history],
+  );
+  const visibleHistory = sortedHistory.slice(0, visibleItems);
+  const hasMoreHistory = visibleItems < sortedHistory.length;
 
-    {history.length === 0 ? (
-      <View style={styles.emptyContainer}>
-        <Ionicons name="time-outline" size={32} color={colors.text.tertiary} />
-        <TypographyComponent variant="bodySmall" color={colors.text.secondary}>
-          Aucune partie jouée pour le moment.
+  const handleShowMore = () => {
+    setVisibleItems((current) => current + VISIBLE_ITEMS_STEP);
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Ionicons
+          name="document-text-outline"
+          size={24}
+          color={colors.primary}
+        />
+        <TypographyComponent variant="h5" color={colors.text.primary}>
+          Historique des parties
         </TypographyComponent>
       </View>
-    ) : (
-      history.map((item) => <DuelHistoryRow item={item} key={item.duel_id} />)
-    )}
-  </View>
-);
+
+      {sortedHistory.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Ionicons
+            name="time-outline"
+            size={32}
+            color={colors.text.tertiary}
+          />
+          <TypographyComponent
+            variant="bodySmall"
+            color={colors.text.secondary}
+          >
+            Aucune partie jouée pour le moment.
+          </TypographyComponent>
+        </View>
+      ) : (
+        <>
+          {visibleHistory.map((item) => (
+            <DuelHistoryRow item={item} key={item.duel_id} />
+          ))}
+
+          {hasMoreHistory && (
+            <TouchableOpacity
+              style={styles.showMoreButton}
+              onPress={handleShowMore}
+              activeOpacity={0.8}
+            >
+              <TypographyComponent variant="label" color={colors.primary}>
+                Afficher plus
+              </TypographyComponent>
+              <Ionicons name="chevron-down" size={18} color={colors.primary} />
+            </TouchableOpacity>
+          )}
+        </>
+      )}
+    </View>
+  );
+};
 
 const DuelHistoryRow = ({ item }: { item: DuelHistoryItem }) => {
   const config = outcomeConfig[item.outcome];
@@ -182,6 +231,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     marginLeft: 6,
+  },
+  showMoreButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 14,
+    paddingVertical: 12,
+    marginTop: 4,
   },
 });
 
