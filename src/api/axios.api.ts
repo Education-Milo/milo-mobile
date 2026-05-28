@@ -88,6 +88,7 @@ export const APIRoutes = {
   GET_User_Search: '/users/search',
   GET_User_By_Username: (username: string) => `/users/by-username/${username}`,
   GET_User_By_Id: (userId: number) => `/users/${userId}`,
+  GET_User_Online_Status: (ids: string) => `/users/presence?ids=${ids}`,
 
   /* FRIENDS */
   GET_Friends: '/friends',
@@ -96,6 +97,14 @@ export const APIRoutes = {
   PATCH_ACCEPT_FRIEND_REQUEST: (friendId: number) => `/friends/${friendId}/accept`,
   PATCH_BLOCK_FRIEND: (friendId: number) => `/friends/${friendId}/block`,
 
+
+  /* DUEL */
+  POST_DUEL_Request: (target_user_id: number) => `/duels/challenge/${target_user_id}`,
+  POST_DUEL_Accept: (challenge_id: number) => `/duels/challenge/${challenge_id}/accept`,
+  POST_DUEL_Decline: (challenge_id: number) => `/duels/challenge/${challenge_id}/decline`,
+  GET_DUEL_Pending: '/duels/pending',
+  GET_DUEL_History: '/duels/history',
+  GET_DUEL_Stats: '/duels/stats',
 
   /* OCR */
   POST_OCR_Report_Card: '/ocr/report_card',

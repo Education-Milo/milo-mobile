@@ -13,6 +13,7 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Route } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TypographyComponent from '@components/Typography.component';
+import { useDuel } from '@hooks/duel/DuelContext';
 
 interface NavItem {
   icon: keyof typeof Ionicons.glyphMap;
@@ -25,10 +26,12 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 function BottomNavBar(props: BottomTabBarProps) {
   const { state, navigation } = props;
   const insets = useSafeAreaInsets();
+  const { screen: duelScreen } = useDuel();
 
   const [showMenu, setShowMenu] = React.useState(false);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const shouldHideNavBar = duelScreen !== 'lobby';
 
   const menuItems = useMemo(() => [
     {
@@ -55,7 +58,7 @@ function BottomNavBar(props: BottomTabBarProps) {
     { icon: 'home', routeName: 'Home' },
     { icon: 'reader', routeName: 'Lessons' },
     { icon: 'add', routeName: 'Scan', isCenter: true },
-    { icon: 'trophy', routeName: 'Game' },
+    { icon: 'trophy', routeName: 'Duel' },
     { icon: 'ellipsis-horizontal', routeName: 'More' },
   ];
 
@@ -90,6 +93,16 @@ function BottomNavBar(props: BottomTabBarProps) {
       ]).start();
     }
   }, [showMenu, slideAnim, fadeAnim]);
+
+  React.useEffect(() => {
+    if (shouldHideNavBar) {
+      setShowMenu(false);
+    }
+  }, [shouldHideNavBar]);
+
+  if (shouldHideNavBar) {
+    return null;
+  }
 
   const handleTabPress = (route: Route<string>, isFocused: boolean) => {
     if (route.name === 'More') {

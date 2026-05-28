@@ -449,14 +449,14 @@ App.tsx
           │    ├─ Home          → HomeScreen
           │    ├─ Lessons       → LessonScreen
           │    ├─ Scan          → SelectDocumentScreen
-          │    ├─ Game          → GameScreen
+          │    ├─ Duel          → DuelScreen
           │    ├─ Profile       → ProfileScreen
           │    ├─ Friends       → FriendsScreen
           │    ├─ MissionScreen → MissionScreen
           │    └─ More          → (placeholder View)
           │
           ├─ Profile            → ProfileScreen
-          ├─ Game               → ExercicesScreen
+          ├─ Duel               → ExercicesScreen
           ├─ Lesson             → LessonScreen
           ├─ Scan               → SelectDocumentScreen
           ├─ CameraOrImport     → CameraOrImportScreen
