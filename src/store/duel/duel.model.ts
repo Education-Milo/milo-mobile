@@ -49,12 +49,22 @@ export interface DuelHistoryItem {
 }
 
 export interface DuelStats {
-  total_duels?: number;
+  total_games?: number;
   wins?: number;
-  losses?: number;
   draws?: number;
-  score?: number;
-  rank?: number;
+  losses?: number;
+  winrate?: number;
+  avg_score?: number;
+  per_opponent?: DuelOpponentStats[];
+}
+
+export interface DuelOpponentStats {
+  opponent_id: number;
+  opponent_username: string;
+  wins: number;
+  draws: number;
+  losses: number;
+  winrate: number;
 }
 
 export type DuelScreen = "lobby" | "waiting" | "game" | "end";
