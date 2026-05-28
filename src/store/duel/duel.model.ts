@@ -1,91 +1,101 @@
-// Structure d'une question reçue du serveur
 export interface QuestionPayload {
-    number: number;
-    question: string;
-    choices: string[];
-    time_limit: number;
-  }
+  number: number;
+  question: string;
+  choices: string[];
+  time_limit: number;
+}
 
-  // Structure des résultats intermédiaires
-  export interface RoundResultPayload {
-    good_answer: number; // L'index de la bonne réponse
-    responses: (number | null)[]; // Les réponses des deux joueurs [joueur0, joueur1]
-    scores: Record<string, number>; // Les scores { "0": 1, "1": 0 }
-  }
-
-  // Structure de fin de partie
-  export interface DuelEndPayload {
-    scores: Record<string, number>;
-    winner: number | null; // null si égalité, sinon index du gagnant (0 ou 1)
-  }
-
-  // Structure de connexion réussie
 export interface JoinedPayload {
-    room_id: string;
-    player_idx: number; // 0 ou 1 (mon identifiant pour cette partie)
-  }
+  room_id: string;
+  player_idx: number;
+}
 
-  export type DuelChallengeStatus =
-    | 'pending'
-    | 'accepted'
-    | 'declined'
-    | 'expired'
-    | 'completed';
+export type DuelChallengeStatus =
+  | "pending"
+  | "accepted"
+  | "declined"
+  | "expired"
+  | "completed";
 
-  export interface DuelUserSummary {
-    id: number;
-    first_name?: string;
-    last_name?: string;
-    username?: string;
-    avatarId?: number;
-  }
+export interface DuelUserSummary {
+  id: number;
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  avatarId?: number;
+}
 
-  export interface DuelChallenge {
-    id: number;
-    challenger_id?: number;
-    target_user_id?: number;
-    status: DuelChallengeStatus;
-    room_id?: string;
-    player_idx?: number;
-    challenger?: DuelUserSummary;
-    target_user?: DuelUserSummary;
-    created_at?: string;
-    updated_at?: string;
-  }
+export interface DuelChallenge {
+  id: number;
+  challenger_id?: number;
+  target_user_id?: number;
+  status: DuelChallengeStatus;
+  room_id?: string;
+  player_idx?: number;
+  challenger?: DuelUserSummary;
+  target_user?: DuelUserSummary;
+  created_at?: string;
+  updated_at?: string;
+}
 
-  export interface DuelHistoryItem {
-    id: number;
-    challenger_id?: number;
-    target_user_id?: number;
-    winner_id?: number | null;
-    scores?: Record<string, number>;
-    status?: DuelChallengeStatus;
-    room_id?: string;
-    created_at?: string;
-    ended_at?: string;
-  }
+export interface DuelHistoryItem {
+  duel_id: number;
+  opponent_id: number;
+  opponent_username: string;
+  my_score: number;
+  opponent_score: number;
+  outcome: "win" | "loss" | "draw";
+  played_at: string;
+}
 
-  export interface DuelStats {
-    total_duels?: number;
-    wins?: number;
-    losses?: number;
-    draws?: number;
-    score?: number;
-    rank?: number;
-  }
+export interface DuelStats {
+  total_duels?: number;
+  wins?: number;
+  losses?: number;
+  draws?: number;
+  score?: number;
+  rank?: number;
+}
 
-  // Les différents états possibles de l'interface utilisateur
-  export type DuelStatus =
-    | 'idle'                // Rien ne se passe
-    | 'searching'           // En attente d'un adversaire (WebSocket connecté)
-    | 'playing_question'    // Une question est affichée, le joueur doit répondre
-    | 'playing_waiting'     // Le joueur a répondu, il attend la fin du timer ou l'autre joueur
-    | 'round_result'        // Affiche si on a gagné/perdu le point
-    | 'finished';           // Partie terminée, affiche le vainqueur
+export type DuelScreen = "lobby" | "waiting" | "game" | "end";
 
-  // Union de tous les messages possibles reçus via WebSocket
-  export type WebSocketMessage =
-    | { type: 'joined'; room_id: string; player_idx: number }
-    | { type: 'question'; number: number; question: string; choices: string[]; time_limit: number }
-    | { type: 'result'; good_answer: number; responses: (number | null)[]; scores: Record<string, number> }
-    | { type: 'end'; scores: Record<string, number>; winner: number | null };
+export interface PendingChallenge {
+  challenge_id: number;
+  from_username: string;
+  from_first_name?: string;
+  from_last_name?: string;
+  expires_in?: number;
+}
+
+export interface DuelLastResult {
+  good_answer: number;
+  my_answer: number | null;
+  opponent_answer: number | null;
+  scores: Record<string, number>;
+}
+
+export interface DuelEndData {
+  scores: Record<string, number>;
+  winner: number | null;
+}
+
+export interface DuelContextValue {
+  screen: DuelScreen;
+  pendingChallenge: PendingChallenge | null;
+  currentQuestion: QuestionPayload | null;
+  myIdx: number | null;
+  lastResult: DuelLastResult | null;
+  endData: DuelEndData | null;
+  lobbyStatus: string;
+  waitingMessage: string;
+  answered: boolean;
+  startMatchmaking: () => void;
+  sendChallengeToUserId: (userId: number) => Promise<void>;
+  acceptChallenge: (challengeId?: number) => Promise<void>;
+  declineChallenge: (challengeId?: number) => Promise<void>;
+  sendAnswer: (answerIdx: number) => void;
+  goToLobby: () => void;
+  setLobbyStatus: (msg: string) => void;
+  decliningChallengeId?: number;
+  isDecliningChallenge: boolean;
+}

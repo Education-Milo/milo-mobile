@@ -88,7 +88,7 @@ export const APIRoutes = {
   GET_User_Search: '/users/search',
   GET_User_By_Username: (username: string) => `/users/by-username/${username}`,
   GET_User_By_Id: (userId: number) => `/users/${userId}`,
-  GET_User_Online_Status: '/users/presence',
+  GET_User_Online_Status: (ids: string) => `/users/presence?ids=${ids}`,
 
   /* FRIENDS */
   GET_Friends: '/friends',

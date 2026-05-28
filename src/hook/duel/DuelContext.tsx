@@ -7,9 +7,14 @@ import React, {
 	useState,
 } from "react";
 import { useAuthStore } from "@store/auth/auth.store";
-import {
+import type {
 	DuelChallenge,
+	DuelContextValue,
+	DuelEndData,
+	DuelLastResult,
+	DuelScreen,
 	JoinedPayload,
+	PendingChallenge,
 	QuestionPayload,
 } from "@store/duel/duel.model";
 import {
@@ -19,51 +24,6 @@ import {
 	useRequestDuel,
 } from "@queries/duel/duel.queries";
 import { useDuelWebSocket } from "@hooks/duel/useDuelWebSocket";
-
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-export type DuelScreen = "lobby" | "waiting" | "game" | "end";
-
-export interface PendingChallenge {
-	challenge_id: number;
-	from_username: string;
-	from_first_name?: string;
-	from_last_name?: string;
-	expires_in?: number;
-}
-
-export interface DuelLastResult {
-	good_answer: number;
-	my_answer: number | null;
-	opponent_answer: number | null;
-	scores: Record<string, number>;
-}
-
-export interface DuelEndData {
-	scores: Record<string, number>;
-	winner: number | null;
-}
-
-interface DuelContextValue {
-	screen: DuelScreen;
-	pendingChallenge: PendingChallenge | null;
-	currentQuestion: QuestionPayload | null;
-	myIdx: number | null;
-	lastResult: DuelLastResult | null;
-	endData: DuelEndData | null;
-	lobbyStatus: string;
-	waitingMessage: string;
-	answered: boolean;
-	startMatchmaking: () => void;
-	sendChallengeToUserId: (userId: number) => Promise<void>;
-	acceptChallenge: (challengeId?: number) => Promise<void>;
-	declineChallenge: (challengeId?: number) => Promise<void>;
-	sendAnswer: (answerIdx: number) => void;
-	goToLobby: () => void;
-	setLobbyStatus: (msg: string) => void;
-	decliningChallengeId?: number;
-	isDecliningChallenge: boolean;
-}
 
 // ── Context ───────────────────────────────────────────────────────────────────
 
@@ -171,7 +131,6 @@ export const DuelProvider: React.FC<{ children: React.ReactNode }> = ({
 			setCurrentQuestion(q);
 			setScreen("game");
 		} else if (msg.type === "result") {
-			// Utilise le ref pour éviter le problème de closure sur myIdx
 			const idx = myIdxRef.current;
 			setLastResult({
 				good_answer: msg.good_answer,
