@@ -108,6 +108,8 @@ export const APIRoutes = {
 
   /* OCR */
   POST_OCR_Report_Card: '/ocr/report_card',
+  POST_OCR_Exercise_generation: '/ocr/exercise_generation',
+  POST_OCR_Course_qcm: '/ocr/course_qcm',
 
   /* COURSES */
   GET_Subjects: '/get_subjects',
@@ -119,6 +121,7 @@ export const APIRoutes = {
   /* Courses with Milo */
   POST_Chat_Lesson: '/chat_lesson',
   POST_Chat_Question: '/chat_lesson_question',
+  POST_Free_Chat: '/chat',
 };
 
 export default APIAxios;

@@ -26,14 +26,13 @@ const SelectDocumentScreen = () => {
 			>
 				Sélectionnez le type de document
 			</TypographyComponent>
-        <View style={localStyles.gridContainer}>
-          {documentTypes.map((doc) => (
-            <TouchableOpacity
-              key={doc.id}
-              style={[
-                localStyles.card]}
-              onPress={() => handleDocumentSelect(doc.id)}
-            >
+			<View style={localStyles.gridContainer}>
+				{documentTypes.map((doc) => (
+					<TouchableOpacity
+						key={doc.id}
+						style={[localStyles.card]}
+						onPress={() => handleDocumentSelect(doc.id)}
+					>
 						<Text style={localStyles.icon}>{doc.icon}</Text>
 						<TypographyComponent variant="h6">{doc.title}</TypographyComponent>
 						<TypographyComponent
@@ -50,26 +49,26 @@ const SelectDocumentScreen = () => {
 };
 
 const localStyles = StyleSheet.create({
-  gridContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 12,
-    padding: 10,
-  },
-  card: {
-    width: "48%",
-    backgroundColor: "#FFF",
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 15,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
+	gridContainer: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		justifyContent: "center",
+		gap: 12,
+		padding: 10,
+	},
+	card: {
+		width: "48%",
+		backgroundColor: "#FFF",
+		borderRadius: 15,
+		padding: 20,
+		marginBottom: 15,
+		alignItems: "center",
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 3.84,
+		elevation: 5,
+	},
 	icon: {
 		fontSize: 40,
 		marginBottom: 10,
