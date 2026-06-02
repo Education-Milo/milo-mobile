@@ -7,6 +7,7 @@ import {
 } from "@navigation/Auth/authNavigator.model";
 import ExercicesScreen from "@screens/exercises/ExercicesScreen";
 import GeneratedExerciseScreen from "@screens/exercises/GeneratedExerciseScreen";
+import GeneratedQCMScreen from "@screens/exercises/GeneratedQCMScreen";
 import LessonScreen from "@screens/courses/LessonScreen";
 import SelectDocumentScreen from "@screens/ocr/SelectDocumentScreen";
 import CameraOrImportScreen from "@screens/ocr/CameraOrImportScreen";
@@ -52,6 +53,10 @@ const AuthNavigator = () => {
         <Stack.Screen
           name={AuthScreenNames.GeneratedExerciseScreen}
           component={GeneratedExerciseScreen}
+        />
+        <Stack.Screen
+          name={AuthScreenNames.GeneratedQCMScreen}
+          component={GeneratedQCMScreen}
         />
         <Stack.Screen
           name={AuthScreenNames.MissionScreen}

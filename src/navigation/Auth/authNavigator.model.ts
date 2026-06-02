@@ -8,6 +8,7 @@ export enum AuthScreenNames {
   LessonChapter = "LessonChapter",
   ExercicesScreen = "ExercicesScreen",
   GeneratedExerciseScreen = "GeneratedExerciseScreen",
+  GeneratedQCMScreen = "GeneratedQCMScreen",
   MissionScreen = "MissionScreen",
   ChatScreen = "ChatScreen",
   FriendsScreen = "FriendsScreen",
@@ -41,6 +42,16 @@ export type AuthStackParamList = {
     statement: string;
     correction?: string;
     conversationId?: string;
+  };
+  GeneratedQCMScreen: {
+    questions: Array<{
+      id?: number;
+      question: string;
+      options: string[];
+      correctAnswer?: string;
+      correct_answer?: string;
+      answer?: string;
+    }>;
   };
   EditProfileScreen: undefined;
   FriendsScreen: undefined;

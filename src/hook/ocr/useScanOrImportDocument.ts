@@ -70,6 +70,15 @@ const extractExerciseCorrection = (data: any) => {
   return String(correction ?? "");
 };
 
+const extractQcmQuestions = (data: any) => {
+  const reply = data?.reply ?? data;
+
+  if (Array.isArray(reply)) return reply;
+  if (Array.isArray(reply?.questions)) return reply.questions;
+
+  return [];
+};
+
 export const useScanOrImportDocument = ({
   documentType,
 }: UseScanOrImportDocumentParams) => {
@@ -245,6 +254,14 @@ export const useScanOrImportDocument = ({
       }
 
       console.log("Réponse OCR:", data);
+
+      if (documentType === "cours" && action === "qcm" && data) {
+        navigation.navigate("GeneratedQCMScreen", {
+          questions: extractQcmQuestions(data),
+        });
+        return;
+      }
+
       if (documentType === "exercice" && action === "exercise" && data) {
         navigation.navigate("GeneratedExerciseScreen", {
           statement: extractExerciseStatement(data),
