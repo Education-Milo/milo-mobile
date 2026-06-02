@@ -5,7 +5,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import APIAxios, { APIRoutes } from "@api/axios.api";
-import { generateExercise, generateQCM } from "@api/ocr.api";
+import { generateExercise, generateQCM, startDocumentChat } from "@api/ocr.api";
 import { AuthStackParamList } from "@navigation/Auth/authNavigator.model";
 import { useTranslation } from "react-i18next";
 import { showMessage } from "react-native-flash-message";
@@ -22,7 +22,7 @@ export interface DocumentPreview {
   isImage: boolean;
 }
 
-export type OcrProcessingAction = "qcm" | "exercise";
+export type OcrProcessingAction = "qcm" | "exercise" | "chat";
 
 interface UseScanOrImportDocumentParams {
   documentType: string;
@@ -78,6 +78,12 @@ const extractQcmQuestions = (data: any) => {
 
   return [];
 };
+
+const extractChatReply = (data: any) =>
+  String(data?.reply ?? data?.content ?? data?.message ?? "");
+
+const extractConversationId = (data: any) =>
+  String(data?.conversation_id ?? data?.conversationId ?? "");
 
 export const useScanOrImportDocument = ({
   documentType,
@@ -228,6 +234,18 @@ export const useScanOrImportDocument = ({
       return generateQCM(payload);
     }
 
+    if (action === "chat") {
+      return startDocumentChat({
+        ...payload,
+        chatRequest:
+          "Analyse ce document et aide-moi à le comprendre. Je vais te poser des questions dessus.",
+        context:
+          documentType === "cours"
+            ? "Document importé par l'utilisateur : cours."
+            : "Document importé par l'utilisateur : exercice.",
+      });
+    }
+
     return generateExercise(payload);
   };
 
@@ -254,6 +272,25 @@ export const useScanOrImportDocument = ({
       }
 
       console.log("Réponse OCR:", data);
+
+      if (
+        (documentType === "cours" || documentType === "exercice") &&
+        action === "chat" &&
+        data
+      ) {
+        navigation.navigate("ChatScreen", {
+          lessonTitle: "Discussion avec Milo",
+          context:
+            documentType === "cours"
+              ? "Document importé par l'utilisateur : cours."
+              : "Document importé par l'utilisateur : exercice.",
+          conversationId: extractConversationId(data),
+          initialMessage:
+            extractChatReply(data) ||
+            "J'ai bien reçu ton document. Pose-moi tes questions quand tu veux.",
+        });
+        return;
+      }
 
       if (documentType === "cours" && action === "qcm" && data) {
         navigation.navigate("GeneratedQCMScreen", {

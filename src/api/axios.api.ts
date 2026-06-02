@@ -121,6 +121,7 @@ export const APIRoutes = {
   /* Courses with Milo */
   POST_Chat_Lesson: '/chat_lesson',
   POST_Chat_Question: '/chat_lesson_question',
+  POST_Free_Chat: '/chat',
 };
 
 export default APIAxios;

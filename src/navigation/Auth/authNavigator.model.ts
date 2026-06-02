@@ -36,7 +36,13 @@ export type AuthStackParamList = {
   CameraOrImport: { documentType: string };
   LessonChapter: { matiere: string };
   MissionScreen: undefined;
-  ChatScreen: { lessonId: string; lessonTitle: string; context: string };
+  ChatScreen: {
+    lessonId?: string;
+    lessonTitle?: string;
+    context?: string;
+    conversationId?: string;
+    initialMessage?: string;
+  };
   ExercicesScreen: { lessonId: string };
   GeneratedExerciseScreen: {
     statement: string;

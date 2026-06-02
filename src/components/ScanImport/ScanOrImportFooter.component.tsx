@@ -169,7 +169,7 @@ const ScanOrImportFooter = (props: Props) => {
 
       <BottomSheetComponent
         ref={sendSheetRef}
-        snapPoints={[canChooseProcessing ? "48%" : "34%"]}
+        snapPoints={[canChooseProcessing ? "56%" : "34%"]}
         onDismiss={onCancelSend}
       >
         <View style={styles.sheetContainer}>
@@ -209,6 +209,24 @@ const ScanOrImportFooter = (props: Props) => {
                   style={styles.modalButtonText}
                 >
                   {processingActionLabel}
+                </Typography>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.processingChoice, styles.chatChoice]}
+                onPress={() => onConfirmSend("chat")}
+                disabled={isUploading}
+              >
+                <Ionicons
+                  name="chatbubble-ellipses-outline"
+                  size={22}
+                  color={colors.primary}
+                />
+                <Typography
+                  variant="button"
+                  color={colors.primary}
+                  style={styles.modalButtonText}
+                >
+                  Discuter avec Milo
                 </Typography>
               </TouchableOpacity>
               <TouchableOpacity

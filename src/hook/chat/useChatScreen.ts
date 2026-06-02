@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { LessonPart } from "@store/course/course.model";
 import { AuthStackParamList } from "@navigation/Auth/authNavigator.model";
 import { fetchLessonParts, sendChatMessage } from "@queries/course.queries";
+import { sendDocumentChatMessage } from "@api/ocr.api";
 
 // TYPES PARTAGÉS AVEC L'ÉCRAN
 export type Message = {
@@ -26,7 +27,13 @@ const useChatScreen = () => {
   // Navigation + params de la stack
   const navigation = useNavigation<ChatScreenNavigationProp>();
   const route = useRoute<ChatScreenRouteProp | any>();
-  const { lessonId, lessonTitle, context } = route.params || {};
+  const {
+    lessonId,
+    lessonTitle,
+    context,
+    conversationId: initialConversationId,
+    initialMessage,
+  } = route.params || {};
 
   // Référence pour l'auto-scroll de la liste
   const flatListRef = useRef<FlatList<Message> | null>(null);
@@ -35,6 +42,17 @@ const useChatScreen = () => {
   const [inputText, setInputText] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [conversationId, setConversationId] = useState(
+    initialConversationId ?? "",
+  );
+
+  const isLessonChat = Boolean(lessonId);
+
+  const extractReplyText = (data: any) =>
+    String(data?.reply ?? data?.content ?? data?.message ?? "");
+
+  const extractConversationId = (data: any) =>
+    String(data?.conversation_id ?? data?.conversationId ?? "");
 
   // 🔁 Logique dynamique d'initialisation du chat
   // - Si une leçon est présente, on déclenche la génération de l'intro via le store
@@ -46,13 +64,16 @@ const useChatScreen = () => {
       setMessages([
         {
           id: "welcome",
-          text: "Salut ! Je suis Milo. Je suis là pour t'aider dans tes devoirs. De quoi veux-tu parler ?",
+          text:
+            initialMessage ||
+            "Salut ! Je suis Milo. Je suis là pour t'aider dans tes devoirs. De quoi veux-tu parler ?",
           sender: "milo",
           timestamp: new Date(),
         },
       ]);
+      setPhase("waiting_question");
     }
-  }, [lessonId, messages.length]);
+  }, [initialMessage, lessonId, messages.length]);
 
   const startLesson = async () => {
     setIsTyping(true);
@@ -137,11 +158,29 @@ const useChatScreen = () => {
     setPhase("answering");
 
     try {
-      const replyText = await sendChatMessage(currentPartContent, userMsgText);
+      let replyText = "";
+
+      if (isLessonChat) {
+        replyText = await sendChatMessage(currentPartContent, userMsgText);
+      } else {
+        const response = await sendDocumentChatMessage({
+          chatRequest: userMsgText,
+          context,
+          conversationId,
+        });
+        replyText = extractReplyText(response);
+
+        const nextConversationId = extractConversationId(response);
+        if (nextConversationId) {
+          setConversationId(nextConversationId);
+        }
+      }
 
       const miloMsg: Message = {
         id: (Date.now() + 1).toString(),
-        text: replyText,
+        text:
+          replyText ||
+          "J'ai bien reçu ta question, mais je n'ai pas réussi à formuler une réponse.",
         sender: "milo",
         timestamp: new Date(),
       };
