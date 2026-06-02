@@ -1,17 +1,18 @@
 export enum AuthScreenNames {
-  HomeTabs = 'HomeTabs',
-  Lesson = 'Lessons',
-  Profile = 'Profile',
-  Duel = 'Duel',
-  Scan = 'Scan',
-  CameraOrImport = 'CameraOrImport',
-  LessonChapter = 'LessonChapter',
-  ExercicesScreen = 'ExercicesScreen',
-  MissionScreen = 'MissionScreen',
-  ChatScreen = 'ChatScreen',
-  FriendsScreen = 'FriendsScreen',
-  EditProfileScreen = 'EditProfileScreen',
-  Settings = 'Settings',
+  HomeTabs = "HomeTabs",
+  Lesson = "Lessons",
+  Profile = "Profile",
+  Duel = "Duel",
+  Scan = "Scan",
+  CameraOrImport = "CameraOrImport",
+  LessonChapter = "LessonChapter",
+  ExercicesScreen = "ExercicesScreen",
+  GeneratedExerciseScreen = "GeneratedExerciseScreen",
+  MissionScreen = "MissionScreen",
+  ChatScreen = "ChatScreen",
+  FriendsScreen = "FriendsScreen",
+  EditProfileScreen = "EditProfileScreen",
+  Settings = "Settings",
 }
 
 export type HomeTabsParamList = {
@@ -36,6 +37,11 @@ export type AuthStackParamList = {
   MissionScreen: undefined;
   ChatScreen: { lessonId: string; lessonTitle: string; context: string };
   ExercicesScreen: { lessonId: string };
+  GeneratedExerciseScreen: {
+    statement: string;
+    correction?: string;
+    conversationId?: string;
+  };
   EditProfileScreen: undefined;
   FriendsScreen: undefined;
   Settings: undefined;
