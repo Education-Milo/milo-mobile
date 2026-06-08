@@ -1,0 +1,116 @@
+import React from 'react';
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import TypographyComponent from '@shared/components/Typography.component';
+import { colors } from '@shared/theme/colors';
+import { useNavigation } from '@react-navigation/native';
+import { AuthStackParamList } from '@app/navigation/Auth/authNavigator.model';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { User } from '@features/user/store/user.model';
+import { useTranslation } from 'react-i18next';
+
+interface ProfileHeaderProps {
+  user: User | null;
+}
+
+type ProfilHeaderNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
+
+const ProfileHeader = ({ user }: ProfileHeaderProps) => {
+  const { t } = useTranslation();
+  const navigation = useNavigation<ProfilHeaderNavigationProp>();
+
+  return (
+    <View style={styles.header}>
+      <View style={styles.headerTopRow}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => navigation.navigate('Settings')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="settings-outline" size={24} color={colors.text.secondary} />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.profileInfo}>
+        <View style={styles.avatarContainer}>
+          <Image
+            source={require('@assets/images/avatars/profil_picture1.png')}
+            style={styles.avatar}
+          />
+          <View style={styles.flagBadge}>
+            <TypographyComponent variant="h6" style={{ fontSize: 12 }}>🇫🇷</TypographyComponent>
+          </View>
+        </View>
+        {user?.first_name && user?.last_name ? (
+          <TypographyComponent variant="h3" style={{ marginTop: 12 }}>
+            {user.first_name} {user.last_name}
+          </TypographyComponent>
+        ) : <TypographyComponent variant="h3" style={{ marginTop: 12 }}>
+          {t("profile.title")}
+        </TypographyComponent>
+        }
+        <TypographyComponent variant="body" color={colors.text.tertiary}>
+          {t("profile.joined", { date: new Date(user?.created_at || '').toLocaleDateString('fr-FR', { year: 'numeric' }) })}
+        </TypographyComponent>
+        <TouchableOpacity
+          style={styles.addFriendButton}
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate('EditProfileScreen')}
+        >
+          <TypographyComponent variant="button" color="#FFF">
+            {t("profile.editButton")}
+          </TypographyComponent>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  header: {
+    padding: 20,
+  },
+  headerTopRow: {
+    flexDirection: 'row-reverse',
+    marginBottom: 10,
+  },
+  iconButton: {
+    padding: 8,
+  },
+  profileInfo: {
+    alignItems: 'center',
+  },
+  avatarContainer: {
+    position: 'relative',
+    marginBottom: 8,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 3,
+    borderColor: '#E5E5E5',
+  },
+  flagBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    elevation: 2,
+  },
+  addFriendButton: {
+    flexDirection: 'row',
+    backgroundColor: colors.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 16,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+});
+
+export default ProfileHeader;
