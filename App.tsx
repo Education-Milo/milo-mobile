@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import AppInitializer from '@screens/AppInitializer';
+import AppInitializer from '@app/AppInitializer';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import React from 'react';
-import RootNavigator from '@navigation/Root/rootNavigator';
+import RootNavigator from '@app/navigation/Root/rootNavigator';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import FlashMessage from 'react-native-flash-message';
 
