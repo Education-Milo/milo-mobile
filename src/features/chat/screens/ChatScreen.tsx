@@ -15,6 +15,33 @@ import useChatScreen, { Message } from "@features/chat/hooks/useChatScreen";
 import { useKeyboardState } from "@shared/hooks/useKeyboardState";
 import ChatInput from "@features/chat/components/chat/ChatInput.component";
 
+const END_ACTIONS = [
+	{
+		key: "qcm",
+		icon: "checkmark-circle-outline" as const,
+		label: "S'exercer sur des QCM",
+		description: "Teste tes connaissances avec des questions à choix multiple",
+		color: "#6366F1",
+		bgColor: "#EEF2FF",
+	},
+	{
+		key: "open",
+		icon: "chatbubble-ellipses-outline" as const,
+		label: "Questions ouvertes",
+		description: "Réponds à des questions de réflexion pour approfondir",
+		color: "#0EA5E9",
+		bgColor: "#E0F2FE",
+	},
+	{
+		key: "back",
+		icon: "library-outline" as const,
+		label: "Choisir une autre notion",
+		description: "Retourner au menu des chapitres",
+		color: "#10B981",
+		bgColor: "#ECFDF5",
+	},
+] as const;
+
 const ChatScreen = () => {
 	const {
 		navigation,
@@ -29,17 +56,24 @@ const ChatScreen = () => {
 		currentPartIndex,
 		phase,
 		goToNextPart,
+		handleGoToQCM,
+		handleGoToOpenQuestion,
+		handleGoBackToChapters,
 	} = useChatScreen();
-	const { isFieldFocused, handleFocus, handleBlur, dismissKeyboard } =
-		useKeyboardState();
+	const { isFieldFocused, handleFocus, handleBlur } = useKeyboardState();
 
 	const currentPart = parts[currentPartIndex];
 	const isLastPart = currentPartIndex === parts.length - 1;
 	const isInputEnabled = phase === "waiting_question" || phase === "answering";
 
+	const handleEndAction = (key: string) => {
+		if (key === "qcm") handleGoToQCM();
+		else if (key === "open") handleGoToOpenQuestion();
+		else if (key === "back") handleGoBackToChapters();
+	};
+
 	const renderMessageItem = ({
 		item,
-		index,
 	}: {
 		item: Message;
 		index: number;
@@ -131,7 +165,6 @@ const ChatScreen = () => {
 								{currentPart.title}
 							</TypographyComponent>
 						</View>
-						{/* Barre de progression */}
 						<View style={styles.progressBar}>
 							<View
 								style={[
@@ -147,69 +180,148 @@ const ChatScreen = () => {
 			)}
 
 			{/* MESSAGES */}
-					<FlatList
-						ref={flatListRef}
-						data={messages}
-						style={{ flex: 1 }}
-						keyExtractor={(item) => item.id}
-						renderItem={renderMessageItem}
-						contentContainerStyle={styles.messagesList}
-						onContentSizeChange={() =>
-							flatListRef.current?.scrollToEnd({ animated: true })
-						}
-						onLayout={() =>
-							flatListRef.current?.scrollToEnd({ animated: true })
-						}
-						ListFooterComponent={
-							<>
-								{/* Typing indicator */}
-								{isTyping && (
-									<View style={styles.typingContainer}>
-										<Image
-											source={require("../../../../assets/images/mascot.png")}
-											style={styles.avatarSmall}
-											resizeMode="contain"
-										/>
-										<View style={styles.typingBubble}>
-											<ActivityIndicator size="small" color={colors.primary} />
-											<TypographyComponent
-												variant="labelSmall"
-												color={colors.text.secondary}
-												style={{ marginLeft: 8 }}
-											>
-												Milo est en train d'écrire...
-											</TypographyComponent>
-										</View>
-									</View>
-								)}
+			<FlatList
+				ref={flatListRef}
+				data={messages}
+				style={{ flex: 1 }}
+				keyExtractor={(item) => item.id}
+				renderItem={renderMessageItem}
+				contentContainerStyle={styles.messagesList}
+				onContentSizeChange={() =>
+					flatListRef.current?.scrollToEnd({ animated: true })
+				}
+				onLayout={() =>
+					flatListRef.current?.scrollToEnd({ animated: true })
+				}
+				ListFooterComponent={
+					<>
+						{/* Typing indicator */}
+						{isTyping && (
+							<View style={styles.typingContainer}>
+								<Image
+									source={require("../../../../assets/images/mascot.png")}
+									style={styles.avatarSmall}
+									resizeMode="contain"
+								/>
+								<View style={styles.typingBubble}>
+									<ActivityIndicator size="small" color={colors.primary} />
+									<TypographyComponent
+										variant="labelSmall"
+										color={colors.text.secondary}
+										style={{ marginLeft: 8 }}
+									>
+										Milo est en train d'écrire...
+									</TypographyComponent>
+								</View>
+							</View>
+						)}
 
-								{/* Bouton passer à la suite */}
-								{phase === "waiting_question" &&
-									!isTyping &&
-									parts.length > 0 && (
-										<Animated.View
-											entering={FadeInUp.duration(400)}
-											style={styles.nextPartContainer}
+						{/* Bouton passer à la suite (pas la dernière partie) */}
+						{phase === "waiting_question" &&
+							!isTyping &&
+							parts.length > 0 &&
+							!isLastPart && (
+								<Animated.View
+									entering={FadeInUp.duration(400)}
+									style={styles.nextPartContainer}
+								>
+									<TouchableOpacity
+										style={styles.nextPartButton}
+										onPress={goToNextPart}
+										activeOpacity={0.8}
+									>
+										<TypographyComponent variant="button" color={colors.white}>
+											Partie suivante →
+										</TypographyComponent>
+									</TouchableOpacity>
+								</Animated.View>
+							)}
+
+						{/* Bouton terminer la dernière partie */}
+						{phase === "waiting_question" &&
+							!isTyping &&
+							parts.length > 0 &&
+							isLastPart && (
+								<Animated.View
+									entering={FadeInUp.duration(400)}
+									style={styles.nextPartContainer}
+								>
+									<TouchableOpacity
+										style={styles.nextPartButton}
+										onPress={goToNextPart}
+										activeOpacity={0.8}
+									>
+										<TypographyComponent variant="button" color={colors.white}>
+											Terminer la leçon 🎉
+										</TypographyComponent>
+									</TouchableOpacity>
+								</Animated.View>
+							)}
+
+						{/* Cartes de fin de leçon */}
+						{phase === "lesson_complete" && !isTyping && (
+							<Animated.View
+								entering={FadeInUp.delay(200).duration(500).springify()}
+								style={styles.endActionsContainer}
+							>
+								<TypographyComponent
+									variant="labelSmall"
+									color={colors.text.tertiary}
+									style={styles.endActionsTitle}
+								>
+									QUE VEUX-TU FAIRE ENSUITE ?
+								</TypographyComponent>
+
+								{END_ACTIONS.map((action, index) => (
+									<Animated.View
+										key={action.key}
+										entering={FadeInUp.delay(300 + index * 100).duration(400).springify()}
+									>
+										<TouchableOpacity
+											style={styles.actionCard}
+											onPress={() => handleEndAction(action.key)}
+											activeOpacity={0.85}
 										>
-											<TouchableOpacity
-												style={styles.nextPartButton}
-												onPress={goToNextPart}
-												activeOpacity={0.8}
+											<View
+												style={[
+													styles.actionIconContainer,
+													{ backgroundColor: action.bgColor },
+												]}
 											>
+												<Ionicons
+													name={action.icon}
+													size={22}
+													color={action.color}
+												/>
+											</View>
+											<View style={styles.actionTextContainer}>
 												<TypographyComponent
-													variant="button"
-													color={colors.white}
+													variant="h6"
+													color={colors.text.primary}
+													style={styles.actionLabel}
 												>
-													{isLastPart
-														? "Terminer la leçon 🎉"
-														: "Partie suivante →"}
+													{action.label}
 												</TypographyComponent>
-											</TouchableOpacity>
-										</Animated.View>
-									)}
-							</>
-						}
-					/>
+												<TypographyComponent
+													variant="labelSmall"
+													color={colors.text.secondary}
+												>
+													{action.description}
+												</TypographyComponent>
+											</View>
+											<Ionicons
+												name="chevron-forward"
+												size={18}
+												color={colors.text.tertiary}
+											/>
+										</TouchableOpacity>
+									</Animated.View>
+								))}
+							</Animated.View>
+						)}
+					</>
+				}
+			/>
 
 			{/* INPUT BAR */}
 			<ChatInput
@@ -222,6 +334,8 @@ const ChatScreen = () => {
 				placeholder={
 					isInputEnabled
 						? "Pose ta question à Milo..."
+						: phase === "lesson_complete"
+						? "Leçon terminée ! Choisis une option ci-dessus."
 						: "Milo prépare la suite..."
 				}
 			/>
@@ -364,6 +478,46 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.3,
 		shadowRadius: 8,
 		elevation: 4,
+	},
+
+	// Fin de leçon
+	endActionsContainer: {
+		marginTop: 8,
+		marginBottom: 16,
+		gap: 10,
+	},
+	endActionsTitle: {
+		textAlign: "center",
+		letterSpacing: 1,
+		marginBottom: 4,
+	},
+	actionCard: {
+		flexDirection: "row",
+		alignItems: "center",
+		backgroundColor: "#FFFFFF",
+		borderRadius: 16,
+		paddingVertical: 14,
+		paddingHorizontal: 16,
+		gap: 12,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.07,
+		shadowRadius: 6,
+		elevation: 2,
+	},
+	actionIconContainer: {
+		width: 44,
+		height: 44,
+		borderRadius: 12,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	actionTextContainer: {
+		flex: 1,
+		gap: 2,
+	},
+	actionLabel: {
+		fontWeight: "600",
 	},
 });
 

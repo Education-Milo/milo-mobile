@@ -15,18 +15,18 @@ export type Message = {
   timestamp: Date;
 };
 
-export type ChatPhase = "explaining" | "waiting_question" | "answering";
+export type ChatPhase = "explaining" | "waiting_question" | "answering" | "lesson_complete";
 
 type ChatScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 type ChatScreenRouteProp = RouteProp<AuthStackParamList, "ChatScreen">;
 
 const useChatScreen = () => {
-  const [parts, setParts] = useState<LessonPart[]>([]); // parties de la leçon
+  const [parts, setParts] = useState<LessonPart[]>([]);
   const [currentPartIndex, setCurrentPartIndex] = useState(0);
   const [phase, setPhase] = useState<ChatPhase>("explaining");
-  // Navigation + params de la stack
+
   const navigation = useNavigation<ChatScreenNavigationProp>();
-  const route = useRoute<ChatScreenRouteProp | any>();
+  const route = useRoute<ChatScreenRouteProp>();
   const {
     lessonId,
     lessonTitle,
@@ -35,10 +35,8 @@ const useChatScreen = () => {
     initialMessage,
   } = route.params || {};
 
-  // Référence pour l'auto-scroll de la liste
   const flatListRef = useRef<FlatList<Message> | null>(null);
 
-  // Etat local du chat
   const [inputText, setInputText] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -54,9 +52,6 @@ const useChatScreen = () => {
   const extractConversationId = (data: any) =>
     String(data?.conversation_id ?? data?.conversationId ?? "");
 
-  // 🔁 Logique dynamique d'initialisation du chat
-  // - Si une leçon est présente, on déclenche la génération de l'intro via le store
-  // - Sinon, on affiche un message d'accueil générique
   useEffect(() => {
     if (lessonId && messages.length === 0) {
       startLesson();
@@ -76,10 +71,16 @@ const useChatScreen = () => {
   }, [initialMessage, lessonId, messages.length]);
 
   const startLesson = async () => {
+    if (!lessonId) return;
+
     setIsTyping(true);
     try {
-      const response = await fetchLessonParts(lessonId, context);
-      const lessonParts: LessonPart[] = response;
+      const response = await fetchLessonParts(Number(lessonId), context);
+      const lessonParts: LessonPart[] = response.parts;
+      if (response.conversationId) {
+        setConversationId(response.conversationId);
+      }
+
       setParts(lessonParts);
       setMessages([
         {
@@ -107,20 +108,22 @@ const useChatScreen = () => {
 
   const goToNextPart = () => {
     const nextIndex = currentPartIndex + 1;
+
+    // Leçon terminée → on passe en mode "lesson_complete"
     if (nextIndex >= parts.length) {
-      // leçon terminée
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now().toString(),
-          text: "Bravo ! Tu as terminé toutes les parties de cette leçon ! 🎉",
+          text: "Bravo ! Tu as terminé toutes les parties de cette leçon ! 🎉 Comment veux-tu continuer ?",
           sender: "milo",
           timestamp: new Date(),
         },
       ]);
-      setTimeout(() => navigation.goBack(), 2000);
+      setPhase("lesson_complete");
       return;
     }
+
     setCurrentPartIndex(nextIndex);
     setPhase("explaining");
     setIsTyping(true);
@@ -161,7 +164,16 @@ const useChatScreen = () => {
       let replyText = "";
 
       if (isLessonChat) {
-        replyText = await sendChatMessage(currentPartContent, userMsgText);
+        const response = await sendChatMessage(
+          currentPartContent,
+          userMsgText,
+          conversationId,
+        );
+        replyText = response.text;
+
+        if (response.conversationId) {
+          setConversationId(response.conversationId);
+        }
       } else {
         const response = await sendDocumentChatMessage({
           chatRequest: userMsgText,
@@ -203,10 +215,38 @@ const useChatScreen = () => {
     }
   };
 
+  // Actions de fin de leçon
+  const handleGoToQCM = () => {
+    if (!lessonId) return;
+
+    navigation.navigate("ExercicesScreen", { lessonId });
+  };
+
+  const handleGoToOpenQuestion = () => {
+    const params: AuthStackParamList["OpenQuestionScreen"] = {};
+
+    if (lessonId) params.lessonId = lessonId;
+    if (lessonTitle) params.lessonTitle = lessonTitle;
+    if (context || lessonTitle) params.context = context || lessonTitle;
+    if (conversationId) params.conversationId = conversationId;
+
+    navigation.navigate("OpenQuestionScreen", params);
+  };
+
+  const handleGoBackToChapters = () => {
+    if (context) {
+      navigation.navigate("LessonChapter", { matiere: context });
+      return;
+    }
+
+    navigation.navigate("Lessons");
+  };
+
   return {
     // navigation / infos d'écran
     navigation,
     lessonTitle,
+    lessonId,
 
     // état du chat
     messages,
@@ -221,6 +261,11 @@ const useChatScreen = () => {
 
     // actions
     sendMessage,
+
+    // actions fin de leçon
+    handleGoToQCM,
+    handleGoToOpenQuestion,
+    handleGoBackToChapters,
 
     // refs
     flatListRef,
