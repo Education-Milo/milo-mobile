@@ -51,7 +51,16 @@ export const useCourses = (subjectId: number | undefined) => {
 //         enabled: !!subjectId,
 //     });
 
-export const fetchLessonParts = async (lessonId: number, context: string = ""): Promise<LessonPart[]> => {
+const extractReplyText = (data: any) =>
+    String(data?.reply ?? data?.content ?? data?.message ?? "");
+
+const extractConversationId = (data: any) =>
+    String(data?.conversation_id ?? data?.conversationId ?? "");
+
+export const fetchLessonParts = async (
+    lessonId: number,
+    context: string = "",
+): Promise<{ parts: LessonPart[]; conversationId: string }> => {
     const response = await APIAxios.post(
         APIRoutes.POST_Chat_Lesson,
         {
@@ -61,7 +70,10 @@ export const fetchLessonParts = async (lessonId: number, context: string = ""): 
         },
         { params: { lesson_id: lessonId } }
     );
-    return response.data.parts;
+    return {
+        parts: response.data.parts ?? [],
+        conversationId: extractConversationId(response.data),
+    };
 };
 
 
@@ -69,13 +81,17 @@ export const sendChatMessage = async (
     partContent: string,
     question: string,
     conversationId?: string
-): Promise<string> => {
+): Promise<{ text: string; conversationId: string }> => {
     const response = await APIAxios.post(APIRoutes.POST_Chat_Lesson, {
         part_content: partContent,
         question: question,
         conversation_id: conversationId,
     });
-    return response.data.reply || response.data.content;
+
+    return {
+        text: extractReplyText(response.data),
+        conversationId: extractConversationId(response.data),
+    };
 };
 
 export const useChapters = (courseId: number) => {

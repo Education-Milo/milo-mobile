@@ -11,6 +11,7 @@ export enum AuthScreenNames {
   GeneratedQCMScreen = "GeneratedQCMScreen",
   MissionScreen = "MissionScreen",
   ChatScreen = "ChatScreen",
+  OpenQuestionScreen = "OpenQuestionScreen",
   FriendsScreen = "FriendsScreen",
   EditProfileScreen = "EditProfileScreen",
   Settings = "Settings",
@@ -42,6 +43,12 @@ export type AuthStackParamList = {
     context?: string;
     conversationId?: string;
     initialMessage?: string;
+  };
+  OpenQuestionScreen: {
+    lessonId?: string;
+    lessonTitle?: string;
+    context?: string;
+    conversationId?: string;
   };
   ExercicesScreen: { lessonId: string };
   GeneratedExerciseScreen: {

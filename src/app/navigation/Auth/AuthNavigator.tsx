@@ -14,6 +14,7 @@ import CameraOrImportScreen from "@features/ocr/screens/CameraOrImportScreen";
 import LessonChapterScreen from "@features/course/screens/LessonChapterScreen";
 import MissionsScreen from "@features/mission/screens/MissionScreen";
 import ChatScreen from "@features/chat/screens/ChatScreen";
+import OpenQuestionScreen from "@features/openquestion/screens/OpenQuestionScreen";
 import EditProfileScreen from "@features/profile/screens/EditProfileScreen";
 import SettingsScreen from "@features/settings/screens/SettingsScreen";
 import FriendsScreen from "@features/friend/screens/FriendsScreen";
@@ -65,6 +66,10 @@ const AuthNavigator = () => {
         <Stack.Screen
           name={AuthScreenNames.ChatScreen}
           component={ChatScreen}
+        />
+        <Stack.Screen
+          name={AuthScreenNames.OpenQuestionScreen}
+          component={OpenQuestionScreen}
         />
         <Stack.Screen
           name={AuthScreenNames.FriendsScreen}
